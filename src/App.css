@@ -1,0 +1,114 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Add styles to your CSS file */
+.price-tags {
+  display: flex;
+  flex-wrap: wrap;
+  width: 474px;
+}
+.price-tag {
+  width: 158px;
+  height: 127px;
+  margin-left: -3px;
+  flex: 0 0 26%;
+}
+.price-tag-svg {
+  position: relative;
+  display: inline-block; /* Display price tags in a row */
+  margin: 0; /* Margin between price tags */
+  /* max-width: 33%;  */
+  box-sizing: border-box;
+}
+
+.price-tag-image {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.product-details {
+  position: absolute;
+  top: 0;
+  color: #000000;
+}
+
+.product-name {
+  width: 142px;
+  height: 24px;
+  overflow: hidden;
+  position: relative;
+  top: 2px;
+  left: 6px;
+  text-align: left;
+  font-size: 16px;
+  line-height: 24px;
+  /* font-size: 3.5vw; */
+  font-weight: bold;
+  color: #000; /* Black color for the name */
+}
+
+.product-price {
+  padding-top: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  line-height: 60px;
+  width: 156px;
+  height: 60px;
+  font-size: 52px;
+  text-align: center;
+}
+
+.original-price {
+  position: relative;
+}
+
+.discounted-price {
+  width: 70px;
+  height: 18px;
+  position: absolute;
+  bottom: -10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 750;
+  font-size: 16px;
+  color: #e71b84;
+}
+
+@media print {
+  .ToggleGroup {
+    display: none;
+    visibility: hidden;
+    position: absolute;
+  }
+  .price-tags {
+    margin: 2px;
+    zoom: 137%;
+  }
+  @page {
+    size: A4 portrait;
+    margin-top: 47px;
+    margin-bottom: 47px;
+    margin-left: 77px;
+    margin-right: 77px;
+  }
+}
+
+/* Accordion.css */
+
+/* Стили для аккордеона */
+.accordion {
+  border: none !important;
+  max-width: 26rem !important;
+}
+.accordion__panel {
+  max-width: 26rem !important;
+  text-align: left !important;
+}
+.accordion__button {
+  text-align: center !important;
+  color: white !important;
+  background: transparent !important;
+}
