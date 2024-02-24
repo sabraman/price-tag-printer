@@ -75,9 +75,9 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
             <br />
             <span className="discounted-price">
               {design === "old"
-                ? new Intl.NumberFormat("ru-RU").format(discountPrice)
+                ? new Intl.NumberFormat("ru-RU").format(discountPrice) + ` ₽`
                 : design === "new"
-                  ? new Intl.NumberFormat("ru-RU").format(price)
+                  ? new Intl.NumberFormat("ru-RU").format(price) + ` ₽`
                   : ""}
             </span>
           </div>
