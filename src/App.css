@@ -43,7 +43,7 @@
 .product-name {
   width: 162px;
   height: 24px;
-  overflow: scroll;
+  overflow: hidden;
   position: relative;
   top: 8px;
   left: 10px;
