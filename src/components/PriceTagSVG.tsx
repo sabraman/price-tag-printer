@@ -58,7 +58,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
           <div
             id={`product-name-${data}`}
             className="product-name"
-            style={{ fontSize: `${fontSize - 1}px` }}
+            style={{ fontSize: `${fontSize - 1.5}px` }}
             key={key}
           >
             {data}
