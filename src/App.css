@@ -1,3 +1,7 @@
+:root {
+  --discount-text-color: #f8bdd7;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -33,7 +37,7 @@
 .product-details {
   position: absolute;
   top: 0;
-  color: #000000;
+  color: white;
 }
 
 .product-name {
@@ -41,19 +45,23 @@
   height: 24px;
   overflow: hidden;
   position: relative;
-  top: 2px;
-  left: 6px;
+  top: 8px;
+  left: 10px;
   text-align: left;
   font-size: 16px;
   line-height: 24px;
   /* font-size: 3.5vw; */
   font-weight: bold;
-  color: #000; /* Black color for the name */
+  text-transform: uppercase;
+  font-weight: 500;
+  font-family: "Montserrat";
+  color: white; /* Black color for the name */
 }
 
 .product-price {
   padding-top: 5px;
-  font-family: Arial, Helvetica, sans-serif;
+  /* padding-left: 10px; */
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
   font-weight: bold;
   line-height: 60px;
   width: 156px;
@@ -70,11 +78,13 @@
   width: 70px;
   height: 18px;
   position: absolute;
-  bottom: -10px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: 750;
-  font-size: 16px;
-  color: #e71b84;
+  bottom: -3px;
+  left: 15px;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--discount-text-color);
+  text-align: left;
 }
 
 @media print {

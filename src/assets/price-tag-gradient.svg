@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="158" height="130" viewBox="0 0 158 130">
-  
-  <defs>
+ 
+ <defs>
     <style>
-      .cls-1 {
+      .cls-10 {
+        fill: #f8bfd8;
+        font-size: 7.5px;
+        font-family: Montserrat-Regular, 'Montserrat Regular';
+      }
+
+      .cls-12 {
         fill: url(#linear-gradient);
       }
     </style>
@@ -12,7 +18,11 @@
       <stop offset="1" stop-color="#f6989a"/>
     </linearGradient>
   </defs>
-  <rect class="cls-1" width="158" height="130"/>
-  <rect x="1" y="1" width="155.91" height="127.56" fill="#ffffff00" stroke="black" stroke-dasharray="5 5"/>
-
+  <rect class="cls-12" width="158" height="130"/>
+  <g>
+    <text class="cls-10" transform="translate(58 109)">
+    <tspan x="0" y="0">цена при регистрации</tspan>
+    <tspan x="0" y="8.14">в приложении</tspan>
+    </text>
+  </g>
 </svg>

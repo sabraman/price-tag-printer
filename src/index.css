@@ -89,7 +89,7 @@ button:focus-visible {
 
 .ToggleGroupItem {
   height: 35px;
-  width: 50px;
+  width: auto;
   display: flex;
   align-items: center;
   justify-content: center;

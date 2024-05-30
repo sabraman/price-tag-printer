@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 
 interface SwitcherProps {
-  onChange: (design: "new" | "old" | "noDiscount") => void; // Define onChange prop
+  onChange: (design: "new" | "noDiscount") => void; // Define onChange prop
 }
 
 const Switcher: React.FC<SwitcherProps> = ({ onChange }) => {
-  const [design, setDesign] = useState<"new" | "old" | "noDiscount">("new"); // State for design
+  const [design, setDesign] = useState<"new" | "noDiscount">("new"); // State for design
 
   // Handle design change
-  const handleDesignChange = (value: "new" | "old" | "noDiscount") => {
+  const handleDesignChange = (value: "new" | "noDiscount") => {
     setDesign(value);
     onChange(value); // Pass the selected design to the parent component
   };
@@ -22,13 +22,13 @@ const Switcher: React.FC<SwitcherProps> = ({ onChange }) => {
       onValueChange={handleDesignChange} // Handle value change
       aria-label="Design"
     >
-      <ToggleGroup.Item
+      {/* <ToggleGroup.Item
         className="ToggleGroupItem"
         value="old"
         aria-label="Старый дизайн"
       >
         Старый
-      </ToggleGroup.Item>
+      </ToggleGroup.Item> */}
       <ToggleGroup.Item
         className="ToggleGroupItem"
         value="noDiscount"
@@ -39,9 +39,9 @@ const Switcher: React.FC<SwitcherProps> = ({ onChange }) => {
       <ToggleGroup.Item
         className="ToggleGroupItem"
         value="new"
-        aria-label="Новый дизайн"
+        aria-label="Со скидкой"
       >
-        Новый
+        Со скидкой
       </ToggleGroup.Item>
     </ToggleGroup.Root>
   );

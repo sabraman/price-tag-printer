@@ -1,15 +1,16 @@
 // PriceTagSVG.tsx
 import React, { useState, useEffect } from "react";
-import priceTagSVG from "../assets/price-tag-new.svg";
-import noDiscountSVG from "../assets/price-tag-plonq.svg";
-import oldDesignSVG from "../assets/price-tag-old.svg";
+// import priceTagSVG from "../assets/price-tag-new.svg";
+import noDiscountSVG from "../assets/price-tag-gradient-bg.svg";
+// import oldDesignSVG from "../assets/price-tag-old.svg";
+import priceTagSVG from "../assets/price-tag-gradient.svg";
 import "../App.css";
 
 interface PriceTagSVGProps {
   data: string | number;
   price: number;
   discountPrice: number;
-  design: "new" | "old" | "noDiscount"; // Add design prop
+  design: "new" | "noDiscount"; // Add design prop
 }
 
 const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
@@ -23,7 +24,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   const [key, setKey] = useState<number>(0);
 
   useEffect(() => {
-    setLineHeight(design === "noDiscount" ? 75 : 60);
+    setLineHeight(design === "noDiscount" ? 90 : 75);
     const element = document.getElementById(`product-name-${data}`);
     if (element) {
       const isOverflown =
@@ -40,11 +41,10 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   // Define image source based on design prop
   const getImageSource = () => {
     switch (design) {
-      case "old":
-        return oldDesignSVG;
+      case "new":
+        return priceTagSVG;
       case "noDiscount":
         return noDiscountSVG;
-      case "new":
       default:
         return priceTagSVG;
     }
@@ -68,17 +68,22 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
             style={{ lineHeight: `${lineHeight}px` }}
           >
             <span className="original-price">
-              {design === "old" || design === "noDiscount"
+              {/* {design === "old" || design === "noDiscount" */}
+              {new Intl.NumberFormat("ru-RU").format(price)}
+              {/* {design === "noDiscount"
                 ? new Intl.NumberFormat("ru-RU").format(price)
-                : new Intl.NumberFormat("ru-RU").format(discountPrice)}
+                : new Intl.NumberFormat("ru-RU").format(discountPrice)} */}
             </span>
             <br />
             <span className="discounted-price">
-              {design === "old"
+              {design === "new"
+                ? new Intl.NumberFormat("ru-RU").format(discountPrice)
+                : ""}
+              {/* {design === "old"
                 ? new Intl.NumberFormat("ru-RU").format(discountPrice) + ` ₽`
                 : design === "new"
                   ? new Intl.NumberFormat("ru-RU").format(price) + ` ₽`
-                  : ""}
+                  : ""} */}
             </span>
           </div>
         </div>

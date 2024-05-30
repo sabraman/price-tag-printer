@@ -13,9 +13,9 @@ interface PriceTagListProps {
 }
 
 const PriceTagList: React.FC<PriceTagListProps> = ({ items }) => {
-  const [design, setDesign] = useState<"new" | "old" | "noDiscount">("new"); // State for design
+  const [design, setDesign] = useState<"new" | "noDiscount">("new"); // State for design
 
-  const handleDesignChange = (selectedDesign: "new" | "old" | "noDiscount") => {
+  const handleDesignChange = (selectedDesign: "new" | "noDiscount") => {
     setDesign(selectedDesign);
   };
 
