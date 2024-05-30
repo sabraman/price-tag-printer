@@ -12,11 +12,11 @@
 .price-tags {
   display: flex;
   flex-wrap: wrap;
-  width: 474px;
+  width: 513px;
 }
 .price-tag {
-  width: 158px;
-  height: 130px;
+  width: 171px;
+  height: 114px;
   margin-left: 0px;
   flex: 0 0 26%;
 }
@@ -41,7 +41,7 @@
 }
 
 .product-name {
-  width: 142px;
+  width: 171px;
   height: 24px;
   overflow: hidden;
   position: relative;
@@ -64,7 +64,7 @@
   font-family: "Montserrat", Arial, Helvetica, sans-serif;
   font-weight: bold;
   line-height: 60px;
-  width: 156px;
+  width: 171px;
   height: 60px;
   font-size: 52px;
   text-align: center;
@@ -78,7 +78,7 @@
   width: 70px;
   height: 18px;
   position: absolute;
-  bottom: -3px;
+  bottom: 8px;
   left: 10px;
   font-family: "Montserrat", Arial, Helvetica, sans-serif;
   font-weight: 400;
@@ -94,15 +94,15 @@
     position: absolute;
   }
   .price-tags {
-    margin: 2px;
-    zoom: 137%;
+    margin: 0px;
+    zoom: 205%;
   }
   @page {
     size: A4 portrait;
-    margin-top: 47px;
-    margin-bottom: 47px;
-    margin-left: 77px;
-    margin-right: 77px;
+    margin-top: 45px;
+    margin-bottom: 45px;
+    margin-left: 36px;
+    margin-right: 36px;
   }
 }
 

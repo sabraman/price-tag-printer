@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="158" height="130" viewBox="0 0 158 130">
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="171" height="114" viewBox="0 0 171 114">
   <defs>
     <style>
       .cls-1 {
+        fill: #f8bfd8;
+      }
+
+      .cls-2 {
         fill: url(#linear-gradient);
       }
     </style>
@@ -11,6 +15,5 @@
       <stop offset="1" stop-color="#f6989a"/>
     </linearGradient>
   </defs>
-
-  <rect class="cls-1" width="158" height="130"/>
+  <rect class="cls-2" width="171" height="114"/>
 </svg>

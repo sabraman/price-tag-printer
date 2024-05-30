@@ -24,7 +24,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   const [key, setKey] = useState<number>(0);
 
   useEffect(() => {
-    setLineHeight(design === "noDiscount" ? 90 : 75);
+    setLineHeight(design === "noDiscount" ? 75 : 60);
     const element = document.getElementById(`product-name-${data}`);
     if (element) {
       const isOverflown =
