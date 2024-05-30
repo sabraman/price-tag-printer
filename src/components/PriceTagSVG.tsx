@@ -27,12 +27,12 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
     setLineHeight(design === "noDiscount" ? 75 : 60);
     const element = document.getElementById(`product-name-${data}`);
     if (element) {
-      const isOverflown =
-        element.scrollHeight > element.clientHeight ||
-        element.scrollWidth > element.clientWidth;
+      const isOverflown = element.scrollHeight > element.clientHeight;
 
       if (isOverflown) {
-        setFontSize((prevFontSize) => Math.max(prevFontSize - 1, 2));
+        console.log(element.scrollHeight, element.clientHeight);
+        console.log(element.scrollWidth, element.clientWidth);
+        setFontSize((prevFontSize) => Math.max(prevFontSize - 1.4, 2));
         setKey((prevKey) => prevKey + 1);
       }
     }
@@ -58,7 +58,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
           <div
             id={`product-name-${data}`}
             className="product-name"
-            style={{ fontSize: `${fontSize - 1}px` }}
+            style={{ fontSize: `${fontSize}px` }}
             key={key}
           >
             {data}
