@@ -16,8 +16,8 @@
 }
 .price-tag {
   width: 158px;
-  height: 127px;
-  margin-left: -3px;
+  height: 130px;
+  margin-left: 0px;
   flex: 0 0 26%;
 }
 .price-tag-svg {
@@ -54,7 +54,7 @@
   font-weight: bold;
   text-transform: uppercase;
   font-weight: 500;
-  font-family: "Montserrat";
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
   color: white; /* Black color for the name */
 }
 
@@ -79,7 +79,7 @@
   height: 18px;
   position: absolute;
   bottom: -3px;
-  left: 15px;
+  left: 10px;
   font-family: "Montserrat", Arial, Helvetica, sans-serif;
   font-weight: 400;
   font-size: 18px;
