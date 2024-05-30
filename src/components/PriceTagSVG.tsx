@@ -30,10 +30,8 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
       const isOverflown = element.scrollHeight > element.clientHeight;
 
       if (isOverflown) {
-        console.log(element.scrollHeight, element.clientHeight);
-        console.log(element.scrollWidth, element.clientWidth);
-        setFontSize((prevFontSize) => Math.max(prevFontSize - 1.4, 2));
         setKey((prevKey) => prevKey + 1);
+        setFontSize((prevFontSize) => Math.max(prevFontSize - 0.4, 2));
       }
     }
   }, [data, design, key]);
@@ -58,7 +56,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
           <div
             id={`product-name-${data}`}
             className="product-name"
-            style={{ fontSize: `${fontSize}px` }}
+            style={{ fontSize: `${fontSize}mm` }}
             key={key}
           >
             {data}
