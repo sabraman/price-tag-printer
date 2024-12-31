@@ -224,7 +224,7 @@ const App: React.FC = () => {
                   </>
                 )}
               </Button>
-              {!isEditMode && (
+              {/* {!isEditMode && (
                 <Button
                   onClick={(e) => {
                     e.preventDefault();
@@ -235,13 +235,18 @@ const App: React.FC = () => {
                 >
                   Распечатать или сохранить в PDF
                 </Button>
-              )}
+              )} */}
             </div>
             {!isEditMode && <Switcher onChange={handleDesignChange} />}
           </div>
         )}
         {isEditMode ? (
-          <EditTable items={items} onItemsChange={handleItemsChange} />
+          <EditTable
+            items={items}
+            onItemsChange={handleItemsChange}
+            isEditMode={isEditMode}
+            setIsEditMode={setIsEditMode}
+          />
         ) : (
           <>
             <GenerateButton
