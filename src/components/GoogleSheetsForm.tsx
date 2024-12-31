@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AccordionInfo from "./AccordionInfo.tsx";
+import { Input } from "./ui/input.tsx";
 
 interface GoogleSheetsFormProps {
   onSubmit: (url: string) => void;
@@ -28,21 +29,20 @@ const GoogleSheetsForm: React.FC<GoogleSheetsFormProps> = ({ onSubmit }) => {
 
   return (
     <div className="mb-4">
-      <form onSubmit={handleSubmit}>
-        <p className="block mb-2">Или вставь ссылку на Гугл таблицы: </p>
-        <div className="flex">
-          <input
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <p className="text-base font-medium">
+          Или вставь ссылку на Гугл таблицы:{" "}
+        </p>
+        <div className="flex flex-col space-y-4">
+          <Input
             type="text"
             value={url}
             onChange={handleUrlChange}
-            className="flex-grow bg-blue-500 border p-2 rounded-r"
-            placeholder="ссылочка"
+            placeholder="Вставьте ссылку на Google Таблицы"
+            className="w-full"
           />
+          <AccordionInfo />
         </div>
-        <AccordionInfo />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded-r">
-          Сгенерировать Ценники
-        </button>
       </form>
     </div>
   );

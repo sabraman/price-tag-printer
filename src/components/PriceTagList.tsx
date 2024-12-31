@@ -1,7 +1,7 @@
 // src/components/PriceTagList.tsx
-import React, { useState } from "react";
+import React from "react";
 import PriceTagSVG from "./PriceTagSVG";
-import Switcher from "./Switcher";
+import "../App.css";
 
 interface PriceTagListProps {
   items: {
@@ -10,23 +10,17 @@ interface PriceTagListProps {
     price: number;
     discountPrice: number;
   }[];
+  design: boolean;
 }
 
-const PriceTagList: React.FC<PriceTagListProps> = ({ items }) => {
-  const [design, setDesign] = useState<"new" | "noDiscount">("new"); // State for design
-
-  const handleDesignChange = (selectedDesign: "new" | "noDiscount") => {
-    setDesign(selectedDesign);
-  };
-
+const PriceTagList: React.FC<PriceTagListProps> = ({ items, design }) => {
   return (
-    <>
-      <Switcher onChange={handleDesignChange} />{" "}
-      {/* Pass handleDesignChange as onChange prop */}
-      <div className="price-tags">
+    <div className="w-full flex flex-col items-center">
+      <div className="price-tags flex flex-wrap w-[513px] justify-center">
         {items.map((item) => (
           <div key={item.id} className="price-tag">
             <PriceTagSVG
+              id={item.id}
               data={item.data}
               price={item.price}
               discountPrice={item.discountPrice}
@@ -35,7 +29,7 @@ const PriceTagList: React.FC<PriceTagListProps> = ({ items }) => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

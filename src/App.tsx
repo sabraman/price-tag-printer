@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { useReactToPrint } from "react-to-print";
+import React, { useState, useCallback, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
+import { AlertCircle, Edit2, Eye } from "lucide-react";
 import { fetchGoogleSheetsData } from "google-sheets-data-fetcher";
 import PriceTagList from "./components/PriceTagList";
 import GoogleSheetsForm from "./components/GoogleSheetsForm";
 import ExcelUploader from "./components/ExcelUploader";
-import FancyFooter from "./components/FancyFooter";
+import { usePrintTags } from "./hooks/usePrintTags";
+import Switcher from "./components/Switcher";
+import { EditTable } from "./components/EditTable";
+import GenerateButton from "./components/GenerateButton";
 
 interface Item {
   id: number;
@@ -30,28 +36,18 @@ const App: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [, setColumnLabels] = useState<string[]>([]);
+  const [design, setDesign] = useState<boolean>(true);
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  const componentRef = React.useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const savedUrl = localStorage.getItem("lastUrl");
-    if (savedUrl) {
-      setUrl(savedUrl);
-      fetchData(savedUrl);
-    }
-  }, []); // Fetch data automatically on initial load if there is a saved URL
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+  const { componentRef, handlePrint } = usePrintTags({
+    onError: (error) => setError(error.message),
   });
 
-  const extractSheetIdFromUrl = (url: string): string => {
-    const parts = url.split("/");
-    const sheetIdIndex = parts.indexOf("d") + 1;
-    return parts[sheetIdIndex];
+  const handleDesignChange = (selectedDesign: boolean) => {
+    setDesign(selectedDesign);
   };
 
-  const fetchData = async (url: string) => {
+  const fetchData = useCallback(async (url: string) => {
     setLoading(true);
     try {
       const sheetId = extractSheetIdFromUrl(url);
@@ -63,7 +59,7 @@ const App: React.FC = () => {
             subSheetsIds: ["0"],
           },
         ],
-        ["JSON_COLUMNS"],
+        ["JSON_COLUMNS"]
       );
 
       console.log("Получены данные из Google Sheets API:", data);
@@ -78,12 +74,12 @@ const App: React.FC = () => {
               ...row,
               data: row.data,
               price: Number(
-                data[columnKey === "A" ? "B" : "A"].rows[row.id].data,
+                data[columnKey === "A" ? "B" : "A"].rows[row.id].data
               ), // Extract price from the second column
               discountPrice:
                 Number(data[columnKey === "A" ? "B" : "A"].rows[row.id].data) -
                 55, // Calculate discount price
-            }),
+            })
           ) as Item[];
 
           setItems(receivedItems);
@@ -92,14 +88,14 @@ const App: React.FC = () => {
         } else {
           console.error(
             "Неверная структура данных, полученная от API Google Таблиц:",
-            data,
+            data
           );
           setError("Неверная ссылка");
         }
       } else {
         console.error(
           "Неверная структура данных, полученная от API Google Таблиц:",
-          data,
+          data
         );
         setError("Неверная структура данных, полученная от API Google Таблиц:");
       }
@@ -109,6 +105,20 @@ const App: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  }, []); // Empty dependency array since this function doesn't depend on any state/props
+
+  useEffect(() => {
+    const savedUrl = localStorage.getItem("lastUrl");
+    if (savedUrl) {
+      setUrl(savedUrl);
+      fetchData(savedUrl);
+    }
+  }, [fetchData]); // Add fetchData as a dependency
+
+  const extractSheetIdFromUrl = (url: string): string => {
+    const parts = url.split("/");
+    const sheetIdIndex = parts.indexOf("d") + 1;
+    return parts[sheetIdIndex];
   };
 
   const handleGoogleSheetsSubmit = (submittedUrl: string) => {
@@ -146,7 +156,7 @@ const App: React.FC = () => {
         data: row.data,
         price: Number(parsedData.B.rows[row.id].data), // Extract price from the second column
         discountPrice: Number(parsedData.B.rows[row.id].data) - 55, // Calculate discount price
-      }),
+      })
     ) as Item[];
 
     setItems(receivedItems);
@@ -154,29 +164,104 @@ const App: React.FC = () => {
     setError(null);
   };
 
+  const handleItemsChange = (newItems: Item[]) => {
+    setItems(newItems);
+  };
+
+  const handleManualEntry = () => {
+    setItems([]);
+    setIsEditMode(true);
+    setError(null);
+  };
+
+  const handleGenerate = () => {
+    handlePrint();
+  };
+
   return (
     <>
-      <div className="max-w-screen-xl mx-auto p-4">
+      <div className="max-w-lg mx-auto p-4 flex flex-col gap-4">
         <ExcelUploader onUpload={handleExcelUpload} />
-        <GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
-        {/* Pass setNewDesign function to Switcher */}
-        {loading && <div>Зогрузочка👣...</div>}
-        {error && <div className="mb-4 text-red-500">{error}</div>}
+        <div className="flex flex-col">
+          <GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
+          {!items.length ? (
+            <Button onClick={handleManualEntry} variant="outline">
+              Добавить самому
+            </Button>
+          ) : null}
+        </div>
+        {loading && (
+          <div className="w-full my-4">
+            <Progress value={33} className="w-full" />
+            <p className="text-sm text-muted-foreground mt-2">
+              Загрузка данных...
+            </p>
+          </div>
+        )}
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         {items.length > 0 && (
+          <div className="flex-col flex gap-4">
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setIsEditMode(!isEditMode)}
+                variant="outline"
+                className="flex-1"
+              >
+                {isEditMode ? (
+                  <>
+                    <Eye className="h-4 w-4 mr-2" />
+                    Просмотр
+                  </>
+                ) : (
+                  <>
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    Редактировать
+                  </>
+                )}
+              </Button>
+              {!isEditMode && (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePrint();
+                  }}
+                  className="flex-1"
+                  variant="default"
+                >
+                  Распечатать или сохранить в PDF
+                </Button>
+              )}
+            </div>
+            {!isEditMode && <Switcher onChange={handleDesignChange} />}
+          </div>
+        )}
+        {isEditMode ? (
+          <EditTable items={items} onItemsChange={handleItemsChange} />
+        ) : (
           <>
-            <button
-              onClick={handlePrint}
-              className="mb-4 bg-green-500 text-white p-2 rounded"
+            <GenerateButton
+              items={items}
+              onGenerate={handleGenerate}
+              isEditMode={isEditMode}
+            />
+            <div
+              ref={componentRef}
+              className={`flex flex-col print-content ${
+                items.length === 0 ? "hidden" : ""
+              }`}
             >
-              Распечатать или сохранить в PDF{" "}
-            </button>
-            <div ref={componentRef}>
-              <PriceTagList items={items} />
+              {items.length > 0 && (
+                <PriceTagList items={items} design={design} />
+              )}
             </div>
           </>
         )}
       </div>
-      <FancyFooter />
     </>
   );
 };

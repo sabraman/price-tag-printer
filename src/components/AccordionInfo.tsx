@@ -2,37 +2,37 @@
 import React from "react";
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel,
-} from "react-accessible-accordion";
-import "../App.css"; // Импортируйте стили библиотеки
-import "react-accessible-accordion/dist/fancy-example.css";
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const AccordionInfo: React.FC = () => {
   return (
-    <Accordion allowZeroExpanded>
-      <AccordionItem>
-        <AccordionItemHeading>
-          <AccordionItemButton>
-            Проблемы с доступом к Google Таблицам?
-          </AccordionItemButton>
-        </AccordionItemHeading>
-        <AccordionItemPanel>
-          <strong>Откройте настройки доступа:</strong>
-          <ol>
-            <li>
-              В верхнем правом углу нажмите на кнопку "Настройки доступа".
-            </li>
-
-            <li>
-              Нажмите на "Изменить" или "Доступ по ссылке" (в зависимости от
-              текущих настроек).
-            </li>
-            <li>Убедитесь, что опция "Доступ по ссылке" включена.</li>
-          </ol>
-        </AccordionItemPanel>
+    <Accordion type="single" collapsible>
+      <AccordionItem value="google-sheets-access">
+        <AccordionTrigger>
+          Проблемы с доступом к Google Таблицам?
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="space-y-2 text-left">
+            <strong className="text-lg font-semibold">
+              Откройте настройки доступа:
+            </strong>
+            <ol className="list-decimal list-inside space-y-2 ml-4 text-base">
+              <li className="font-medium">
+                В верхнем правом углу нажмите на кнопку "Настройки доступа".
+              </li>
+              <li className="font-medium">
+                Нажмите на "Изменить" или "Доступ по ссылке" (в зависимости от
+                текущих настроек).
+              </li>
+              <li className="font-medium">
+                Убедитесь, что опция "Доступ по ссылке" включена.
+              </li>
+            </ol>
+          </div>
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
   );

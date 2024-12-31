@@ -18,7 +18,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({ onUpload }) => {
             new Uint8Array((e.target as FileReader).result as ArrayBuffer),
             {
               type: "array",
-            },
+            }
           ) as WorkBook;
           onUpload(data);
         } catch (error) {

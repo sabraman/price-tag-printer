@@ -1,49 +1,19 @@
-import React, { useState } from "react";
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import React from "react";
+import { Label } from "@/components/ui/label";
+import { Switch } from "./ui/switch";
 
 interface SwitcherProps {
-  onChange: (design: "new" | "noDiscount") => void; // Define onChange prop
+  onChange: (design: boolean) => void;
 }
 
 const Switcher: React.FC<SwitcherProps> = ({ onChange }) => {
-  const [design, setDesign] = useState<"new" | "noDiscount">("new"); // State for design
-
-  // Handle design change
-  const handleDesignChange = (value: "new" | "noDiscount") => {
-    setDesign(value);
-    onChange(value); // Pass the selected design to the parent component
-  };
-
   return (
-    <ToggleGroup.Root
-      className="ToggleGroup"
-      type="single"
-      value={design} // Set the value of the ToggleGroup to the current design state
-      onValueChange={handleDesignChange} // Handle value change
-      aria-label="Design"
-    >
-      {/* <ToggleGroup.Item
-        className="ToggleGroupItem"
-        value="old"
-        aria-label="Старый дизайн"
-      >
-        Старый
-      </ToggleGroup.Item> */}
-      <ToggleGroup.Item
-        className="ToggleGroupItem"
-        value="noDiscount"
-        aria-label="Без скидки"
-      >
-        Без скидки
-      </ToggleGroup.Item>
-      <ToggleGroup.Item
-        className="ToggleGroupItem"
-        value="new"
-        aria-label="Со скидкой"
-      >
-        Со скидкой
-      </ToggleGroup.Item>
-    </ToggleGroup.Root>
+    <div className="border flex flex-row gap-4 p-4 border-secondary w-full justify-between rounded-lg">
+      <Label htmlFor="discount" className="leading-normal">
+        Использовать ценник со скидкой
+      </Label>
+      <Switch id="discount" onCheckedChange={onChange} defaultChecked />
+    </div>
   );
 };
 

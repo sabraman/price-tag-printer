@@ -1,31 +1,37 @@
 // PriceTagSVG.tsx
 import React, { useState, useEffect } from "react";
-// import priceTagSVG from "../assets/price-tag-new.svg";
 import noDiscountSVG from "../assets/price-tag-gradient-bg.svg";
-// import oldDesignSVG from "../assets/price-tag-old.svg";
 import priceTagSVG from "../assets/price-tag-gradient.svg";
 import "../App.css";
 
 interface PriceTagSVGProps {
+  id: number;
   data: string | number;
   price: number;
   discountPrice: number;
-  design: "new" | "noDiscount"; // Add design prop
+  design: boolean;
 }
 
 const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
+  id,
   data,
   price,
   discountPrice,
-  design, // Receive design prop
+  design,
 }) => {
   const [fontSize, setFontSize] = useState<number>(16);
   const [lineHeight, setLineHeight] = useState<number>(20);
   const [key, setKey] = useState<number>(0);
 
+  // Reset font size when data changes
   useEffect(() => {
-    setLineHeight(design === "noDiscount" ? 75 : 60);
-    const element = document.getElementById(`product-name-${data}`);
+    setFontSize(16);
+    setKey(0);
+  }, [data]);
+
+  useEffect(() => {
+    setLineHeight(design ? 60 : 75);
+    const element = document.getElementById(`product-name-${id}`);
     if (element) {
       const isOverflown = element.scrollHeight > element.clientHeight;
 
@@ -34,54 +40,51 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
         setFontSize((prevFontSize) => Math.max(prevFontSize - 0.4, 2));
       }
     }
-  }, [data, design, key]);
 
-  // Define image source based on design prop
+    // Check again after a short delay to ensure DOM has updated
+    const timeoutId = setTimeout(() => {
+      const element = document.getElementById(`product-name-${id}`);
+      if (element) {
+        const isOverflown = element.scrollHeight > element.clientHeight;
+        if (isOverflown) {
+          setKey((prevKey) => prevKey + 1);
+          setFontSize((prevFontSize) => Math.max(prevFontSize - 0.4, 2));
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [id, data, design, key, fontSize]);
+
   const getImageSource = () => {
-    switch (design) {
-      case "new":
-        return priceTagSVG;
-      case "noDiscount":
-        return noDiscountSVG;
-      default:
-        return priceTagSVG;
-    }
+    return design ? priceTagSVG : noDiscountSVG;
   };
 
   return (
-    <div className="price-tag-svg">
-      <div className="price-tag-image">
+    <div className="relative m-0 p-0 box-border w-[171px] h-[114px]">
+      <div className="relative m-0 p-0">
         <img src={getImageSource()} alt="Price Tag" />
-        <div className="product-details">
+        <div className="absolute top-0 text-white">
           <div
-            id={`product-name-${data}`}
-            className="product-name"
+            id={`product-name-${id}`}
+            className="w-[162px] h-6 overflow-hidden relative top-2 left-2.5 text-left text-base leading-6 font-medium uppercase font-['Montserrat'] text-white"
             style={{ fontSize: `${fontSize}mm` }}
             key={key}
           >
             {data}
           </div>
           <div
-            className="product-price"
+            className="pt-[5px] font-['Montserrat'] font-bold w-[171px] h-[60px] text-[52px] text-center"
             style={{ lineHeight: `${lineHeight}px` }}
           >
-            <span className="original-price">
-              {/* {design === "old" || design === "noDiscount" */}
+            <span className="relative">
               {new Intl.NumberFormat("ru-RU").format(price)}
-              {/* {design === "noDiscount"
-                ? new Intl.NumberFormat("ru-RU").format(price)
-                : new Intl.NumberFormat("ru-RU").format(discountPrice)} */}
             </span>
             <br />
-            <span className="discounted-price">
-              {design === "new"
+            <span className="absolute bottom-[3px] left-2.5 w-[70px] h-[18px] font-['Montserrat'] font-normal text-[18px] text-left text-[var(--discount-text-color)]">
+              {design
                 ? new Intl.NumberFormat("ru-RU").format(discountPrice)
                 : ""}
-              {/* {design === "old"
-                ? new Intl.NumberFormat("ru-RU").format(discountPrice) + ` ₽`
-                : design === "new"
-                  ? new Intl.NumberFormat("ru-RU").format(price) + ` ₽`
-                  : ""} */}
             </span>
           </div>
         </div>
