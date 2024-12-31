@@ -28,7 +28,6 @@ interface EditTableProps {
 export const EditTable: React.FC<EditTableProps> = ({
   items,
   onItemsChange,
-  isEditMode,
   setIsEditMode,
 }) => {
   const [editingItems, setEditingItems] = useState<Item[]>(items);
