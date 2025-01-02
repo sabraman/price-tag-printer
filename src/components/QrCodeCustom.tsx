@@ -20,8 +20,8 @@ export default function QrCodeCustom({
           body: "#ffffff",
         }}
         bgColor="transparent"
-        size={220}
         bgRounded
+        resize={220}
       />
     </div>
   );
