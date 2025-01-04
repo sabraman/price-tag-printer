@@ -1,5 +1,6 @@
 // PriceTagSVG.tsx
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import noDiscountSVG from "../assets/price-tag-gradient-bg.svg";
 import priceTagSVG from "../assets/price-tag-gradient.svg";
 import "../App.css";
@@ -22,12 +23,11 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   const [fontSize, setFontSize] = useState<number>(16);
   const [lineHeight, setLineHeight] = useState<number>(20);
   const [key, setKey] = useState<number>(0);
-
   // Reset font size when data changes
   useEffect(() => {
     setFontSize(16);
     setKey(0);
-  }, [data]);
+  }, []); // Remove unnecessary data dependency since we only want this to run once
 
   useEffect(() => {
     setLineHeight(design ? 60 : 75);
@@ -54,7 +54,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
     }, 100);
 
     return () => clearTimeout(timeoutId);
-  }, [id, data, design, key, fontSize]);
+  }, [id, design]);
 
   const getImageSource = () => {
     return design ? priceTagSVG : noDiscountSVG;

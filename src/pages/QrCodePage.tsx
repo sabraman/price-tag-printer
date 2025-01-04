@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import QrCodeGenerator from "@/components/QrCodeGenerator";
 
 export const QrCodePage: React.FC = () => {

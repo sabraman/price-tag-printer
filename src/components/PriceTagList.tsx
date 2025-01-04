@@ -1,5 +1,5 @@
 // src/components/PriceTagList.tsx
-import React from "react";
+import type React from "react";
 import PriceTagSVG from "./PriceTagSVG";
 import "../App.css";
 

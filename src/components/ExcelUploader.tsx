@@ -1,6 +1,6 @@
-import React from "react";
+import type React from "react";
 import { useDropzone } from "react-dropzone";
-import { read, WorkBook } from "xlsx";
+import { read, type WorkBook } from "xlsx";
 
 interface ExcelUploaderProps {
   onUpload: (data: WorkBook) => void;
