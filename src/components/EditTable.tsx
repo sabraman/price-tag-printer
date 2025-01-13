@@ -43,7 +43,7 @@ export const EditTable: React.FC<EditTableProps> = ({
   const calculateDiscountPrice = (price: number) => {
     if (!design) return price;
     const maxDiscount = price * (maxDiscountPercent / 100);
-    return price - Math.min(discountAmount, maxDiscount);
+    return Math.ceil(price - Math.min(discountAmount, maxDiscount));
   };
 
   const handleEdit = (id: number, field: "data" | "price", value: string) => {

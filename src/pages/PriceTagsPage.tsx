@@ -48,7 +48,7 @@ export const PriceTagsPage: React.FC = () => {
   const calculateDiscountPrice = (price: number) => {
     if (!design) return price;
     const maxDiscount = price * (maxDiscountPercent / 100);
-    return price - Math.min(discountAmount, maxDiscount);
+    return Math.ceil(price - Math.min(discountAmount, maxDiscount));
   };
 
   const handleDesignChange = (selectedDesign: boolean, amount: number, maxPercent: number) => {
@@ -90,7 +90,7 @@ export const PriceTagsPage: React.FC = () => {
                 ...row,
                 data: row.data,
                 price,
-                discountPrice: design ? (price - Math.min(discountAmount, price * (maxDiscountPercent / 100))) : price,
+                discountPrice: design ? Math.ceil(price - Math.min(discountAmount, price * (maxDiscountPercent / 100))) : price,
               };
             }
           ) as Item[];
