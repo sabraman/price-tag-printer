@@ -31,29 +31,25 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 
   useEffect(() => {
     setLineHeight(design ? 60 : 75);
-    const element = document.getElementById(`product-name-${id}`);
-    if (element) {
-      const isOverflown = element.scrollHeight > element.clientHeight;
-
-      if (isOverflown) {
-        setKey((prevKey) => prevKey + 1);
-        setFontSize((prevFontSize) => Math.max(prevFontSize - 0.4, 2));
-      }
-    }
-
-    // Check again after a short delay to ensure DOM has updated
-    const timeoutId = setTimeout(() => {
+    
+    const adjustFontSize = () => {
       const element = document.getElementById(`product-name-${id}`);
       if (element) {
         const isOverflown = element.scrollHeight > element.clientHeight;
         if (isOverflown) {
           setKey((prevKey) => prevKey + 1);
           setFontSize((prevFontSize) => Math.max(prevFontSize - 0.4, 2));
+          // Schedule next check
+          return setTimeout(adjustFontSize, 50);
         }
       }
-    }, 100);
+    };
 
-    return () => clearTimeout(timeoutId);
+    const timeoutId = adjustFontSize();
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [id, design]);
 
   const getImageSource = () => {
