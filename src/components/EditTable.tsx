@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -23,15 +24,27 @@ interface EditTableProps {
   onItemsChange: (items: Item[]) => void;
   isEditMode: boolean;
   setIsEditMode: (value: boolean) => void;
+  design?: boolean;
+  discountAmount?: number;
+  maxDiscountPercent?: number;
 }
 
 export const EditTable: React.FC<EditTableProps> = ({
   items,
   onItemsChange,
   setIsEditMode,
+  design = true,
+  discountAmount = 100,
+  maxDiscountPercent = 5,
 }) => {
   const [editingItems, setEditingItems] = useState<Item[]>(items);
   const [newItem, setNewItem] = useState({ data: "", price: "" });
+
+  const calculateDiscountPrice = (price: number) => {
+    if (!design) return price;
+    const maxDiscount = price * (maxDiscountPercent / 100);
+    return price - Math.min(discountAmount, maxDiscount);
+  };
 
   const handleEdit = (id: number, field: "data" | "price", value: string) => {
     setEditingItems((prev) =>
@@ -41,7 +54,7 @@ export const EditTable: React.FC<EditTableProps> = ({
           return {
             ...item,
             [field]: field === "price" ? Number(value) : String(value),
-            discountPrice: price - 55,
+            discountPrice: calculateDiscountPrice(price),
           };
         }
         return item;
@@ -65,7 +78,7 @@ export const EditTable: React.FC<EditTableProps> = ({
         id: Date.now(),
         data: String(newItem.data),
         price: price,
-        discountPrice: price - 55,
+        discountPrice: calculateDiscountPrice(price),
       };
       setEditingItems((prev) => [...prev, newItemComplete]);
       setNewItem({ data: "", price: "" });

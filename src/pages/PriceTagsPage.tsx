@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from "react";
+import type React from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
@@ -37,13 +38,29 @@ export const PriceTagsPage: React.FC = () => {
   const [, setColumnLabels] = useState<string[]>([]);
   const [design, setDesign] = useState<boolean>(true);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState(100);
+  const [maxDiscountPercent, setMaxDiscountPercent] = useState(5);
 
   const { componentRef, handlePrint } = usePrintTags({
     onError: (error) => setError(error.message),
   });
 
-  const handleDesignChange = (selectedDesign: boolean) => {
+  const calculateDiscountPrice = (price: number) => {
+    if (!design) return price;
+    const maxDiscount = price * (maxDiscountPercent / 100);
+    return price - Math.min(discountAmount, maxDiscount);
+  };
+
+  const handleDesignChange = (selectedDesign: boolean, amount: number, maxPercent: number) => {
     setDesign(selectedDesign);
+    setDiscountAmount(amount);
+    setMaxDiscountPercent(maxPercent);
+    if (selectedDesign) {
+      setItems(items.map(item => ({
+        ...item,
+        discountPrice: calculateDiscountPrice(item.price)
+      })));
+    }
   };
 
   const fetchData = useCallback(async (url: string) => {
@@ -67,20 +84,18 @@ export const PriceTagsPage: React.FC = () => {
 
         if (columnKey && data[columnKey].rows) {
           const receivedItems = Object.values(data[columnKey].rows).map(
-            (row: { id: number; data: string | number }) => ({
-              ...row,
-              data: row.data,
-              price: Number(
-                data[columnKey === "A" ? "B" : "A"].rows[row.id].data
-              ),
-              discountPrice:
-                Number(data[columnKey === "A" ? "B" : "A"].rows[row.id].data) -
-                55,
-            })
+            (row: { id: number; data: string | number }) => {
+              const price = Number(data[columnKey === "A" ? "B" : "A"].rows[row.id].data);
+              return {
+                ...row,
+                data: row.data,
+                price,
+                discountPrice: design ? (price - Math.min(discountAmount, price * (maxDiscountPercent / 100))) : price,
+              };
+            }
           ) as Item[];
-
           setItems(receivedItems);
-          setColumnLabels([data["A"].label, data["B"].label]);
+          setColumnLabels([data.A.label, data.B.label]);
           setError(null);
         } else {
           setError("Неверная ссылка");
@@ -93,7 +108,7 @@ export const PriceTagsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [design, discountAmount, maxDiscountPercent]);
 
   useEffect(() => {
     const savedUrl = localStorage.getItem("lastUrl");
@@ -112,16 +127,27 @@ export const PriceTagsPage: React.FC = () => {
     fetchData(submittedUrl);
   };
 
-  const handleExcelUpload = (data: any) => {
+  interface ExcelData {
+    Sheets: {
+      [key: string]: {
+        [cell: string]: {
+          v: string | number;
+        };
+      };
+    };
+    SheetNames: string[];
+  }
+
+  const handleExcelUpload = (data: ExcelData) => {
     const sheetData = data.Sheets[data.SheetNames[0]];
     const parsedData: GoogleSheetsResponse = {
       A: { id: "1", label: "Название", type: "string", rows: {} },
       B: { id: "2", label: "Цена", type: "number", rows: {} },
     };
 
-    Object.keys(sheetData).forEach((cell) => {
+    for (const cell of Object.keys(sheetData)) {
       const col = cell.charAt(0);
-      const row = parseInt(cell.substring(1));
+      const row = Number.parseInt(cell.substring(1));
 
       if (row > 1) {
         if (parsedData[col]) {
@@ -131,7 +157,7 @@ export const PriceTagsPage: React.FC = () => {
           };
         }
       }
-    });
+    }
 
     const receivedItems = Object.values(parsedData.A.rows).map(
       (row: { id: number; data: string | number }) => ({
@@ -219,6 +245,9 @@ export const PriceTagsPage: React.FC = () => {
               onItemsChange={handleItemsChange}
               isEditMode={isEditMode}
               setIsEditMode={setIsEditMode}
+              design={design}
+              discountAmount={discountAmount}
+              maxDiscountPercent={maxDiscountPercent}
             />
           ) : (
             <div ref={componentRef}>

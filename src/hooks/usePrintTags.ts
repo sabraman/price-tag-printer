@@ -17,36 +17,38 @@ export const usePrintTags = ({ onError }: UsePrintTagsOptions = {}) => {
     pageStyle: `
       @page {
         size: A4 portrait;
-        margin-top: 45px;
-        margin-bottom: 45px;
-        margin-left: 36px;
-        margin-right: 36px;
-      }
-      @media print {
-        html, body {
-          height: 100vh !important;
-          margin: 0 !important;
-          padding: 0 !important;
-          overflow: hidden !important;
+        margin: 0;
+        }
+        
+        @media print {
+          html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
           -webkit-print-color-adjust: exact;
+          }
+          
+          .print-page {
+            break-inside: avoid;
+            page-break-after: always;
+            margin: 0;
+            padding-top: 36px;
+            height: 100%;
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            align-items: center;
+            justify-items: center;
+            justify-content: center;
+          transform: scale(1.4);
+          transform-origin: top center;
         }
-        .print-content {
-          display: flex !important;
-          align-items: center;
-          justify-content: center;
-          min-height: 100vh;
-          width: 100%;
+        
+        .price-tag {
+          margin: 0;
         }
-        .price-tags {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          align-items: center;
-          gap: 0;
-          width: fit-content;
-          margin: auto;
-          transform: scale(1.4); // 140% or 1.4x original size (513px becomes 718.2px)
-          transform-origin: center center;
+        
+        .print-page:last-child {
+          page-break-after: auto;
         }
       }
     `,
