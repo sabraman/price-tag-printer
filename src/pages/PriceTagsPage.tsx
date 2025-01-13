@@ -45,23 +45,20 @@ export const PriceTagsPage: React.FC = () => {
     onError: (error) => setError(error.message),
   });
 
-  const calculateDiscountPrice = (price: number) => {
+  const calculateDiscountPrice = useCallback((price: number) => {
     if (!design) return price;
     const maxDiscount = price * (maxDiscountPercent / 100);
     return Math.ceil(price - Math.min(discountAmount, maxDiscount));
-  };
+  }, [design, discountAmount, maxDiscountPercent]);
 
-  const handleDesignChange = (selectedDesign: boolean, amount: number, maxPercent: number) => {
-    setDesign(selectedDesign);
-    setDiscountAmount(amount);
-    setMaxDiscountPercent(maxPercent);
-    if (selectedDesign) {
-      setItems(items.map(item => ({
+  const updateItemPrices = useCallback(() => {
+    setItems(currentItems => 
+      currentItems.map(item => ({
         ...item,
         discountPrice: calculateDiscountPrice(item.price)
-      })));
-    }
-  };
+      }))
+    );
+  }, [calculateDiscountPrice]);
 
   const fetchData = useCallback(async (url: string) => {
     setLoading(true);
@@ -90,7 +87,7 @@ export const PriceTagsPage: React.FC = () => {
                 ...row,
                 data: row.data,
                 price,
-                discountPrice: design ? Math.ceil(price - Math.min(discountAmount, price * (maxDiscountPercent / 100))) : price,
+                discountPrice: price,
               };
             }
           ) as Item[];
@@ -108,7 +105,7 @@ export const PriceTagsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [design, discountAmount, maxDiscountPercent]);
+  }, []);
 
   useEffect(() => {
     const savedUrl = localStorage.getItem("lastUrl");
@@ -116,6 +113,10 @@ export const PriceTagsPage: React.FC = () => {
       fetchData(savedUrl);
     }
   }, [fetchData]);
+
+  useEffect(() => {
+    updateItemPrices();
+  }, [updateItemPrices]);
 
   const extractSheetIdFromUrl = (url: string): string => {
     const parts = url.split("/");
@@ -185,6 +186,12 @@ export const PriceTagsPage: React.FC = () => {
 
   const handleGenerate = () => {
     handlePrint();
+  };
+
+  const handleDesignChange = (selectedDesign: boolean, amount: number, maxPercent: number) => {
+    setDesign(selectedDesign);
+    setDiscountAmount(amount);
+    setMaxDiscountPercent(maxPercent);
   };
 
   return (

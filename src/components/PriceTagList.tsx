@@ -28,7 +28,7 @@ const PriceTagList: React.FC<PriceTagListProps> = ({ items, design }) => {
     <div className="w-full flex flex-col items-center">
       {chunkedItems.map((chunk, pageIndex) => (
         <div 
-          key={pageIndex} 
+          key={chunk.map(item => item.id).join('-')} 
           className="grid grid-cols-3 w-[513px] print-page"
           style={{ pageBreakAfter: pageIndex < chunkedItems.length - 1 ? 'always' : 'auto' }}
         >
