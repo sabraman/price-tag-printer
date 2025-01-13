@@ -17,6 +17,7 @@ export default function PlusMinusInput({ defaultValue, minValue, label, step = 1
       defaultValue={defaultValue} 
       minValue={minValue} 
       onChange={onChange}
+      step={step}
     >
       <div className="flex flex-col gap-2">
         <Label className="text-sm font-medium text-foreground">
@@ -29,7 +30,9 @@ export default function PlusMinusInput({ defaultValue, minValue, label, step = 1
           >
             <Minus size={16} strokeWidth={2} aria-hidden="true" />
           </Button>
-          <Input className="w-full grow bg-background px-3 py-2 text-center tabular-nums text-foreground focus:outline-none" step={step} />
+          <Input 
+            className="w-full grow bg-background px-3 py-2 text-center tabular-nums text-foreground focus:outline-none" 
+          />
           <Button
             slot="increment"
             className="-me-px flex aspect-square h-[inherit] items-center justify-center rounded-e-lg border border-input bg-background text-sm text-muted-foreground/80 transition-shadow hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
