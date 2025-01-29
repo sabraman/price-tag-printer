@@ -52,7 +52,7 @@ export const PriceTagsPage: React.FC = () => {
   }, [design, discountAmount, maxDiscountPercent]);
 
   const updateItemPrices = useCallback(() => {
-    setItems(currentItems => 
+    setItems(currentItems =>
       currentItems.map(item => ({
         ...item,
         discountPrice: calculateDiscountPrice(item.price)
@@ -179,7 +179,12 @@ export const PriceTagsPage: React.FC = () => {
   };
 
   const handleManualEntry = () => {
-    setItems([]);
+    setItems([{
+      id: 1,
+      data: "",
+      price: 0,
+      discountPrice: 0
+    }]);
     setIsEditMode(true);
     setError(null);
   };

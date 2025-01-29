@@ -16,13 +16,14 @@ const priceTagsRoute = createRoute({
   component: PriceTagsPage,
 });
 
-const qrCodeRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/marketing",
-  component: QrCodePage,
-});
+// Temporarily hidden marketing/QR code route
+// const qrCodeRoute = createRoute({
+//   getParentRoute: () => rootRoute,
+//   path: "/marketing",
+//   component: QrCodePage,
+// });
 
-const routeTree = rootRoute.addChildren([priceTagsRoute, qrCodeRoute]);
+const routeTree = rootRoute.addChildren([priceTagsRoute]);
 
 export const router = createRouter({ routeTree });
 

@@ -20,16 +20,15 @@ const App: React.FC = () => {
             Ценники
           </Link>
         </Button>
+        {/* Temporarily hidden marketing link
         <Button
           asChild
           variant={currentPath === "/marketing" ? "default" : "outline"}
           className="flex-1"
         >
-          <Link to="/marketing" className="flex items-center">
-            <QrCodeIcon className="h-4 w-4 mr-2" />
-            Маркетинг
-          </Link>
+          <Link to="/marketing">Marketing</Link>
         </Button>
+        */}
       </div>
       <Outlet />
     </div>
