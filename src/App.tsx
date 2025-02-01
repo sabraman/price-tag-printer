@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Tag, QrCode as QrCodeIcon } from "lucide-react";
+// import { Tag, QrCode as QrCodeIcon } from "lucide-react";
 import { Link, Outlet, useMatches } from "@tanstack/react-router";
 
 const App: React.FC = () => {
@@ -16,7 +16,7 @@ const App: React.FC = () => {
           className="flex-1"
         >
           <Link to="/" className="flex items-center">
-            <Tag className="h-4 w-4 mr-2" />
+            {/* <Tag className="h-4 w-4 mr-2" /> */}
             Ценники
           </Link>
         </Button>

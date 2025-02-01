@@ -25,7 +25,6 @@ interface EditTableProps {
   design?: boolean;
   discountAmount?: number;
   maxDiscountPercent?: number;
-  designType?: string;
 }
 
 export const EditTable: React.FC<EditTableProps> = ({
@@ -34,7 +33,6 @@ export const EditTable: React.FC<EditTableProps> = ({
   design = true,
   discountAmount = 100,
   maxDiscountPercent = 5,
-  designType = "default",
 }) => {
   const [editingItems, setEditingItems] = useState<Item[]>(items);
   const [newItem, setNewItem] = useState({ data: "", price: "" });

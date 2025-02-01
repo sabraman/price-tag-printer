@@ -260,7 +260,6 @@ export const PriceTagsPage: React.FC = () => {
               design={design}
               discountAmount={discountAmount}
               maxDiscountPercent={maxDiscountPercent}
-              designType={designType}
             />
           ) : (
             <div ref={componentRef}>
