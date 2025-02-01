@@ -4,7 +4,7 @@ import {
   createRoute,
 } from "@tanstack/react-router";
 import App from "./App";
-// import { PriceTagsPage, QrCodePage } from "./pages";
+import { PriceTagsPage, QrCodePage } from "./pages";
 
 const rootRoute = createRootRoute({
   component: App,
@@ -13,17 +13,16 @@ const rootRoute = createRootRoute({
 const priceTagsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  // component: PriceTagsPage,
+  component: PriceTagsPage,
 });
 
-// Temporarily hidden marketing/QR code route
-// const qrCodeRoute = createRoute({
-//   getParentRoute: () => rootRoute,
-//   path: "/marketing",
-//   component: QrCodePage,
-// });
+const qrCodeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/marketing",
+  component: QrCodePage,
+});
 
-const routeTree = rootRoute.addChildren([priceTagsRoute]);
+const routeTree = rootRoute.addChildren([priceTagsRoute, qrCodeRoute]);
 
 export const router = createRouter({ routeTree });
 

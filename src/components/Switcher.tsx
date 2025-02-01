@@ -1,19 +1,22 @@
 import type React from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "./ui/switch";
-import { useState } from "react";
 import PlusMinusInput from "./PlusMinusInput";
 import RadioGroupSwitcher from "./RadioGroupSwitcher";
+import { usePriceTagsStore } from "@/store/priceTagsStore";
 
-interface SwitcherProps {
-  onChange: (design: boolean, discountAmount: number, maxDiscountPercent: number, designType: string) => void;
-}
-
-const Switcher: React.FC<SwitcherProps> = ({ onChange }) => {
-  const [isChecked, setIsChecked] = useState(true);
-  const [discountAmount, setDiscountAmount] = useState(100);
-  const [maxDiscountPercent, setMaxDiscountPercent] = useState(15);
-  const [designType, setDesignType] = useState("default");
+const Switcher: React.FC = () => {
+  const {
+    design,
+    discountAmount,
+    maxDiscountPercent,
+    designType,
+    setDesign,
+    setDiscountAmount,
+    setMaxDiscountPercent,
+    setDesignType,
+    updateItemPrices
+  } = usePriceTagsStore();
 
   const designItems = [
     { value: "default", label: "Обычный" },
@@ -22,34 +25,34 @@ const Switcher: React.FC<SwitcherProps> = ({ onChange }) => {
   ];
 
   const handleChange = (checked: boolean) => {
-    setIsChecked(checked);
-    onChange(checked, discountAmount, maxDiscountPercent, designType);
+    setDesign(checked);
+    updateItemPrices();
   };
 
   const handleDiscountChange = (value: number) => {
     setDiscountAmount(value);
-    if (isChecked) {
-      onChange(isChecked, value, maxDiscountPercent, designType);
+    if (design) {
+      updateItemPrices();
     }
   };
 
   const handleMaxPercentChange = (value: number) => {
     setMaxDiscountPercent(value);
-    if (isChecked) {
-      onChange(isChecked, discountAmount, value, designType);
+    if (design) {
+      updateItemPrices();
     }
   };
 
   const handleDesignTypeChange = (value: string) => {
     setDesignType(value);
-    onChange(isChecked, discountAmount, maxDiscountPercent, value);
+    updateItemPrices();
   };
 
   return (
     <div className="border flex flex-col gap-4 p-4 border-secondary w-full rounded-lg">
       <RadioGroupSwitcher
         items={designItems}
-        defaultValue="default"
+        defaultValue={designType}
         onChange={handleDesignTypeChange}
         className="w-full"
       />
@@ -57,9 +60,13 @@ const Switcher: React.FC<SwitcherProps> = ({ onChange }) => {
         <Label htmlFor="discount" className="leading-normal">
           Использовать ценник со скидкой
         </Label>
-        <Switch id="discount" onCheckedChange={handleChange} defaultChecked />
+        <Switch
+          id="discount"
+          onCheckedChange={handleChange}
+          checked={design}
+        />
       </div>
-      {isChecked && (
+      {design && (
         <div className="flex flex-col gap-4">
           <PlusMinusInput
             label="Размер скидки"

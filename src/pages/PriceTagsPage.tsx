@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
@@ -12,13 +12,8 @@ import { usePrintTags } from "@/hooks/usePrintTags";
 import Switcher from "@/components/Switcher";
 import { EditTable } from "@/components/EditTable";
 import GenerateButton from "@/components/GenerateButton";
-
-interface Item {
-  id: number;
-  data: string | number;
-  price: number;
-  discountPrice: number;
-}
+import { usePriceTagsStore } from "@/store/priceTagsStore";
+import type { Item } from "@/store/priceTagsStore";
 
 interface GoogleSheetsResponse {
   [columnKey: string]: {
@@ -32,34 +27,27 @@ interface GoogleSheetsResponse {
 }
 
 export const PriceTagsPage: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<Item[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [, setColumnLabels] = useState<string[]>([]);
-  const [design, setDesign] = useState<boolean>(true);
-  const [designType, setDesignType] = useState<string>("default");
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [discountAmount, setDiscountAmount] = useState(100);
-  const [maxDiscountPercent, setMaxDiscountPercent] = useState(5);
+  const {
+    items,
+    loading,
+    error,
+    design,
+    designType,
+    isEditMode,
+    discountAmount,
+    maxDiscountPercent,
+    setItems,
+    setLoading,
+    setError,
+    setColumnLabels,
+    setIsEditMode,
+    addItem,
+    updateItemPrices,
+  } = usePriceTagsStore();
 
   const { componentRef, handlePrint } = usePrintTags({
     onError: (error) => setError(error.message),
   });
-
-  const calculateDiscountPrice = useCallback((price: number) => {
-    if (!design) return price;
-    const maxDiscount = price * (maxDiscountPercent / 100);
-    return Math.ceil(price - Math.min(discountAmount, maxDiscount));
-  }, [design, discountAmount, maxDiscountPercent]);
-
-  const updateItemPrices = useCallback(() => {
-    setItems(currentItems =>
-      currentItems.map(item => ({
-        ...item,
-        discountPrice: calculateDiscountPrice(item.price)
-      }))
-    );
-  }, [calculateDiscountPrice]);
 
   const fetchData = useCallback(async (url: string) => {
     setLoading(true);
@@ -106,7 +94,7 @@ export const PriceTagsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [setItems, setColumnLabels, setError, setLoading]);
 
   useEffect(() => {
     const savedUrl = localStorage.getItem("lastUrl");
@@ -117,7 +105,7 @@ export const PriceTagsPage: React.FC = () => {
 
   useEffect(() => {
     updateItemPrices();
-  }, [updateItemPrices]);
+  }, [updateItemPrices, design, discountAmount, maxDiscountPercent]);
 
   const extractSheetIdFromUrl = (url: string): string => {
     const parts = url.split("/");
@@ -166,7 +154,7 @@ export const PriceTagsPage: React.FC = () => {
         ...row,
         data: row.data,
         price: Number(parsedData.B.rows[row.id].data),
-        discountPrice: Number(parsedData.B.rows[row.id].data) - 55,
+        discountPrice: Number(parsedData.B.rows[row.id].data),
       })
     ) as Item[];
 
@@ -175,30 +163,14 @@ export const PriceTagsPage: React.FC = () => {
     setError(null);
   };
 
-  const handleItemsChange = (newItems: Item[]) => {
-    setItems(newItems);
-  };
-
   const handleManualEntry = () => {
-    setItems([{
-      id: 1,
-      data: "",
-      price: 0,
-      discountPrice: 0
-    }]);
+    addItem();
     setIsEditMode(true);
     setError(null);
   };
 
   const handleGenerate = () => {
     handlePrint();
-  };
-
-  const handleDesignChange = (selectedDesign: boolean, amount: number, maxPercent: number, type: string) => {
-    setDesign(selectedDesign);
-    setDiscountAmount(amount);
-    setMaxDiscountPercent(maxPercent);
-    setDesignType(type);
   };
 
   return (
@@ -252,14 +224,11 @@ export const PriceTagsPage: React.FC = () => {
               onGenerate={handleGenerate}
             />
           </div>
-          <Switcher onChange={handleDesignChange} />
+          <Switcher />
           {isEditMode ? (
             <EditTable
               items={items}
-              onChange={handleItemsChange}
-              design={design}
-              discountAmount={discountAmount}
-              maxDiscountPercent={maxDiscountPercent}
+              onChange={setItems}
             />
           ) : (
             <div ref={componentRef}>

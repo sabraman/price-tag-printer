@@ -11,37 +11,18 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Save } from "lucide-react";
-
-interface Item {
-  id: number;
-  data: string | number;
-  price: number;
-  discountPrice: number;
-}
+import { usePriceTagsStore } from "@/store/priceTagsStore";
+import type { Item } from "@/store/priceTagsStore";
 
 interface EditTableProps {
   items: Item[];
   onChange: (items: Item[]) => void;
-  design?: boolean;
-  discountAmount?: number;
-  maxDiscountPercent?: number;
 }
 
-export const EditTable: React.FC<EditTableProps> = ({
-  items,
-  onChange,
-  design = true,
-  discountAmount = 100,
-  maxDiscountPercent = 5,
-}) => {
+export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
+  const { updateItem, deleteItem, calculateDiscountPrice } = usePriceTagsStore();
   const [editingItems, setEditingItems] = useState<Item[]>(items);
   const [newItem, setNewItem] = useState({ data: "", price: "" });
-
-  const calculateDiscountPrice = (price: number) => {
-    if (!design) return price;
-    const maxDiscount = price * (maxDiscountPercent / 100);
-    return Math.ceil(price - Math.min(discountAmount, maxDiscount));
-  };
 
   const handleEdit = (id: number, field: "data" | "price", value: string) => {
     setEditingItems((prev) =>
@@ -57,6 +38,7 @@ export const EditTable: React.FC<EditTableProps> = ({
         return item;
       })
     );
+    updateItem(id, field, value);
   };
 
   const handleSave = () => {
@@ -65,6 +47,7 @@ export const EditTable: React.FC<EditTableProps> = ({
 
   const handleDelete = (id: number) => {
     setEditingItems((prev) => prev.filter((item) => item.id !== id));
+    deleteItem(id);
   };
 
   const handleAdd = () => {

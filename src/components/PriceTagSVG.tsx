@@ -12,6 +12,21 @@ interface PriceTagSVGProps {
   designType?: string;
 }
 
+const gradientColors = {
+  default: {
+    start: "#dd4c9b",
+    end: "#f6989a"
+  },
+  new: {
+    start: "#dd4c9b",
+    end: "#f6989a"
+  },
+  sale: {
+    start: "#ee4a61",
+    end: "#f6989a"
+  }
+};
+
 const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   id,
   data,
@@ -23,6 +38,8 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   const [fontSize, setFontSize] = useState<number>(16);
   const [lineHeight, setLineHeight] = useState<number>(20);
   const [key, setKey] = useState<number>(0);
+
+  const gradient = gradientColors[designType as keyof typeof gradientColors] || gradientColors.default;
 
   useEffect(() => {
     setFontSize(16);
@@ -51,29 +68,15 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
     };
   }, [id, design]);
 
-  const getGradientDef = () => {
-    if (designType === "sale") {
-      return (
-        <linearGradient id={`linear-gradient-${id}`} x1="13.75" y1="108.41" x2="148.83" y2="10.42" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#ee4a61" />
-          <stop offset="1" stopColor="#ff8c8c" />
-        </linearGradient>
-      );
-    }
-    return (
-      <linearGradient id={`linear-gradient-${id}`} x1="13.75" y1="108.41" x2="148.83" y2="10.42" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stopColor="#dd4c9b" />
-        <stop offset="1" stopColor="#f6989a" />
-      </linearGradient>
-    );
-  };
-
   return (
     <div className="relative m-0 p-0 box-border w-[171px] h-[114px] overflow-hidden">
       <div className="relative m-0 p-0">
         <svg width="171" height="114" viewBox="0 0 171 114" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            {getGradientDef()}
+            <linearGradient id={`linear-gradient-${id}`} x1="13.75" y1="108.41" x2="148.83" y2="10.42" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stopColor={gradient.start} />
+              <stop offset="1" stopColor={gradient.end} />
+            </linearGradient>
           </defs>
           <rect width="171" height="114" fill={`url(#linear-gradient-${id})`} />
         </svg>
