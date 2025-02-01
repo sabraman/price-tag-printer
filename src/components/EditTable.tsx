@@ -21,21 +21,20 @@ interface Item {
 
 interface EditTableProps {
   items: Item[];
-  onItemsChange: (items: Item[]) => void;
-  isEditMode: boolean;
-  setIsEditMode: (value: boolean) => void;
+  onChange: (items: Item[]) => void;
   design?: boolean;
   discountAmount?: number;
   maxDiscountPercent?: number;
+  designType?: string;
 }
 
 export const EditTable: React.FC<EditTableProps> = ({
   items,
-  onItemsChange,
-  setIsEditMode,
+  onChange,
   design = true,
   discountAmount = 100,
   maxDiscountPercent = 5,
+  designType = "default",
 }) => {
   const [editingItems, setEditingItems] = useState<Item[]>(items);
   const [newItem, setNewItem] = useState({ data: "", price: "" });
@@ -63,8 +62,7 @@ export const EditTable: React.FC<EditTableProps> = ({
   };
 
   const handleSave = () => {
-    onItemsChange(editingItems);
-    setIsEditMode(false);
+    onChange(editingItems);
   };
 
   const handleDelete = (id: number) => {

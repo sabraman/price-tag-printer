@@ -11,9 +11,10 @@ interface PriceTagListProps {
     discountPrice: number;
   }[];
   design: boolean;
+  designType: string;
 }
 
-const PriceTagList: React.FC<PriceTagListProps> = ({ items, design }) => {
+const PriceTagList: React.FC<PriceTagListProps> = ({ items, design, designType }) => {
   // Create chunks of 9 items for each page
   const chunkedItems = items.reduce((acc, item, i) => {
     const chunkIndex = Math.floor(i / 18);
@@ -27,8 +28,8 @@ const PriceTagList: React.FC<PriceTagListProps> = ({ items, design }) => {
   return (
     <div className="w-full flex flex-col items-center">
       {chunkedItems.map((chunk, pageIndex) => (
-        <div 
-          key={chunk.map(item => item.id).join('-')} 
+        <div
+          key={chunk.map(item => item.id).join('-')}
           className="grid grid-cols-3 w-[513px] print-page"
           style={{ pageBreakAfter: pageIndex < chunkedItems.length - 1 ? 'always' : 'auto' }}
         >
@@ -40,6 +41,7 @@ const PriceTagList: React.FC<PriceTagListProps> = ({ items, design }) => {
                 price={item.price}
                 discountPrice={item.discountPrice}
                 design={design}
+                designType={designType}
               />
             </div>
           ))}

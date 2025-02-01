@@ -37,6 +37,7 @@ export const PriceTagsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [, setColumnLabels] = useState<string[]>([]);
   const [design, setDesign] = useState<boolean>(true);
+  const [designType, setDesignType] = useState<string>("default");
   const [isEditMode, setIsEditMode] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(100);
   const [maxDiscountPercent, setMaxDiscountPercent] = useState(5);
@@ -193,10 +194,11 @@ export const PriceTagsPage: React.FC = () => {
     handlePrint();
   };
 
-  const handleDesignChange = (selectedDesign: boolean, amount: number, maxPercent: number) => {
+  const handleDesignChange = (selectedDesign: boolean, amount: number, maxPercent: number, type: string) => {
     setDesign(selectedDesign);
     setDiscountAmount(amount);
     setMaxDiscountPercent(maxPercent);
+    setDesignType(type);
   };
 
   return (
@@ -254,16 +256,15 @@ export const PriceTagsPage: React.FC = () => {
           {isEditMode ? (
             <EditTable
               items={items}
-              onItemsChange={handleItemsChange}
-              isEditMode={isEditMode}
-              setIsEditMode={setIsEditMode}
+              onChange={handleItemsChange}
               design={design}
               discountAmount={discountAmount}
               maxDiscountPercent={maxDiscountPercent}
+              designType={designType}
             />
           ) : (
             <div ref={componentRef}>
-              <PriceTagList items={items} design={design} />
+              <PriceTagList items={items} design={design} designType={designType} />
             </div>
           )}
         </div>
