@@ -1,38 +1,42 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { QrCode, Tag } from "lucide-react";
-import { Link, Outlet, useMatches } from "@tanstack/react-router";
+import { Outlet } from "@tanstack/react-router";
+import FontLoader from "./components/FontLoader";
+import { AppSidebar } from "./components/app-sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
+import { Separator } from "./components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "./components/ui/breadcrumb";
 
 const App: React.FC = () => {
-  const matches = useMatches();
-  const currentPath = matches[matches.length - 1].pathname;
-
   return (
-    <div className="max-w-lg mx-auto p-4 flex flex-col gap-4">
-      <div className="flex gap-2 mb-4">
-        <Button
-          asChild
-          variant={currentPath === "/" ? "default" : "outline"}
-          className="flex-1"
-        >
-          <Link to="/" className="flex items-center">
-            <Tag className="h-4 w-4 mr-2" />
-            Ценники
-          </Link>
-        </Button>
-        <Button
-          asChild
-          variant={currentPath === "/marketing" ? "default" : "outline"}
-          className="flex-1"
-        >
-          <Link to="/marketing">
-            <QrCode className="h-4 w-4 mr-2" />
-            Marketing</Link>
-        </Button>
-
-      </div>
-      <Outlet />
-    </div>
+    <SidebarProvider>
+      <FontLoader />
+      <AppSidebar />
+      <SidebarInset className="p-2">
+        <div className="rounded-xl bg-background">
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b rounded-t-xl">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Ценники</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          </header>
+          <div className="flex flex-1 flex-col p-4">
+            <Outlet />
+          </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 

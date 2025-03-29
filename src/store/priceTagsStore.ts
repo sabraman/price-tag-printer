@@ -8,6 +8,18 @@ export interface Item {
   discountPrice: number;
 }
 
+export interface Theme {
+  start: string;
+  end: string;
+  textColor: string;
+}
+
+export interface ThemeSet {
+  default: Theme;
+  new: Theme;
+  sale: Theme;
+}
+
 interface PriceTagsState {
   items: Item[];
   loading: boolean;
@@ -18,6 +30,9 @@ interface PriceTagsState {
   discountAmount: number;
   maxDiscountPercent: number;
   columnLabels: string[];
+  themes: ThemeSet;
+  currentFont: string;
+  discountText: string;
   setItems: (items: Item[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -27,6 +42,9 @@ interface PriceTagsState {
   setDiscountAmount: (amount: number) => void;
   setMaxDiscountPercent: (percent: number) => void;
   setColumnLabels: (labels: string[]) => void;
+  setThemes: (themes: ThemeSet) => void;
+  setCurrentFont: (font: string) => void;
+  setDiscountText: (text: string) => void;
   updateItemPrices: () => void;
   addItem: () => void;
   calculateDiscountPrice: (price: number) => number;
@@ -43,12 +61,31 @@ export const usePriceTagsStore = create<PriceTagsState>()(
     items: [],
     loading: false,
     error: null,
-    design: true,
+    design: false,
     designType: "default",
     isEditMode: false,
-    discountAmount: 100,
-    maxDiscountPercent: 5,
+    discountAmount: 10,
+    maxDiscountPercent: 30,
     columnLabels: [],
+    themes: {
+      default: {
+        start: "#222222",
+        end: "#dd4c9b",
+        textColor: "#ffffff",
+      },
+      new: {
+        start: "#dd4c9b",
+        end: "#f6989a",
+        textColor: "#ffffff",
+      },
+      sale: {
+        start: "#ee4a61",
+        end: "#f6989a",
+        textColor: "#ffffff",
+      },
+    },
+    currentFont: "Montserrat",
+    discountText: "цена при регистрации\nв приложении",
 
     setItems: (items) => set({ items }),
     setLoading: (loading) => set({ loading }),
@@ -59,12 +96,19 @@ export const usePriceTagsStore = create<PriceTagsState>()(
     setDiscountAmount: (amount) => set({ discountAmount: amount }),
     setMaxDiscountPercent: (percent) => set({ maxDiscountPercent: percent }),
     setColumnLabels: (labels) => set({ columnLabels: labels }),
+    setThemes: (themes) => set({ themes }),
+    setCurrentFont: (font) => set({ currentFont: font }),
+    setDiscountText: (text) => set({ discountText: text }),
 
     calculateDiscountPrice: (price: number) => {
       const state = get();
       if (!state.design) return price;
-      const maxDiscount = price * (state.maxDiscountPercent / 100);
-      return Math.ceil(price - Math.min(state.discountAmount, maxDiscount));
+      const discountedPrice = price - state.discountAmount;
+      const discountPercent = ((price - discountedPrice) / price) * 100;
+      if (discountPercent > state.maxDiscountPercent) {
+        return price - (price * state.maxDiscountPercent) / 100;
+      }
+      return discountedPrice;
     },
 
     updateItemPrices: () =>
@@ -77,7 +121,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
     addItem: () =>
       set((state) => {
         state.items.push({
-          id: state.items.length + 1,
+          id: Date.now(),
           data: "",
           price: 0,
           discountPrice: 0,

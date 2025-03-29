@@ -1,6 +1,7 @@
 // src/components/PriceTagList.tsx
 import type React from "react";
 import PriceTagSVG from "./PriceTagSVG";
+import type { ThemeSet } from "@/store/priceTagsStore";
 import "../App.css";
 
 interface PriceTagListProps {
@@ -12,9 +13,19 @@ interface PriceTagListProps {
   }[];
   design: boolean;
   designType: string;
+  themes: ThemeSet;
+  font: string;
+  discountText: string;
 }
 
-const PriceTagList: React.FC<PriceTagListProps> = ({ items, design, designType }) => {
+const PriceTagList: React.FC<PriceTagListProps> = ({
+  items,
+  design,
+  designType,
+  themes,
+  font,
+  discountText
+}) => {
   // Create chunks of 9 items for each page
   const chunkedItems = items.reduce((acc, item, i) => {
     const chunkIndex = Math.floor(i / 18);
@@ -42,6 +53,9 @@ const PriceTagList: React.FC<PriceTagListProps> = ({ items, design, designType }
                 discountPrice={item.discountPrice}
                 design={design}
                 designType={designType}
+                themes={themes}
+                font={font}
+                discountText={discountText}
               />
             </div>
           ))}

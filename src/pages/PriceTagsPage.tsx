@@ -12,6 +12,7 @@ import { usePrintTags } from "@/hooks/usePrintTags";
 import Switcher from "@/components/Switcher";
 import { EditTable } from "@/components/EditTable";
 import GenerateButton from "@/components/GenerateButton";
+import { PriceTagCustomizer } from "@/components/PriceTagCustomizer";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 import type { Item } from "@/store/priceTagsStore";
 
@@ -36,11 +37,17 @@ export const PriceTagsPage: React.FC = () => {
     isEditMode,
     discountAmount,
     maxDiscountPercent,
+    themes,
+    currentFont,
+    discountText,
     setItems,
     setLoading,
     setError,
     setColumnLabels,
     setIsEditMode,
+    setThemes,
+    setCurrentFont,
+    setDiscountText,
     addItem,
     updateItemPrices,
   } = usePriceTagsStore();
@@ -174,65 +181,89 @@ export const PriceTagsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex-col flex gap-4">
-      <ExcelUploader onUpload={handleExcelUpload} />
-      <div className="flex flex-col">
-        <GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
-        {!items.length ? (
-          <Button onClick={handleManualEntry} variant="outline">
-            Добавить самому
-          </Button>
-        ) : null}
-      </div>
-      {loading && (
-        <div className="w-full my-4">
-          <Progress value={33} className="w-full" />
-          <p className="text-sm text-muted-foreground mt-2">
-            Загрузка данных...
-          </p>
-        </div>
-      )}
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-      {items.length > 0 && (
-        <div className="flex-col flex gap-4">
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setIsEditMode(!isEditMode)}
-              variant="outline"
-              className="flex-1"
-            >
-              {isEditMode ? (
-                <>
-                  <Eye className="h-4 w-4 mr-2" />
-                  Просмотр
-                </>
-              ) : (
-                <>
-                  <Edit2 className="h-4 w-4 mr-2" />
-                  Редактировать
-                </>
-              )}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Left Column - Controls */}
+      <div className="lg:col-span-4 space-y-4">
+        <div className="space-y-4">
+          <ExcelUploader onUpload={handleExcelUpload} />
+          <GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
+          {!items.length ? (
+            <Button onClick={handleManualEntry} variant="outline" className="w-full">
+              Добавить самому
             </Button>
-            <GenerateButton
-              items={items}
-              isEditMode={isEditMode}
-              onGenerate={handleGenerate}
+          ) : null}
+        </div>
+
+        {loading && (
+          <div className="w-full">
+            <Progress value={33} className="w-full" />
+            <p className="text-sm text-muted-foreground mt-2">
+              Загрузка данных...
+            </p>
+          </div>
+        )}
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {items.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setIsEditMode(!isEditMode)}
+                variant="outline"
+                className="flex-1"
+              >
+                {isEditMode ? (
+                  <>
+                    <Eye className="h-4 w-4 mr-2" />
+                    Просмотр
+                  </>
+                ) : (
+                  <>
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    Редактировать
+                  </>
+                )}
+              </Button>
+              <GenerateButton
+                items={items}
+                isEditMode={isEditMode}
+                onGenerate={handleGenerate}
+              />
+            </div>
+            <Switcher />
+            <PriceTagCustomizer
+              themes={themes}
+              currentFont={currentFont}
+              discountText={discountText}
+              onThemeChange={setThemes}
+              onFontChange={setCurrentFont}
+              onDiscountTextChange={setDiscountText}
             />
           </div>
-          <Switcher />
+        )}
+      </div>
+
+      {/* Right Column - Preview/Edit */}
+      {items.length > 0 && (
+        <div className="lg:col-span-8">
           {isEditMode ? (
-            <EditTable
-              items={items}
-              onChange={setItems}
-            />
+            <EditTable items={items} onChange={setItems} />
           ) : (
             <div ref={componentRef}>
-              <PriceTagList items={items} design={design} designType={designType} />
+              <PriceTagList
+                items={items}
+                design={design}
+                designType={designType}
+                themes={themes}
+                font={currentFont}
+                discountText={discountText}
+              />
             </div>
           )}
         </div>

@@ -1,15 +1,16 @@
 import type React from "react";
-import { useDropzone } from "react-dropzone";
 import { read, type WorkBook } from "xlsx";
+import { Dropzone, DropzoneEmptyState } from "./ui/dropzone";
+import { FileSpreadsheet } from "lucide-react";
 
 interface ExcelUploaderProps {
   onUpload: (data: WorkBook) => void;
 }
 
 const ExcelUploader: React.FC<ExcelUploaderProps> = ({ onUpload }) => {
-  const onDrop = (acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      const file = acceptedFiles[0];
+  const handleFiles = (files: File[]) => {
+    if (files.length > 0) {
+      const file = files[0];
       const reader = new FileReader();
 
       reader.onload = (e) => {
@@ -30,32 +31,26 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({ onUpload }) => {
     }
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-        ".xlsx",
-        ".xls",
-      ], // Accept Excel files only
-    }, // Accept string with comma-separated file types
-  });
-
   return (
-    <div className="mb-4">
-      <div
-        {...getRootProps()}
-        className={`dropzone ${isDragActive ? "active" : ""}`}
-        style={{
-          border: "2px dashed #ccc", // Dashed border style
-          borderRadius: "4px", // Optional: Add some border-radius
-          padding: "20px",
-          cursor: "pointer", // Change cursor to pointer when hovering
-        }}
-      >
-        <input {...getInputProps()} />
-        <p>Перетащите Excel файл сюда или кликни, чтобы выбрать</p>
-      </div>
-    </div>
+    <Dropzone
+      className="w-full"
+      accept={{
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+          ".xlsx",
+          ".xls",
+        ],
+      }}
+      onDrop={(files) => handleFiles(files)}
+    >
+      <DropzoneEmptyState>
+        <div className="flex flex-col items-center gap-2">
+          <FileSpreadsheet className="h-8 w-8 text-muted-foreground" />
+          <p className="text-sm font-medium">
+            Перетащите Excel файл сюда или кликни, чтобы выбрать
+          </p>
+        </div>
+      </DropzoneEmptyState>
+    </Dropzone>
   );
 };
 
