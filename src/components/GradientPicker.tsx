@@ -40,31 +40,31 @@ const darkThemePresets: ThemeSet[] = [
         }
 ];
 
-const lightThemePresets: ThemeSet[] = [
-    // Classic Light
-    {
-        default: { start: '#ffffff', end: '#ffcce6', textColor: '#000000' },
-        new: { start: '#ffffff', end: '#90eea8', textColor: '#000000' },
-        sale: { start: '#ffffff', end: '#ffb3b3', textColor: '#000000' },
-    },
-    // Light Monochrome
-    {
-        default: { start: '#ffffff', end: '#cccccc', textColor: '#000000' },
-        new: { start: '#ffffff', end: '#e6e6e6', textColor: '#000000' },
-        sale: { start: '#ffffff', end: '#d9d9d9', textColor: '#000000' },
-    },
-    // Light Slate
-    {
-        default: { start: '#ffffff', end: '#d4e5e5', textColor: '#000000' },
-        new: { start: '#ffffff', end: '#daeeed', textColor: '#000000' },
-        sale: { start: '#ffffff', end: '#f1f1f3', textColor: '#000000' },
-    },
+// const lightThemePresets: ThemeSet[] = [
+//     // Classic Light
+//     {
+//         default: { start: '#ffffff', end: '#ffcce6', textColor: '#000000' },
+//         new: { start: '#ffffff', end: '#90eea8', textColor: '#000000' },
+//         sale: { start: '#ffffff', end: '#ffb3b3', textColor: '#000000' },
+//     },
+//     // Light Monochrome
+//     {
+//         default: { start: '#ffffff', end: '#cccccc', textColor: '#000000' },
+//         new: { start: '#ffffff', end: '#e6e6e6', textColor: '#000000' },
+//         sale: { start: '#ffffff', end: '#d9d9d9', textColor: '#000000' },
+//     },
+//     // Light Slate
+//     {
+//         default: { start: '#ffffff', end: '#d4e5e5', textColor: '#000000' },
+//         new: { start: '#ffffff', end: '#daeeed', textColor: '#000000' },
+//         sale: { start: '#ffffff', end: '#f1f1f3', textColor: '#000000' },
+//     },
 
-];
+// ];
 
 // Создаем уникальные id для тем
 const darkThemeIds = ['classic-dark', 'dark-monochrome', 'dark-slate'];
-const lightThemeIds = ['classic-light', 'light-monochrome', 'light-slate'];
+// const lightThemeIds = ['classic-light', 'light-monochrome', 'light-slate'];
 
 export function GradientPicker({ themes, onChange, className }: GradientPickerProps) {
     const defaultTab = useMemo(() => 'presets', []);
