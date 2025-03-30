@@ -69,9 +69,9 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   console.log(`PriceTagSVG ${id}: design=${design}, price=${price}, discountPrice=${discountPrice}`);
 
   return (
-    <div className="relative m-0 p-0 box-border w-[160px] h-[114px] overflow-hidden">
-      <div className="relative m-0 p-0">
-        <svg width="160" height="114" viewBox="0 0 160 114" xmlns="http://www.w3.org/2000/svg" aria-labelledby={`price-tag-title-${id}`}>
+    <div className="relative w-[160px] h-[110px] overflow-hidden">
+      <div className="absolute inset-0">
+        <svg width="160" height="110" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" aria-labelledby={`price-tag-title-${id}`}>
           <title id={`price-tag-title-${id}`}>Ценник</title>
           <defs>
             <linearGradient id={`linear-gradient-${id}`} x1="13.75" y1="108.41" x2="148.83" y2="10.42" gradientUnits="userSpaceOnUse">
@@ -79,7 +79,15 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
               <stop offset="1" stopColor={currentTheme.end} />
             </linearGradient>
           </defs>
-          <rect width="160" height="114" fill={`url(#linear-gradient-${id})`} />
+          {/* Фоновый градиент */}
+          <rect width="160" height="110" fill={`url(#linear-gradient-${id})`} />
+          
+          {/* Линии для вырезания - более длинные штрихи с небольшими промежутками, 
+            подходят для печати и будут заметны даже при наложении друг на друга в сетке */}
+          <line x1="0" y1="0" x2="160" y2="0" stroke="white" strokeWidth="0.75" strokeDasharray="12,3" />
+          <line x1="0" y1="110" x2="160" y2="110" stroke="white" strokeWidth="0.75" strokeDasharray="12,3" />
+          <line x1="0" y1="0" x2="0" y2="110" stroke="white" strokeWidth="0.75" strokeDasharray="8,3" />
+          <line x1="160" y1="0" x2="160" y2="110" stroke="white" strokeWidth="0.75" strokeDasharray="8,3" />
         </svg>
         <div className="absolute top-0" style={{ color: currentTheme.textColor }}>
           {safeDesignType === "new" ? (
