@@ -46,7 +46,9 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({ onUpload }) => {
         <div className="flex flex-col items-center gap-2">
           <FileSpreadsheet className="h-8 w-8 text-muted-foreground" />
           <p className="text-sm font-medium">
-            Перетащите Excel файл сюда или кликни, чтобы выбрать
+            Перетащите Excel файл сюда
+            <br />
+            или кликни, чтобы выбрать
           </p>
         </div>
       </DropzoneEmptyState>

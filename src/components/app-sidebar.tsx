@@ -32,7 +32,7 @@ export function AppSidebar() {
             >
               <Link to="/marketing" className="flex items-center">
                 <QrCode className="h-4 w-4 mr-2" />
-                Marketing
+                В разработке
               </Link>
             </Button>
           </div>

@@ -1,7 +1,7 @@
 // PriceTagSVG.tsx
 import type React from "react";
 import { useState, useEffect } from "react";
-import type { Theme, ThemeSet } from "@/store/priceTagsStore";
+import type { ThemeSet } from "@/store/priceTagsStore";
 import "../App.css";
 
 interface PriceTagSVGProps {
@@ -31,7 +31,11 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   const [lineHeight, setLineHeight] = useState<number>(20);
   const [key, setKey] = useState<number>(0);
 
-  const currentTheme = themes[designType as keyof ThemeSet];
+  // Make sure we use a valid theme, or fall back to default
+  const safeDesignType = (designType && ["default", "new", "sale"].includes(designType)) 
+    ? designType as keyof ThemeSet 
+    : "default";
+  const currentTheme = themes[safeDesignType];
   const discountLines = discountText.split('\n');
 
   useEffect(() => {
@@ -61,20 +65,24 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
     };
   }, [id, design]);
 
+  // Log discount info to help with debugging
+  console.log(`PriceTagSVG ${id}: design=${design}, price=${price}, discountPrice=${discountPrice}`);
+
   return (
-    <div className="relative m-0 p-0 box-border w-[171px] h-[114px] overflow-hidden">
+    <div className="relative m-0 p-0 box-border w-[160px] h-[114px] overflow-hidden">
       <div className="relative m-0 p-0">
-        <svg width="171" height="114" viewBox="0 0 171 114" xmlns="http://www.w3.org/2000/svg">
+        <svg width="160" height="114" viewBox="0 0 160 114" xmlns="http://www.w3.org/2000/svg" aria-labelledby={`price-tag-title-${id}`}>
+          <title id={`price-tag-title-${id}`}>Ценник</title>
           <defs>
             <linearGradient id={`linear-gradient-${id}`} x1="13.75" y1="108.41" x2="148.83" y2="10.42" gradientUnits="userSpaceOnUse">
               <stop offset="0" stopColor={currentTheme.start} />
               <stop offset="1" stopColor={currentTheme.end} />
             </linearGradient>
           </defs>
-          <rect width="171" height="114" fill={`url(#linear-gradient-${id})`} />
+          <rect width="160" height="114" fill={`url(#linear-gradient-${id})`} />
         </svg>
         <div className="absolute top-0" style={{ color: currentTheme.textColor }}>
-          {designType === "new" ? (
+          {safeDesignType === "new" ? (
             <div
               className="absolute -right-[52px] bottom-[-14px] rotate-[-90deg] text-[52px] font-black whitespace-nowrap overflow-hidden w-[118px]"
               style={{
@@ -84,9 +92,9 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
             >
               NEW
             </div>
-          ) : designType === "sale" ? (
+          ) : safeDesignType === "sale" ? (
             <div
-              className="absolute -right-[50px] bottom-[-14px] rotate-[-90deg] text-[52px] font-black whitespace-nowrap overflow-hidden w-[118px]"
+              className="absolute -right-[48px] bottom-[-14px] rotate-[-90deg] text-[48px] font-black whitespace-nowrap overflow-hidden w-[124px]"
               style={{
                 fontFamily: font,
                 color: themes.sale.start
@@ -97,14 +105,14 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
           ) : null}
           <div
             id={`product-name-${id}`}
-            className="w-[162px] h-6 overflow-hidden relative top-2 left-2.5 text-left text-base leading-6 font-medium uppercase"
+            className="w-[146px] h-6 overflow-hidden relative top-2 left-2.5 text-left text-base leading-6 font-medium uppercase"
             style={{ fontSize: `${fontSize}mm`, fontFamily: font }}
             key={key}
           >
             {data}
           </div>
           <div
-            className="pt-[5px] font-bold w-[171px] h-[60px] text-[52px] text-center"
+            className="pt-[5px] font-bold w-[160px] h-[60px] text-[52px] text-center"
             style={{ lineHeight: `${lineHeight}px`, fontFamily: font }}
           >
             <span className="relative">
@@ -119,10 +127,11 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
           </div>
           {design && (
             <div
-              className="absolute bottom-[-16px] left-[65px]  text-[8px] font-light leading-none max-w-[100px]"
+              className="absolute bottom-[-16px] left-[65px] text-[8px] font-medium leading-none max-w-[100px] flex flex-col"
               style={{ fontFamily: font, opacity: 0.8 }}
             >
-              {discountText}
+              {discountLines[0] && <div key={`discount-line-1-${id}`}>{discountLines[0]}</div>}
+              {discountLines[1] && <div key={`discount-line-2-${id}`}>{discountLines[1]}</div>}
             </div>
           )}
         </div>

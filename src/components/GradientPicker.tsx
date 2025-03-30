@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
 import { useMemo } from 'react'
 import type { Theme, ThemeSet } from '@/store/priceTagsStore'
+import { Button } from './ui/button'
 
 interface GradientPickerProps {
     themes: ThemeSet;
@@ -16,8 +17,8 @@ const darkThemePresets: ThemeSet[] = [
     // Classic Dark
     {
         default: { start: '#222222', end: '#dd4c9b', textColor: '#ffffff' },
-        new: { start: '#222222', end: '#2dc54f', textColor: '#ffffff' },
-        sale: { start: '#222222', end: '#CF2E43', textColor: '#ffffff' },
+        new: { start: '#222222', end: '#9cdd4c', textColor: '#ffffff' },
+        sale: { start: '#222222', end: '#dd4c54', textColor: '#ffffff' },
     },
     // Dark Monochrome
     {
@@ -31,6 +32,12 @@ const darkThemePresets: ThemeSet[] = [
         new: { start: '#2f4550', end: '#b8dbd9', textColor: '#ffffff' },
         sale: { start: '#2f4550', end: '#e2e2e6', textColor: '#ffffff' },
     },
+        // Vapar
+        {
+            default: { start: '#dd4c9b', end: '#f6989a', textColor: '#ffffff' },
+            new: { start: '#dd4c9b', end: '#f6989a', textColor: '#ffffff' },
+            sale: { start: '#ee4a61', end: '#f6989a', textColor: '#ffffff' },
+        }
 ];
 
 const lightThemePresets: ThemeSet[] = [
@@ -52,7 +59,12 @@ const lightThemePresets: ThemeSet[] = [
         new: { start: '#ffffff', end: '#daeeed', textColor: '#000000' },
         sale: { start: '#ffffff', end: '#f1f1f3', textColor: '#000000' },
     },
+
 ];
+
+// Создаем уникальные id для тем
+const darkThemeIds = ['classic-dark', 'dark-monochrome', 'dark-slate'];
+const lightThemeIds = ['classic-light', 'light-monochrome', 'light-slate'];
 
 export function GradientPicker({ themes, onChange, className }: GradientPickerProps) {
     const defaultTab = useMemo(() => 'presets', []);
@@ -70,7 +82,7 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                             Готовые схемы
                         </TabsTrigger>
                         <TabsTrigger className="flex-1" value="custom">
-                            Настройка
+                            Настроить
                         </TabsTrigger>
                     </TabsList>
 
@@ -79,9 +91,10 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                             <div className="space-y-3">
                                 <h3 className="text-sm font-medium">Темные темы</h3>
                                 <div className="grid grid-cols-3 gap-2">
-                                    {darkThemePresets.map((preset, index) => (
-                                        <button
-                                            key={index}
+                                    {darkThemePresets.map((preset, i) => (
+                                        <Button
+                                            type="button"
+                                            key={darkThemeIds[i]}
                                             className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
                                             onClick={() => onChange(preset)}
                                         >
@@ -90,17 +103,18 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                                                 <div style={{ background: getGradientStyle(preset.new) }} />
                                                 <div style={{ background: getGradientStyle(preset.sale) }} />
                                             </div>
-                                        </button>
+                                        </Button>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
+                            {/* <div className="space-y-3">
                                 <h3 className="text-sm font-medium">Светлые темы</h3>
                                 <div className="grid grid-cols-3 gap-2">
-                                    {lightThemePresets.map((preset, index) => (
-                                        <button
-                                            key={index}
+                                    {lightThemePresets.map((preset, i) => (
+                                        <Button
+                                            type="button"
+                                            key={lightThemeIds[i]}
                                             className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
                                             onClick={() => onChange(preset)}
                                         >
@@ -109,21 +123,22 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                                                 <div style={{ background: getGradientStyle(preset.new) }} />
                                                 <div style={{ background: getGradientStyle(preset.sale) }} />
                                             </div>
-                                        </button>
+                                        </Button>
                                     ))}
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </TabsContent>
 
                     <TabsContent value="custom" className="mt-0">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Обычный ценник</label>
+                                <h3 className="text-sm font-medium">Обычный ценник</h3>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label className="text-xs mb-1 block">Начальный</label>
+                                        <label htmlFor="default-start" className="text-xs mb-1 block">Начальный</label>
                                         <Input
+                                            id="default-start"
                                             value={themes.default.start}
                                             className="h-8"
                                             onChange={(e) => onChange({
@@ -133,8 +148,9 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs mb-1 block">Конечный</label>
+                                        <label htmlFor="default-end" className="text-xs mb-1 block">Конечный</label>
                                         <Input
+                                            id="default-end"
                                             value={themes.default.end}
                                             className="h-8"
                                             onChange={(e) => onChange({
@@ -148,11 +164,12 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Новинка</label>
+                                <h3 className="text-sm font-medium">Новинка</h3>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label className="text-xs mb-1 block">Начальный</label>
+                                        <label htmlFor="new-start" className="text-xs mb-1 block">Начальный</label>
                                         <Input
+                                            id="new-start"
                                             value={themes.new.start}
                                             className="h-8"
                                             onChange={(e) => onChange({
@@ -162,8 +179,9 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs mb-1 block">Конечный</label>
+                                        <label htmlFor="new-end" className="text-xs mb-1 block">Конечный</label>
                                         <Input
+                                            id="new-end"
                                             value={themes.new.end}
                                             className="h-8"
                                             onChange={(e) => onChange({
@@ -177,11 +195,12 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Распродажа</label>
+                                <h3 className="text-sm font-medium">Распродажа</h3>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label className="text-xs mb-1 block">Начальный</label>
+                                        <label htmlFor="sale-start" className="text-xs mb-1 block">Начальный</label>
                                         <Input
+                                            id="sale-start"
                                             value={themes.sale.start}
                                             className="h-8"
                                             onChange={(e) => onChange({
@@ -191,8 +210,9 @@ export function GradientPicker({ themes, onChange, className }: GradientPickerPr
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs mb-1 block">Конечный</label>
+                                        <label htmlFor="sale-end" className="text-xs mb-1 block">Конечный</label>
                                         <Input
+                                            id="sale-end"
                                             value={themes.sale.end}
                                             className="h-8"
                                             onChange={(e) => onChange({

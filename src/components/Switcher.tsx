@@ -4,6 +4,7 @@ import { Switch } from "./ui/switch";
 import PlusMinusInput from "./PlusMinusInput";
 import RadioGroupSwitcher from "./RadioGroupSwitcher";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
+import { Button } from "./ui/button";
 
 const Switcher: React.FC = () => {
   const {
@@ -11,18 +12,42 @@ const Switcher: React.FC = () => {
     discountAmount,
     maxDiscountPercent,
     designType,
+    hasTableDesigns,
+    hasTableDiscounts,
     setDesign,
     setDiscountAmount,
     setMaxDiscountPercent,
     setDesignType,
-    updateItemPrices
+    updateItemPrices,
+    clearSettings
   } = usePriceTagsStore();
 
-  const designItems = [
+  // Базовые опции дизайна
+  let designItems = [
     { value: "default", label: "Обычный" },
     { value: "new", label: "Новинка" },
     { value: "sale", label: "Распродажа" },
   ];
+
+  // Добавляем опцию "взять из таблицы", если есть дизайны в таблице
+  if (hasTableDesigns) {
+    designItems = [
+      ...designItems,
+      { value: "table", label: "Взять из таблицы" },
+    ];
+  }
+
+  // Определяем, нужно ли показывать переключатель скидок
+  // Не показываем если "взять из таблицы" и есть настройки скидок в таблице
+  const showDiscountSwitch = !(designType === "table" && hasTableDiscounts);
+  
+  // Показываем настройки скидок только если:
+  // 1. Включен глобальный переключатель скидок, ИЛИ
+  // 2. Мы в режиме таблицы с настройками скидок из таблицы
+  const showDiscountSettings = design || (designType === "table" && hasTableDiscounts);
+
+  // Для отладки - выводим в консоль текущие настройки
+  console.log(`Switcher state: designType=${designType}, hasTableDiscounts=${hasTableDiscounts}, design=${design}, showDiscountSwitch=${showDiscountSwitch}`);
 
   const handleChange = (checked: boolean) => {
     setDesign(checked);
@@ -31,21 +56,31 @@ const Switcher: React.FC = () => {
 
   const handleDiscountChange = (value: number) => {
     setDiscountAmount(value);
-    if (design) {
-      updateItemPrices();
-    }
+    // Always update prices when discount settings change
+    updateItemPrices();
   };
 
   const handleMaxPercentChange = (value: number) => {
     setMaxDiscountPercent(value);
-    if (design) {
-      updateItemPrices();
-    }
+    // Always update prices when discount settings change
+    updateItemPrices();
   };
 
   const handleDesignTypeChange = (value: string) => {
+    // Если переключились на "взять из таблицы" и есть настройки скидок в таблице
+    if (value === "table" && hasTableDiscounts) {
+      // Отключаем глобальную настройку скидки
+      setDesign(false);
+    }
+    
     setDesignType(value);
     updateItemPrices();
+  };
+
+  // Функция для сброса настроек (может быть полезна при отладке)
+  const handleClearSettings = () => {
+    clearSettings();
+    window.location.reload();
   };
 
   return (
@@ -56,27 +91,33 @@ const Switcher: React.FC = () => {
         onChange={handleDesignTypeChange}
         className="w-full"
       />
-      <div className="flex justify-between items-center">
-        <Label htmlFor="discount" className="leading-normal">
-          Использовать ценник со скидкой
-        </Label>
-        <Switch
-          id="discount"
-          onCheckedChange={handleChange}
-          checked={design}
-        />
-      </div>
-      {design && (
+      
+      {/* Показываем переключатель только если не "взять из таблицы" с настройками скидок */}
+      {showDiscountSwitch && (
+        <div className="flex justify-between items-center">
+          <Label htmlFor="discount" className="leading-normal">
+            Использовать ценник со скидкой
+          </Label>
+          <Switch
+            id="discount"
+            onCheckedChange={handleChange}
+            checked={design}
+          />
+        </div>
+      )}
+      
+      {/* Показываем настройки скидок всегда, когда отображается переключатель скидок */}
+      {showDiscountSettings && (
         <div className="flex flex-col gap-4">
           <PlusMinusInput
-            label="Размер скидки"
+            label="Максимальная скидка в рублях"
             defaultValue={discountAmount}
             minValue={0}
             step={5}
             onChange={handleDiscountChange}
           />
           <PlusMinusInput
-            label="Макс. процент скидки"
+            label="Максимальный процент скидки"
             defaultValue={maxDiscountPercent}
             minValue={0}
             step={1}
@@ -84,8 +125,19 @@ const Switcher: React.FC = () => {
           />
         </div>
       )}
+      
+      {/* Кнопка сброса настроек */}
+      <Button 
+        type="button"
+        variant={"link"}
+        onClick={handleClearSettings}
+      >
+        Сбросить все настройки
+      </Button>
     </div>
   );
 };
 
 export default Switcher;
+
+

@@ -131,13 +131,11 @@ export const DropzoneContent = ({ children }: DropzoneContentProps) => {
       </div>
       <p className="my-2 w-full truncate font-medium text-sm">
         {src.length > maxLabelItems
-          ? `${new Intl.ListFormat('en').format(
-              src.slice(0, maxLabelItems).map((file) => file.name)
-            )} and ${src.length - maxLabelItems} more`
-          : new Intl.ListFormat('en').format(src.map((file) => file.name))}
+          ? `${src.slice(0, maxLabelItems).map((file) => file.name).join(', ')} и ещё ${src.length - maxLabelItems}`
+          : src.map((file) => file.name).join(', ')}
       </p>
       <p className="w-full text-muted-foreground text-xs">
-        Drag and drop or click to replace
+        Перетащите файл или нажмите для замены
       </p>
     </>
   );
@@ -161,16 +159,16 @@ export const DropzoneEmptyState = ({ children }: DropzoneEmptyStateProps) => {
   let caption = '';
 
   if (accept) {
-    caption += 'Accepts ';
-    caption += new Intl.ListFormat('en').format(Object.keys(accept));
+    caption += 'Принимает ';
+    caption += Object.keys(accept).join(', ');
   }
 
   if (minSize && maxSize) {
-    caption += ` between ${renderBytes(minSize)} and ${renderBytes(maxSize)}`;
+    caption += ` размером от ${renderBytes(minSize)} до ${renderBytes(maxSize)}`;
   } else if (minSize) {
-    caption += ` at least ${renderBytes(minSize)}`;
+    caption += ` не менее ${renderBytes(minSize)}`;
   } else if (maxSize) {
-    caption += ` less than ${renderBytes(maxSize)}`;
+    caption += ` не более ${renderBytes(maxSize)}`;
   }
 
   return (
@@ -179,10 +177,10 @@ export const DropzoneEmptyState = ({ children }: DropzoneEmptyStateProps) => {
         <UploadIcon size={16} />
       </div>
       <p className="my-2 w-full truncate font-medium text-sm">
-        Upload {maxFiles === 1 ? 'a file' : 'files'}
+        Загрузить {maxFiles === 1 ? 'файл' : 'файлы'}
       </p>
       <p className="w-full truncate text-muted-foreground text-xs">
-        Drag and drop or click to upload
+        Перетащите или нажмите для загрузки
       </p>
       {caption && <p className="text-muted-foreground text-xs">{caption}.</p>}
     </>

@@ -10,5 +10,33 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: [
+            'react',
+            'react-dom',
+            'zustand',
+            'xlsx',
+            'react-hook-form',
+            'zod',
+            '@tanstack/react-router'
+          ],
+          ui: [
+            'lucide-react',
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-slot',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-popover',
+            'tailwind-merge',
+            'class-variance-authority'
+          ]
+        }
+      }
+    }
+  },
   server: {},
 });

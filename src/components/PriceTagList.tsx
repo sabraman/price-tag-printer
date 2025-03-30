@@ -10,12 +10,16 @@ interface PriceTagListProps {
     data: string | number;
     price: number;
     discountPrice: number;
+    designType?: string;
+    hasDiscount?: boolean;
   }[];
   design: boolean;
   designType: string;
   themes: ThemeSet;
   font: string;
   discountText: string;
+  useTableDesigns?: boolean;
+  useTableDiscounts?: boolean;
 }
 
 const PriceTagList: React.FC<PriceTagListProps> = ({
@@ -24,7 +28,9 @@ const PriceTagList: React.FC<PriceTagListProps> = ({
   designType,
   themes,
   font,
-  discountText
+  discountText,
+  useTableDesigns = false,
+  useTableDiscounts = false
 }) => {
   // Create chunks of 9 items for each page
   const chunkedItems = items.reduce((acc, item, i) => {
@@ -41,24 +47,42 @@ const PriceTagList: React.FC<PriceTagListProps> = ({
       {chunkedItems.map((chunk, pageIndex) => (
         <div
           key={chunk.map(item => item.id).join('-')}
-          className="grid grid-cols-3 w-[513px] print-page"
+          className="grid grid-cols-3 w-fit print-page"
           style={{ pageBreakAfter: pageIndex < chunkedItems.length - 1 ? 'always' : 'auto' }}
         >
-          {chunk.map((item) => (
-            <div key={item.id} className="price-tag">
-              <PriceTagSVG
-                id={item.id}
-                data={item.data}
-                price={item.price}
-                discountPrice={item.discountPrice}
-                design={design}
-                designType={designType}
-                themes={themes}
-                font={font}
-                discountText={discountText}
-              />
-            </div>
-          ))}
+          {chunk.map((item) => {
+            // Determine if this item should show a discount
+            let showDiscount = design;
+            if (useTableDiscounts && item.hasDiscount !== undefined) {
+              // If we're using table discounts and this item has a setting, use that
+              showDiscount = item.hasDiscount;
+            }
+            
+            // Debug log with more detailed information about pricing
+            console.log(`Item ${item.id} (${item.data}): 
+              hasDiscount=${item.hasDiscount}, 
+              useTableDiscounts=${useTableDiscounts}, 
+              showDiscount=${showDiscount},
+              price=${item.price}, 
+              discountPrice=${item.discountPrice}
+            `);
+            
+            return (
+              <div key={item.id} className="price-tag">
+                <PriceTagSVG
+                  id={item.id}
+                  data={item.data}
+                  price={item.price}
+                  discountPrice={item.discountPrice}
+                  design={showDiscount}
+                  designType={useTableDesigns && item.designType ? item.designType : designType}
+                  themes={themes}
+                  font={font}
+                  discountText={discountText}
+                />
+              </div>
+            );
+          })}
         </div>
       ))}
     </div>

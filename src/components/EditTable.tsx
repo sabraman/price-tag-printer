@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Save } from "lucide-react";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 import type { Item } from "@/store/priceTagsStore";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 interface EditTableProps {
   items: Item[];
@@ -22,23 +24,51 @@ interface EditTableProps {
 export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
   const { updateItem, deleteItem, calculateDiscountPrice } = usePriceTagsStore();
   const [editingItems, setEditingItems] = useState<Item[]>(items);
-  const [newItem, setNewItem] = useState({ data: "", price: "" });
+  const [newItem, setNewItem] = useState({ data: "", price: "", designType: "", hasDiscount: false });
 
-  const handleEdit = (id: number, field: "data" | "price", value: string) => {
+  const handleEdit = (id: number, field: "data" | "price" | "designType", value: string) => {
     setEditingItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          const price = field === "price" ? Number(value) : item.price;
+          if (field === "price") {
+            const price = Number(value);
+            return {
+              ...item,
+              price,
+              discountPrice: calculateDiscountPrice(price),
+            };
+          } 
+          if (field === "designType") {
+            return {
+              ...item,
+              designType: value,
+            };
+          }
           return {
             ...item,
-            [field]: field === "price" ? Number(value) : String(value),
-            discountPrice: calculateDiscountPrice(price),
+            data: String(value),
           };
         }
         return item;
       })
     );
     updateItem(id, field, value);
+  };
+
+  const handleDiscountToggle = (id: number, checked: boolean) => {
+    setEditingItems((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            hasDiscount: checked,
+          };
+        }
+        return item;
+      })
+    );
+    // Update the item in the store as well
+    updateItem(id, "hasDiscount", checked);
   };
 
   const handleSave = () => {
@@ -58,9 +88,11 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
         data: String(newItem.data),
         price: price,
         discountPrice: calculateDiscountPrice(price),
+        designType: newItem.designType || undefined,
+        hasDiscount: newItem.hasDiscount,
       };
       setEditingItems((prev) => [...prev, newItemComplete]);
-      setNewItem({ data: "", price: "" });
+      setNewItem({ data: "", price: "", designType: "", hasDiscount: false });
     }
   };
 
@@ -71,6 +103,8 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
           <TableRow>
             <TableHead>Название</TableHead>
             <TableHead>Цена</TableHead>
+            <TableHead>Дизайн</TableHead>
+            <TableHead>Скидка</TableHead>
             <TableHead>Действия</TableHead>
           </TableRow>
         </TableHeader>
@@ -88,6 +122,28 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
                   type="number"
                   value={item.price}
                   onChange={(e) => handleEdit(item.id, "price", e.target.value)}
+                />
+              </TableCell>
+              <TableCell>
+                <Select
+                  value={item.designType || ""}
+                  onValueChange={(value) => handleEdit(item.id, "designType", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Выберите дизайн" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">По умолчанию</SelectItem>
+                    <SelectItem value="default">Обычный</SelectItem>
+                    <SelectItem value="new">Новинка</SelectItem>
+                    <SelectItem value="sale">Распродажа</SelectItem>
+                  </SelectContent>
+                </Select>
+              </TableCell>
+              <TableCell className="text-center">
+                <Switch 
+                  checked={item.hasDiscount ?? false}
+                  onCheckedChange={(checked) => handleDiscountToggle(item.id, checked)}
                 />
               </TableCell>
               <TableCell>
@@ -118,6 +174,30 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
                 value={newItem.price}
                 onChange={(e) =>
                   setNewItem((prev) => ({ ...prev, price: e.target.value }))
+                }
+              />
+            </TableCell>
+            <TableCell>
+              <Select
+                value={newItem.designType}
+                onValueChange={(value) => setNewItem((prev) => ({ ...prev, designType: value }))}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Выберите дизайн" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">По умолчанию</SelectItem>
+                  <SelectItem value="default">Обычный</SelectItem>
+                  <SelectItem value="new">Новинка</SelectItem>
+                  <SelectItem value="sale">Распродажа</SelectItem>
+                </SelectContent>
+              </Select>
+            </TableCell>
+            <TableCell className="text-center">
+              <Switch 
+                checked={newItem.hasDiscount}
+                onCheckedChange={(checked) => 
+                  setNewItem((prev) => ({ ...prev, hasDiscount: checked }))
                 }
               />
             </TableCell>

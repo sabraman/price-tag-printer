@@ -1,10 +1,11 @@
 import type React from "react";
-import QrCodeGenerator from "@/components/QrCodeGenerator";
+// import QrCodeGenerator from "@/components/QrCodeGenerator";
 
 export const QrCodePage: React.FC = () => {
   return (
     <div className="flex-col flex gap-4">
-      <QrCodeGenerator />
+      Здесь пока ничего нет
+      {/* <QrCodeGenerator /> */}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { Outlet } from "@tanstack/react-router";
 import FontLoader from "./components/FontLoader";
 import { AppSidebar } from "./components/app-sidebar";
@@ -13,7 +13,7 @@ import {
 
 const App: React.FC = () => {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <FontLoader />
       <AppSidebar />
       <SidebarInset className="p-2">

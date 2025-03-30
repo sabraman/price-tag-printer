@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { GradientPicker } from "./GradientPicker";
-import type { Theme, ThemeSet } from "@/store/priceTagsStore";
+import type { ThemeSet } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 
 interface PriceTagCustomizerProps {
@@ -16,9 +16,9 @@ interface PriceTagCustomizerProps {
 
 const fonts = [
     { id: "Montserrat", name: "Montserrat" },
-    { id: "Roboto", name: "Roboto" },
+    // { id: "Roboto", name: "Roboto" },
     { id: "Inter", name: "Inter" },
-    { id: "Open Sans", name: "Open Sans" }
+    // { id: "Open Sans", name: "Open Sans" }
 ];
 
 export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
@@ -30,7 +30,14 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
     onDiscountTextChange
 }) => {
     const currentFontData = fonts.find(f => f.id === currentFont) || fonts[0];
-    const { design } = usePriceTagsStore();
+    const { design, designType, hasTableDiscounts } = usePriceTagsStore();
+    
+    // Показываем текст скидки если включен глобальный флаг скидки
+    // ИЛИ мы в режиме таблицы с настройками скидок из таблицы
+    const showDiscountText = design || (designType === "table" && hasTableDiscounts);
+    
+    // Отладочная информация
+    console.log(`PriceTagCustomizer: design=${design}, designType=${designType}, hasTableDiscounts=${hasTableDiscounts}, showDiscountText=${showDiscountText}`);
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const lines = e.target.value.split('\n');
@@ -80,7 +87,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
                 </Select>
             </div>
 
-            {design && (
+            {showDiscountText && (
                 <div className="space-y-2">
                     <Label>Текст скидки</Label>
                     <Textarea

@@ -10,7 +10,7 @@ interface RadioGroupSwitcherProps {
   className?: string;
 }
 
-export default function RadioGroupSwitcher({
+export default function  RadioGroupSwitcher({
   title,
   items,
   defaultValue,
