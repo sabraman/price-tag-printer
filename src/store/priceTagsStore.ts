@@ -201,7 +201,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
               item.price = Number(value);
               item.discountPrice = get().calculateDiscountPrice(Number(value));
             } else if (field === "designType") {
-              item.designType = String(value);
+              item.designType = String(value) === "" ? undefined : String(value);
             } else if (field === "hasDiscount") {
               item.hasDiscount = Boolean(value);
             } else if (field === "data") {

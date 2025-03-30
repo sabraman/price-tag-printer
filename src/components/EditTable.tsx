@@ -126,15 +126,14 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
               </TableCell>
               <TableCell>
                 <Select
-                  value={item.designType || ""}
+                  value={item.designType || "default"}
                   onValueChange={(value) => handleEdit(item.id, "designType", value)}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Выберите дизайн" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">По умолчанию</SelectItem>
-                    <SelectItem value="default">Обычный</SelectItem>
+                    <SelectItem value="default">По умолчанию</SelectItem>
                     <SelectItem value="new">Новинка</SelectItem>
                     <SelectItem value="sale">Распродажа</SelectItem>
                   </SelectContent>
@@ -179,15 +178,14 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
             </TableCell>
             <TableCell>
               <Select
-                value={newItem.designType}
+                value={newItem.designType || "default"}
                 onValueChange={(value) => setNewItem((prev) => ({ ...prev, designType: value }))}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Выберите дизайн" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">По умолчанию</SelectItem>
-                  <SelectItem value="default">Обычный</SelectItem>
+                  <SelectItem value="default">По умолчанию</SelectItem>
                   <SelectItem value="new">Новинка</SelectItem>
                   <SelectItem value="sale">Распродажа</SelectItem>
                 </SelectContent>
