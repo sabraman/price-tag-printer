@@ -171,6 +171,13 @@ export const PriceTagsPage: React.FC = () => {
             usePriceTagsStore.getState().setHasTableDiscounts(false);
           }
           
+          // --- REPLACE THIS BLOCK ---
+          if ((hasDesignColumn || hasDesignRow) && hasDiscountColumn) {
+            usePriceTagsStore.getState().setDesign(false); // Reset global discount flag
+            usePriceTagsStore.getState().setDesignType("table");
+          }
+          // --- END OF BLOCK ---
+          
           setError(null);
         } else {
           setError("Неверная ссылка");
@@ -305,6 +312,13 @@ export const PriceTagsPage: React.FC = () => {
     } else {
       usePriceTagsStore.getState().setHasTableDiscounts(false);
     }
+    
+    // --- REPLACE THIS BLOCK ---
+    if ((hasDesignColumn || hasDesignRow) && hasDiscountColumn) {
+      usePriceTagsStore.getState().setDesign(false); // Reset global discount flag
+      usePriceTagsStore.getState().setDesignType("table");
+    }
+    // --- END OF BLOCK ---
     
     setError(null);
   };
