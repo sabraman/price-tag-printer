@@ -18,6 +18,7 @@ const fonts = [
     { id: "Montserrat", name: "Montserrat" },
     // { id: "Roboto", name: "Roboto" },
     { id: "Inter", name: "Inter" },
+    { id: "Nunito", name: "Nunito" },
     // { id: "Open Sans", name: "Open Sans" }
 ];
 

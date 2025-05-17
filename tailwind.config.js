@@ -47,6 +47,13 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
+  			},
+  			sunset: {
+  				primary: 'hsl(var(--sunset-primary))',
+  				red: 'hsl(var(--sunset-red))',
+  				dark: 'hsl(var(--sunset-dark))',
+  				cream: 'hsl(var(--sunset-cream))',
+  				lavender: 'hsl(var(--sunset-lavender))'
   			}
   		},
   		borderRadius: {

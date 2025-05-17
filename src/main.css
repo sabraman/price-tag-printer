@@ -33,6 +33,13 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Sunset theme colors */
+    --sunset-primary: 22 100% 56%; /* FF731D */
+    --sunset-red: 358 99% 63%; /* FE4152 */
+    --sunset-dark: 20 4% 16%; /* 2B2827 */
+    --sunset-cream: 46 98% 80%; /* FEE09B */
+    --sunset-lavender: 240 100% 94%; /* E2E0FF */
   }
 
   .dark {

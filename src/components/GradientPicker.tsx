@@ -32,12 +32,18 @@ const darkThemePresets: ThemeSet[] = [
         new: { start: '#2f4550', end: '#b8dbd9', textColor: '#ffffff' },
         sale: { start: '#2f4550', end: '#e2e2e6', textColor: '#ffffff' },
     },
-        // Vapar
-        {
-            default: { start: '#dd4c9b', end: '#f6989a', textColor: '#ffffff' },
-            new: { start: '#dd4c9b', end: '#f6989a', textColor: '#ffffff' },
-            sale: { start: '#ee4a61', end: '#f6989a', textColor: '#ffffff' },
-        }
+    // Vapar
+    {
+        default: { start: '#dd4c9b', end: '#f6989a', textColor: '#ffffff' },
+        new: { start: '#dd4c9b', end: '#f6989a', textColor: '#ffffff' },
+        sale: { start: '#ee4a61', end: '#f6989a', textColor: '#ffffff' },
+    },
+    // Sunset (New theme)
+    {
+        default: { start: '#2B2827', end: '#FF731D', textColor: '#ffffff' },
+        new: { start: '#2B2827', end: '#E2E0FF', textColor: '#ffffff' },
+        sale: { start: '#2B2827', end: '#FE4152', textColor: '#ffffff' },
+    }
 ];
 
 // const lightThemePresets: ThemeSet[] = [
@@ -63,7 +69,7 @@ const darkThemePresets: ThemeSet[] = [
 // ];
 
 // Создаем уникальные id для тем
-const darkThemeIds = ['classic-dark', 'dark-monochrome', 'dark-slate'];
+const darkThemeIds = ['classic-dark', 'dark-monochrome', 'dark-slate', 'vapar', 'sunset'];
 // const lightThemeIds = ['classic-light', 'light-monochrome', 'light-slate'];
 
 export function GradientPicker({ themes, onChange, className }: GradientPickerProps) {
