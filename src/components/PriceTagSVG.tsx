@@ -179,10 +179,6 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
                   ? new Intl.NumberFormat("ru-RU").format(discountPrice)
                   : ""}
               </span>
-              <div className="absolute bottom-[-2px] right-2.5 w-[auto] h-[18px] font-normal text-[12px] text-right" style={{ fontFamily: font, opacity: 0.8 }}>
-                {priceFor2 && <span>{`x2: ${new Intl.NumberFormat("ru-RU").format(priceFor2)}`}</span>}
-                {priceFrom3 && <span className="ml-1">{`x3+: ${new Intl.NumberFormat("ru-RU").format(priceFrom3)}`}</span>}
-              </div>
             </div>
           )}
 
