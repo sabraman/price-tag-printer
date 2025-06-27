@@ -9,6 +9,8 @@ export interface Item {
   discountPrice: number;
   designType?: string; // 'default', 'new', 'sale' or null for global setting
   hasDiscount?: boolean; // true or false from table column
+  priceFor2?: number;
+  priceFrom3?: number;
 }
 
 export interface Theme {
@@ -58,7 +60,7 @@ interface PriceTagsState {
   deleteItem: (id: number) => void;
   updateItem: (
     id: number,
-    field: "data" | "price" | "designType" | "hasDiscount",
+    field: "data" | "price" | "designType" | "hasDiscount" | "priceFor2" | "priceFrom3",
     value: string | number | boolean
   ) => void;
   clearSettings: () => void;
@@ -191,7 +193,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 
       updateItem: (
         id: number,
-        field: "data" | "price" | "designType" | "hasDiscount",
+        field: "data" | "price" | "designType" | "hasDiscount" | "priceFor2" | "priceFrom3",
         value: string | number | boolean
       ) =>
         set((state) => {
@@ -207,6 +209,10 @@ export const usePriceTagsStore = create<PriceTagsState>()(
             } else if (field === "data") {
               // Handle data field specifically to avoid type errors
               item.data = value as string | number;
+            } else if (field === "priceFor2") {
+              item.priceFor2 = Number(value);
+            } else if (field === "priceFrom3") {
+              item.priceFrom3 = Number(value);
             }
           }
         }),

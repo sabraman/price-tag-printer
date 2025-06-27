@@ -24,9 +24,9 @@ interface EditTableProps {
 export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
   const { updateItem, deleteItem, calculateDiscountPrice } = usePriceTagsStore();
   const [editingItems, setEditingItems] = useState<Item[]>(items);
-  const [newItem, setNewItem] = useState({ data: "", price: "", designType: "", hasDiscount: false });
+  const [newItem, setNewItem] = useState({ data: "", price: "", designType: "", hasDiscount: false, priceFor2: "", priceFrom3: "" });
 
-  const handleEdit = (id: number, field: "data" | "price" | "designType", value: string) => {
+  const handleEdit = (id: number, field: "data" | "price" | "designType" | "priceFor2" | "priceFrom3", value: string) => {
     setEditingItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
@@ -42,6 +42,18 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
             return {
               ...item,
               designType: value,
+            };
+          }
+          if (field === "priceFor2") {
+            return {
+              ...item,
+              priceFor2: Number(value),
+            };
+          }
+          if (field === "priceFrom3") {
+            return {
+              ...item,
+              priceFrom3: Number(value),
             };
           }
           return {
@@ -90,9 +102,11 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
         discountPrice: calculateDiscountPrice(price),
         designType: newItem.designType || undefined,
         hasDiscount: newItem.hasDiscount,
+        priceFor2: Number(newItem.priceFor2) || undefined,
+        priceFrom3: Number(newItem.priceFrom3) || undefined,
       };
       setEditingItems((prev) => [...prev, newItemComplete]);
-      setNewItem({ data: "", price: "", designType: "", hasDiscount: false });
+      setNewItem({ data: "", price: "", designType: "", hasDiscount: false, priceFor2: "", priceFrom3: "" });
     }
   };
 
@@ -105,6 +119,8 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
             <TableHead>Цена</TableHead>
             <TableHead>Дизайн</TableHead>
             <TableHead>Скидка</TableHead>
+            <TableHead>Цена за 2</TableHead>
+            <TableHead>Цена от 3</TableHead>
             <TableHead>Действия</TableHead>
           </TableRow>
         </TableHeader>
@@ -143,6 +159,20 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
                 <Switch 
                   checked={item.hasDiscount ?? false}
                   onCheckedChange={(checked) => handleDiscountToggle(item.id, checked)}
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  value={item.priceFor2 || ''}
+                  onChange={(e) => handleEdit(item.id, "priceFor2", e.target.value)}
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  value={item.priceFrom3 || ''}
+                  onChange={(e) => handleEdit(item.id, "priceFrom3", e.target.value)}
                 />
               </TableCell>
               <TableCell>
@@ -196,6 +226,26 @@ export const EditTable: React.FC<EditTableProps> = ({ items, onChange }) => {
                 checked={newItem.hasDiscount}
                 onCheckedChange={(checked) => 
                   setNewItem((prev) => ({ ...prev, hasDiscount: checked }))
+                }
+              />
+            </TableCell>
+            <TableCell>
+              <Input
+                type="number"
+                placeholder="Цена за 2"
+                value={newItem.priceFor2 || ''}
+                onChange={(e) =>
+                  setNewItem((prev) => ({ ...prev, priceFor2: e.target.value }))
+                }
+              />
+            </TableCell>
+            <TableCell>
+              <Input
+                type="number"
+                placeholder="Цена от 3"
+                value={newItem.priceFrom3 || ''}
+                onChange={(e) =>
+                  setNewItem((prev) => ({ ...prev, priceFrom3: e.target.value }))
                 }
               />
             </TableCell>

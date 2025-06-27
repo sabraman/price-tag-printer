@@ -9,6 +9,8 @@ interface PriceTagSVGProps {
   data: string | number;
   price: number;
   discountPrice: number;
+  priceFor2?: number;
+  priceFrom3?: number;
   design: boolean;
   designType?: string;
   themes: ThemeSet;
@@ -21,6 +23,8 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   data,
   price,
   discountPrice,
+  priceFor2,
+  priceFrom3,
   design,
   designType = "default",
   themes,
@@ -32,11 +36,14 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
   const [key, setKey] = useState<number>(0);
 
   // Make sure we use a valid theme, or fall back to default
-  const safeDesignType = (designType && ["default", "new", "sale"].includes(designType)) 
-    ? designType as keyof ThemeSet 
+  const safeDesignType = (designType && ["default", "new", "sale"].includes(designType))
+    ? designType as keyof ThemeSet
     : "default";
   const currentTheme = themes[safeDesignType];
   const discountLines = discountText.split('\n');
+
+  // Check if we have multi-tier pricing
+  const hasMultiTierPricing = priceFor2 && priceFrom3;
 
   useEffect(() => {
     setFontSize(16);
@@ -81,7 +88,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
           </defs>
           {/* Фоновый градиент */}
           <rect width="160" height="110" fill={`url(#linear-gradient-${id})`} />
-          
+
           {/* Линии для вырезания - более длинные штрихи с небольшими промежутками, 
             подходят для печати и будут заметны даже при наложении друг на друга в сетке */}
           <line x1="0" y1="0" x2="160" y2="0" stroke="white" strokeWidth="0.75" strokeDasharray="12,3" />
@@ -119,21 +126,67 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
           >
             {data}
           </div>
-          <div
-            className="pt-[5px] font-bold w-[160px] h-[60px] text-[52px] text-center"
-            style={{ lineHeight: `${lineHeight}px`, fontFamily: font }}
-          >
-            <span className="relative">
-              {new Intl.NumberFormat("ru-RU").format(price)}
-            </span>
-            <br />
-            <span className="absolute bottom-[3px] left-2.5 w-[70px] h-[18px] font-normal text-[18px] text-left" style={{ fontFamily: font, opacity: 0.8 }}>
-              {design
-                ? new Intl.NumberFormat("ru-RU").format(discountPrice)
-                : ""}
-            </span>
-          </div>
-          {design && (
+
+          {hasMultiTierPricing ? (
+            // Multi-tier pricing layout (like in the picture)
+            <div className="w-[160px] h-[60px] relative" style={{ fontFamily: font }}>
+              {/* Main price - largest and on the right */}
+              {/* <div 
+                className="absolute top-0 right-[12px] font-bold text-[24px]" 
+                style={{ fontFamily: font }}
+              >
+                {new Intl.NumberFormat("ru-RU").format(priceFrom3 || price)}
+              </div> */}
+
+              {/* Price tiers as a list on the left */}
+              <div className="flex flex-col pl-[10px] pr-[14px] pt-[10px]">
+                  <span className="text-[6px] text-left w-full" style={{ fontFamily: font }}>При покупке:</span>
+                <div className="flex justify-between items-end mt-[-18px]">
+                  <span className="text-[10px] w-full mb-[7px]" style={{ fontFamily: font }}>от 3 шт.</span>
+                  <span className="text-[26px] font-bold text-right w-full" style={{ fontFamily: font }}>
+                    {new Intl.NumberFormat("ru-RU").format(priceFrom3)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center mt-[-10px]">
+                  <span className="text-[10px] w-full" style={{ fontFamily: font }}>2 шт.</span>
+                  <span className="text-[20px] font-bold text-right w-full" style={{ fontFamily: font }}>
+
+                    {new Intl.NumberFormat("ru-RU").format(priceFor2)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center mt-[-6px]">
+                  <span className="text-[10px] w-full" style={{ fontFamily: font }}>1 шт.</span>
+                  <span className="text-[16px] font-bold text-right w-full" style={{ fontFamily: font }}>
+                    {new Intl.NumberFormat("ru-RU").format(price)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            // Original layout for single price
+            <div
+              className="pt-[5px] font-bold w-[160px] h-[60px] text-[52px] text-center"
+              style={{ lineHeight: `${lineHeight}px`, fontFamily: font }}
+            >
+              <span className="relative">
+                {new Intl.NumberFormat("ru-RU").format(price)}
+              </span>
+              <br />
+              <span className="absolute bottom-[3px] left-2.5 w-[70px] h-[18px] font-normal text-[18px] text-left" style={{ fontFamily: font, opacity: 0.8 }}>
+                {design
+                  ? new Intl.NumberFormat("ru-RU").format(discountPrice)
+                  : ""}
+              </span>
+              <div className="absolute bottom-[-2px] right-2.5 w-[auto] h-[18px] font-normal text-[12px] text-right" style={{ fontFamily: font, opacity: 0.8 }}>
+                {priceFor2 && <span>{`x2: ${new Intl.NumberFormat("ru-RU").format(priceFor2)}`}</span>}
+                {priceFrom3 && <span className="ml-1">{`x3+: ${new Intl.NumberFormat("ru-RU").format(priceFrom3)}`}</span>}
+              </div>
+            </div>
+          )}
+
+          {design && !hasMultiTierPricing && (
             <div
               className="absolute bottom-[-16px] left-[65px] text-[8px] font-medium leading-none max-w-[100px] flex flex-col"
               style={{ fontFamily: font, opacity: 0.8 }}

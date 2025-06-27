@@ -104,6 +104,10 @@ export const PriceTagsPage: React.FC = () => {
           let designColumnKey = "";
           let hasDiscountColumn = false;
           let discountColumnKey = "";
+          let hasPriceFor2Column = false;
+          let priceFor2ColumnKey = "";
+          let hasPriceFrom3Column = false;
+          let priceFrom3ColumnKey = "";
           
           for (const key of columnKeys) {
             if (data[key]?.label?.toLowerCase() === "дизайн") {
@@ -113,6 +117,14 @@ export const PriceTagsPage: React.FC = () => {
             if (data[key]?.label?.toLowerCase() === "скидка") {
               hasDiscountColumn = true;
               discountColumnKey = key;
+            }
+            if (data[key]?.label?.toLowerCase() === "цена за 2") {
+              hasPriceFor2Column = true;
+              priceFor2ColumnKey = key;
+            }
+            if (data[key]?.label?.toLowerCase() === "цена от 3") {
+              hasPriceFrom3Column = true;
+              priceFrom3ColumnKey = key;
             }
           }
           
@@ -137,6 +149,14 @@ export const PriceTagsPage: React.FC = () => {
                 ? parseDiscountValue(data[discountColumnKey].rows[row.id].data)
                 : undefined;
               
+              const priceFor2 = hasPriceFor2Column && data[priceFor2ColumnKey]?.rows?.[row.id]?.data
+                ? Number(data[priceFor2ColumnKey].rows[row.id].data)
+                : undefined;
+
+              const priceFrom3 = hasPriceFrom3Column && data[priceFrom3ColumnKey]?.rows?.[row.id]?.data
+                ? Number(data[priceFrom3ColumnKey].rows[row.id].data)
+                : undefined;
+              
               return {
                 ...row,
                 data: row.data,
@@ -144,6 +164,8 @@ export const PriceTagsPage: React.FC = () => {
                 discountPrice: price,
                 designType,
                 hasDiscount,
+                priceFor2,
+                priceFrom3,
               };
             }
           ) as Item[];
@@ -156,6 +178,12 @@ export const PriceTagsPage: React.FC = () => {
           }
           if (hasDiscountColumn) {
             labels.push(data[discountColumnKey].label);
+          }
+          if (hasPriceFor2Column) {
+            labels.push(data[priceFor2ColumnKey].label);
+          }
+          if (hasPriceFrom3Column) {
+            labels.push(data[priceFrom3ColumnKey].label);
           }
           setColumnLabels(labels);
           
@@ -231,6 +259,8 @@ export const PriceTagsPage: React.FC = () => {
       B: { id: "2", label: "Цена", type: "number", rows: {} },
       C: { id: "3", label: "Дизайн", type: "string", rows: {} },
       D: { id: "4", label: "Скидка", type: "string", rows: {} },
+      E: { id: "5", label: "Цена за 2", type: "number", rows: {} },
+      F: { id: "6", label: "Цена от 3", type: "number", rows: {} },
     };
 
     let hasDesignColumn = false;
@@ -243,6 +273,18 @@ export const PriceTagsPage: React.FC = () => {
     if (sheetData.D1 && String(sheetData.D1.v).toLowerCase() === "скидка") {
       hasDiscountColumn = true;
       parsedData.D.label = String(sheetData.D1.v);
+    }
+
+    let hasPriceFor2Column = false;
+    if (sheetData.E1 && String(sheetData.E1.v).toLowerCase() === "цена за 2") {
+      hasPriceFor2Column = true;
+      parsedData.E.label = String(sheetData.E1.v);
+    }
+
+    let hasPriceFrom3Column = false;
+    if (sheetData.F1 && String(sheetData.F1.v).toLowerCase() === "цена от 3") {
+      hasPriceFrom3Column = true;
+      parsedData.F.label = String(sheetData.F1.v);
     }
 
     let hasDesignRow = false;
@@ -286,6 +328,8 @@ export const PriceTagsPage: React.FC = () => {
           discountPrice: Number(parsedData.B.rows[row.id].data),
           designType,
           hasDiscount,
+          priceFor2: hasPriceFor2Column && parsedData.E.rows[row.id] ? Number(parsedData.E.rows[row.id].data) : undefined,
+          priceFrom3: hasPriceFrom3Column && parsedData.F.rows[row.id] ? Number(parsedData.F.rows[row.id].data) : undefined,
         };
       }
     ) as Item[];
@@ -298,6 +342,12 @@ export const PriceTagsPage: React.FC = () => {
     }
     if (hasDiscountColumn) {
       labels.push(parsedData.D.label);
+    }
+    if (hasPriceFor2Column) {
+      labels.push(parsedData.E.label);
+    }
+    if (hasPriceFrom3Column) {
+      labels.push(parsedData.F.label);
     }
     setColumnLabels(labels);
     

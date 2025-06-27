@@ -12,6 +12,8 @@ interface PriceTagListProps {
     discountPrice: number;
     designType?: string;
     hasDiscount?: boolean;
+    priceFor2?: number;
+    priceFrom3?: number;
   }[];
   design: boolean;
   designType: string;
@@ -79,6 +81,8 @@ const PriceTagList: React.FC<PriceTagListProps> = ({
                   themes={themes}
                   font={font}
                   discountText={discountText}
+                  priceFor2={item.priceFor2}
+                  priceFrom3={item.priceFrom3}
                 />
               </div>
             );
