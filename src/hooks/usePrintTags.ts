@@ -2,19 +2,19 @@ import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 
 interface UsePrintTagsOptions {
-  documentTitle?: string;
-  onError?: (error: Error) => void;
+	documentTitle?: string;
+	onError?: (error: Error) => void;
 }
 
 export const usePrintTags = ({ onError }: UsePrintTagsOptions = {}) => {
-  const componentRef = useRef<HTMLDivElement>(null);
-  const handlePrint = useReactToPrint({
-    contentRef: componentRef,
-    onPrintError: (errorLocation: "onBeforePrint" | "print", error: Error) => {
-      console.error(`Print failed at ${errorLocation}:`, error);
-      onError?.(error);
-    },
-    pageStyle: `
+	const componentRef = useRef<HTMLDivElement>(null);
+	const handlePrint = useReactToPrint({
+		contentRef: componentRef,
+		onPrintError: (errorLocation: "onBeforePrint" | "print", error: Error) => {
+			console.error(`Print failed at ${errorLocation}:`, error);
+			onError?.(error);
+		},
+		pageStyle: `
       @page {
         size: A4 portrait;
         margin: 0;
@@ -52,10 +52,10 @@ export const usePrintTags = ({ onError }: UsePrintTagsOptions = {}) => {
         }
       }
     `,
-  });
+	});
 
-  return {
-    componentRef,
-    handlePrint,
-  };
+	return {
+		componentRef,
+		handlePrint,
+	};
 };
