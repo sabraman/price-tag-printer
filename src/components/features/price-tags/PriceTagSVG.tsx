@@ -1,5 +1,5 @@
 // PriceTagSVG.tsx
-import "../App.css";
+import "@/App.css";
 import type React from "react";
 import { useEffect, useState } from "react";
 import type { ThemeSet } from "@/store/priceTagsStore";
@@ -72,11 +72,6 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 			if (timeoutId) clearTimeout(timeoutId);
 		};
 	}, [id, design]);
-
-	// Log discount info to help with debugging
-	console.log(
-		`PriceTagSVG ${id}: design=${design}, price=${price}, discountPrice=${discountPrice}`,
-	);
 
 	return (
 		<div className="relative w-[160px] h-[110px] overflow-hidden">

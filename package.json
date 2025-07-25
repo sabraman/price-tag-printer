@@ -10,11 +10,18 @@
 		"preview": "vite preview",
 		"biome:check": "biome check .",
 		"biome:unsafe": "biome check --unsafe .",
-		"biome:write": "biome format --write ."
+		"biome:write": "biome format --write .",
+		"test": "vitest",
+		"test:selection": "vitest run src/components/__tests__/OptimizedEditTable.test.tsx",
+		"test:duplication": "vitest run src/components/__tests__/DuplicationSystem.test.tsx",
+		"test:duplication-ui": "vitest run src/components/__tests__/OptimizedEditTable.duplication.test.tsx",
+		"test:selection-filtering": "vitest run src/components/__tests__/OptimizedEditTable.selectionFiltering.test.tsx",
+		"test:all-table": "vitest run src/components/__tests__/OptimizedEditTable.test.tsx src/components/__tests__/DuplicationSystem.test.tsx src/components/__tests__/OptimizedEditTable.duplication.test.tsx src/components/__tests__/OptimizedEditTable.selectionFiltering.test.tsx"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^4.1.0",
 		"@radix-ui/react-accordion": "^1.2.2",
+		"@radix-ui/react-alert-dialog": "^1.1.14",
 		"@radix-ui/react-avatar": "^1.1.3",
 		"@radix-ui/react-checkbox": "^1.3.2",
 		"@radix-ui/react-collapsible": "^1.1.3",
@@ -38,6 +45,8 @@
 		"clsx": "^2.1.1",
 		"google-sheets-data-fetcher": "^1.1.7",
 		"immer": "^10.1.1",
+		"jspdf": "^2.5.1",
+		"jspdf-autotable": "^3.8.2",
 		"lucide-react": "^0.469.0",
 		"node-xlsx": "^0.24.0",
 		"pdf-lib": "^1.17.1",
@@ -48,16 +57,17 @@
 		"react-hook-form": "^7.54.2",
 		"react-qrcode-pretty": "^1.3.3",
 		"react-to-print": "^3.0.4",
+		"sonner": "^2.0.6",
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7",
 		"xlsx": "^0.18.5",
 		"zod": "^3.24.2",
-		"zustand": "^5.0.3",
-		"jspdf": "^2.5.1",
-		"jspdf-autotable": "^3.8.2"
+		"zustand": "^5.0.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.0.6",
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.3.0",
 		"@types/node": "^22.10.2",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
@@ -70,12 +80,14 @@
 		"eslint-plugin-react-compiler": "19.0.0-beta-27714ef-20250124",
 		"eslint-plugin-react-hooks": "^5.1.0",
 		"eslint-plugin-react-refresh": "^0.4.16",
+		"jsdom": "^26.1.0",
 		"postcss": "^8.4.49",
 		"tailwindcss": "^3.4.17",
 		"ts-node": "^10.9.2",
 		"tsx": "^4.19.2",
 		"typescript": "^5.7.2",
-		"vite": "^6.0.6"
+		"vite": "^6.0.6",
+		"vitest": "^3.2.4"
 	},
 	"packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
 }

@@ -1,7 +1,7 @@
 import { Link, useMatches } from "@tanstack/react-router";
 import { QrCode, Tag } from "lucide-react";
-import { Button } from "./ui/button";
-import { Sidebar } from "./ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { Sidebar } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
 	const matches = useMatches();

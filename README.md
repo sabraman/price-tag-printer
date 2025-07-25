@@ -8,9 +8,10 @@ Web application for generating and printing price tags. Built with React, TypeSc
 - Import data from Excel files
 - Google Sheets integration
 - Real-time preview of price tags
-- Responsive UI
+- Dashboard for managing price tags
 - Multiple tag layout options
 - Automatic text size adjustment
+- Print-ready PDF generation
 
 ## Tech Stack
 
@@ -18,10 +19,29 @@ Web application for generating and printing price tags. Built with React, TypeSc
 - TypeScript
 - Vite
 - TailwindCSS
-- Shadcn
+- Shadcn UI components
 - PDF-lib for PDF generation
 - XLSX for Excel file handling
 - Google Sheets API integration
+
+## Project Structure
+
+```
+price-tag-printer/
+  ├── public/           # Static assets
+  ├── src/
+  │   ├── app/          # Application pages
+  │   │   └── dashboard/ # Dashboard components
+  │   ├── assets/       # Media assets
+  │   ├── components/   # Reusable components
+  │   │   └── ui/       # Shadcn UI components
+  │   ├── hooks/        # Custom React hooks
+  │   ├── lib/          # Library code and utilities
+  │   ├── pages/        # Page components
+  │   ├── store/        # State management
+  │   └── utils/        # Utility functions
+  └── ...               # Configuration files
+```
 
 ## Getting Started
 
@@ -70,13 +90,32 @@ pnpm preview
 ## Usage
 
 1. Choose your data input method:
-
    - Upload an Excel file
    - Connect to Google Sheets
    - Manual data entry
 
-2. Preview your tags
+2. Customize your price tags:
+   - Select layout template
+   - Adjust text sizes and positioning
+   - Add logos or images (if supported)
 
-3. Print your tags:
-   - Generate PDF
-   - Direct printing
+3. Preview your tags in real-time
+
+4. Print your tags:
+   - Generate PDF for printing
+   - Direct printing from browser
+
+## Excel File Format
+
+The application expects Excel files with the following structure:
+- Column names should match the fields needed for price tags (e.g., name, price, SKU)
+- Russian Excel files are supported (like the included "Объединенный_прайс.xlsx")
+
+## Development
+
+### Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm preview` - Preview production build
+- `pnpm lint` - Run ESLint

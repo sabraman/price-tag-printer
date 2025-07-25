@@ -4,7 +4,8 @@ import {
 	createRouter,
 } from "@tanstack/react-router";
 import App from "./App";
-import { PriceTagsPage, QrCodePage } from "./pages";
+import { PriceTagsPage } from "@/components/features/price-tags/PriceTagsPage";
+import { QrCodePage } from "@/components/features/qr/QrCodePage";
 
 const rootRoute = createRootRoute({
 	component: App,

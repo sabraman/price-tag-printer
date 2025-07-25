@@ -1,7 +1,7 @@
 import { FileSpreadsheet } from "lucide-react";
 import type React from "react";
 import { read, type WorkBook } from "xlsx";
-import { Dropzone, DropzoneEmptyState } from "./ui/dropzone";
+import { Dropzone, DropzoneEmptyState } from "@/components/ui/dropzone";
 
 interface ExcelUploaderProps {
 	onUpload: (data: WorkBook) => void;
@@ -22,8 +22,8 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({ onUpload }) => {
 						},
 					) as WorkBook;
 					onUpload(data);
-				} catch (error) {
-					console.error("Error reading Excel file:", error);
+				} catch (_error) {
+					// Handle Excel reading error silently
 				}
 			};
 

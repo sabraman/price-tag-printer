@@ -44,11 +44,6 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	const showDiscountText =
 		design || (designType === "table" && hasTableDiscounts);
 
-	// Отладочная информация
-	console.log(
-		`PriceTagCustomizer: design=${design}, designType=${designType}, hasTableDiscounts=${hasTableDiscounts}, showDiscountText=${showDiscountText}`,
-	);
-
 	const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const lines = e.target.value.split("\n");
 		if (lines.length > 2) {

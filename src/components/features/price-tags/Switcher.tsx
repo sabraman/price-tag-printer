@@ -3,8 +3,8 @@ import { Label } from "@/components/ui/label";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 import PlusMinusInput from "./PlusMinusInput";
 import RadioGroupSwitcher from "./RadioGroupSwitcher";
-import { Button } from "./ui/button";
-import { Switch } from "./ui/switch";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
 const Switcher: React.FC = () => {
 	const {
@@ -46,11 +46,6 @@ const Switcher: React.FC = () => {
 	// 2. Мы в режиме таблицы с настройками скидок из таблицы
 	const showDiscountSettings =
 		design || (designType === "table" && hasTableDiscounts);
-
-	// Для отладки - выводим в консоль текущие настройки
-	console.log(
-		`Switcher state: designType=${designType}, hasTableDiscounts=${hasTableDiscounts}, design=${design}, showDiscountSwitch=${showDiscountSwitch}`,
-	);
 
 	const handleChange = (checked: boolean) => {
 		setDesign(checked);

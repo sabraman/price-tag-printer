@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Theme, ThemeSet } from "@/store/priceTagsStore";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 interface GradientPickerProps {
 	themes: ThemeSet;

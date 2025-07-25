@@ -2,6 +2,32 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
+// Add ID counter to prevent collisions - use a more robust approach
+let uniqueIdCounter = 0;
+let lastTimestamp = 0;
+
+// Helper function to generate guaranteed unique IDs
+const generateUniqueId = (): number => {
+	// Get current timestamp in milliseconds
+	let timestamp = Date.now();
+
+	// If we're generating IDs too quickly (same millisecond), increment the timestamp
+	if (timestamp <= lastTimestamp) {
+		timestamp = lastTimestamp + 1;
+	}
+	lastTimestamp = timestamp;
+
+	// Multiply by 1000 to leave room for counter, then add incremental counter
+	const uniqueId = timestamp * 1000 + ++uniqueIdCounter;
+
+	// Reset counter if it gets too large to prevent overflow
+	if (uniqueIdCounter > 999) {
+		uniqueIdCounter = 0;
+	}
+
+	return uniqueId;
+};
+
 export interface Item {
 	id: number;
 	data: string | number;
@@ -74,6 +100,7 @@ interface PriceTagsState {
 		value: string | number | boolean,
 	) => void;
 	clearSettings: () => void;
+	duplicateItems: (idsToDuplicate: number[]) => void;
 }
 
 export const usePriceTagsStore = create<PriceTagsState>()(
@@ -209,13 +236,26 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 
 			addItem: (item: Item) =>
 				set((state) => {
-					console.log("Adding item to store:", item);
-					state.items.push(item);
+					const newItems = [...state.items, item];
+
+					// Update history
+					const newHistory = state.history.slice(0, state.historyIndex + 1);
+					newHistory.push([...newItems]);
+					state.history = newHistory;
+					state.historyIndex = newHistory.length - 1;
+					state.items = newItems;
 				}),
 
 			deleteItem: (id: number) =>
 				set((state) => {
-					state.items = state.items.filter((item) => item.id !== id);
+					const newItems = state.items.filter((item) => item.id !== id);
+
+					// Update history
+					const newHistory = state.history.slice(0, state.historyIndex + 1);
+					newHistory.push([...newItems]);
+					state.history = newHistory;
+					state.historyIndex = newHistory.length - 1;
+					state.items = newItems;
 				}),
 
 			updateItem: (
@@ -230,7 +270,8 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 				value: string | number | boolean,
 			) =>
 				set((state) => {
-					const item = state.items.find((item) => item.id === id);
+					const newItems = [...state.items];
+					const item = newItems.find((item) => item.id === id);
 					if (item) {
 						if (field === "price") {
 							item.price = Number(value);
@@ -248,7 +289,45 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 						} else if (field === "priceFrom3") {
 							item.priceFrom3 = Number(value);
 						}
+
+						// Update history
+						const newHistory = state.history.slice(0, state.historyIndex + 1);
+						newHistory.push([...newItems]);
+						state.history = newHistory;
+						state.historyIndex = newHistory.length - 1;
+						state.items = newItems;
 					}
+				}),
+
+			// Enhanced duplication with proper ID generation and history management
+			duplicateItems: (idsToDuplicate: number[]) =>
+				set((state) => {
+					if (idsToDuplicate.length === 0) return;
+
+					const itemsToDuplicate = state.items.filter((item) =>
+						idsToDuplicate.includes(item.id),
+					);
+
+					if (itemsToDuplicate.length === 0) return;
+
+					// Generate truly unique IDs using timestamp + incremental counter
+					const duplicatedItems = itemsToDuplicate.map((item) => {
+						const uniqueId = generateUniqueId();
+						return {
+							...item,
+							id: uniqueId,
+							data: item.data, // Remove the copy suffix
+						};
+					});
+
+					const newItems = [...state.items, ...duplicatedItems];
+
+					// Update history properly
+					const newHistory = state.history.slice(0, state.historyIndex + 1);
+					newHistory.push([...newItems]);
+					state.history = newHistory;
+					state.historyIndex = newHistory.length - 1;
+					state.items = newItems;
 				}),
 
 			clearSettings: () =>
@@ -288,10 +367,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 				// Выполняем действия после восстановления состояния из localStorage
 				return (rehydratedState, error) => {
 					if (error) {
-						console.error(
-							"Ошибка при загрузке состояния из localStorage:",
-							error,
-						);
+						// localStorage rehydration error - silently continue
 					} else if (rehydratedState) {
 						// Пересчитываем discountPrice для всех элементов после восстановления из localStorage
 						setTimeout(() => {

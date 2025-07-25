@@ -1,5 +1,5 @@
 // src/components/PriceTagList.tsx
-import "../App.css";
+import "@/App.css";
 import type React from "react";
 import type { ThemeSet } from "@/store/priceTagsStore";
 import PriceTagSVG from "./PriceTagSVG";
@@ -65,15 +65,6 @@ const PriceTagList: React.FC<PriceTagListProps> = ({
 							// If we're using table discounts and this item has a setting, use that
 							showDiscount = item.hasDiscount;
 						}
-
-						// Debug log with more detailed information about pricing
-						console.log(`Item ${item.id} (${item.data}): 
-              hasDiscount=${item.hasDiscount}, 
-              useTableDiscounts=${useTableDiscounts}, 
-              showDiscount=${showDiscount},
-              price=${item.price}, 
-              discountPrice=${item.discountPrice}
-            `);
 
 						return (
 							<div key={item.id} className="price-tag">

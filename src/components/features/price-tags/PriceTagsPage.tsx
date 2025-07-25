@@ -3,19 +3,20 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { AlertCircle, Edit2, Eye } from "lucide-react";
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import * as XLSX from "xlsx";
-import { EditTable } from "@/components/EditTable";
-import EditTableEnhancements from "@/components/EditTableEnhancements";
-import ExcelUploader from "@/components/ExcelUploader";
-import GenerateButton from "@/components/GenerateButton";
-import GoogleSheetsForm from "@/components/GoogleSheetsForm";
-import { PriceTagCustomizer } from "@/components/PriceTagCustomizer";
-import PriceTagList from "@/components/PriceTagList";
-import Switcher from "@/components/Switcher";
+import ExcelUploader from "@/components/features/price-tags/ExcelUploader";
+import GenerateButton from "@/components/features/price-tags/GenerateButton";
+import GoogleSheetsForm from "@/components/features/price-tags/GoogleSheetsForm";
+import { OptimizedEditTable } from "@/components/features/price-tags/OptimizedEditTable";
+import { PriceTagCustomizer } from "@/components/features/price-tags/PriceTagCustomizer";
+import PriceTagList from "@/components/features/price-tags/PriceTagList";
+import Switcher from "@/components/features/price-tags/Switcher";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useNewItemDraft } from "@/hooks/useNewItemDraft";
 import { usePrintTags } from "@/hooks/usePrintTags";
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
@@ -60,8 +61,7 @@ const parseDiscountValue = (
 		return false;
 	}
 
-	// For any other values, log and return undefined
-	console.log(`Unknown discount value: ${value}`);
+	// For any other values, return undefined
 	return undefined;
 };
 
@@ -94,7 +94,50 @@ export const PriceTagsPage: React.FC = () => {
 	const [currentFilter, setCurrentFilter] = useState<string>("all");
 	const [currentSort, setCurrentSort] = useState<string>("nameAsc");
 	const [currentSearchQuery, setCurrentSearchQuery] = useState<string>("");
+	// Enhanced selection state management with filtering support
 	const [selectedItems, setSelectedItems] = useState<number[]>([]);
+	const [lastDuplicationTime, setLastDuplicationTime] = useState<number>(0);
+
+	// Memoized filtered IDs for stable reference
+	const filteredItemIds = useMemo(
+		() => filteredItems.map((item) => item.id),
+		[filteredItems],
+	);
+
+	// Handle selection changes with validation
+	const handleSelectionChange = useCallback(
+		(newSelection: number[] | ((prev: number[]) => number[])) => {
+			const processSelection = (selection: number[]) => {
+				// Always validate against filtered items
+				const validSelection = selection.filter((id) =>
+					filteredItemIds.includes(id),
+				);
+				setSelectedItems(validSelection);
+			};
+
+			if (typeof newSelection === "function") {
+				const result = newSelection(selectedItems);
+				processSelection(result);
+			} else {
+				processSelection(newSelection);
+			}
+		},
+		[selectedItems, filteredItemIds],
+	);
+
+	// Auto-cleanup selection when filtered items change
+	useEffect(() => {
+		const hasInvalidSelections = selectedItems.some(
+			(id) => !filteredItemIds.includes(id),
+		);
+
+		if (hasInvalidSelections) {
+			const cleanedSelection = selectedItems.filter((id) =>
+				filteredItemIds.includes(id),
+			);
+			setSelectedItems(cleanedSelection);
+		}
+	}, [filteredItemIds, selectedItems]);
 
 	useEffect(() => {
 		let updatedItems = [...items];
@@ -155,34 +198,42 @@ export const PriceTagsPage: React.FC = () => {
 		setFilteredItems(updatedItems);
 	}, [items, currentFilter, currentSort, currentSearchQuery]);
 
+	// Enhanced duplication with comprehensive UX
 	const handleDuplicate = () => {
-		if (selectedItems.length > 0) {
-			const itemsToDuplicate = items.filter((item) =>
-				selectedItems.includes(item.id),
-			);
-			const newItems = [...items];
-			itemsToDuplicate.forEach((item) => {
-				newItems.push({ ...item, id: Date.now() });
-			});
-			setItems(newItems);
-			setSelectedItems([]); // Clear selection after duplication
+		if (selectedItems.length === 0) {
+			toast.error("Выберите товары для дублирования");
+			return;
 		}
-	};
 
-	const handleBatchEdit = (field: string, value: string | boolean) => {
-		console.log("handleBatchEdit - field:", field, "value:", value);
-		const updatedItems = items.map((item) => {
-			if (selectedItems.includes(item.id)) {
-				if (field === "designType") {
-					return { ...item, designType: value };
-				} else if (field === "hasDiscount") {
-					return { ...item, hasDiscount: value };
-				}
-			}
-			return item;
-		});
-		setItems(updatedItems);
-		setSelectedItems([]); // Clear selection after batch edit
+		// Prevent rapid duplication
+		const now = Date.now();
+		if (now - lastDuplicationTime < 1000) {
+			toast.warning("Пожалуйста, подождите перед следующим дублированием");
+			return;
+		}
+
+		try {
+			// Show loading state
+			toast.loading("Дублирование товаров...", { id: "duplication" });
+
+			// Use the store's proper duplication method
+			const { duplicateItems } = usePriceTagsStore.getState();
+			duplicateItems(selectedItems);
+
+			// Clear selection after successful duplication
+			setSelectedItems([]);
+			setLastDuplicationTime(now);
+
+			// Dismiss loading and show success
+			toast.dismiss("duplication");
+			toast.success(`✅ Продуктов скопировано: ${selectedItems.length}`, {
+				duration: 3000,
+				description: "Копии добавлены в конец списка",
+			});
+		} catch (_error) {
+			toast.dismiss("duplication");
+			toast.error("Ошибка при дублировании товаров");
+		}
 	};
 
 	const handleUndo = () => {
@@ -207,8 +258,7 @@ export const PriceTagsPage: React.FC = () => {
 
 	const handleClearAll = () => {
 		setItems([]);
-		usePriceTagsStore.getState().setHistory([[]]);
-		usePriceTagsStore.getState().setHistoryIndex(0);
+		setSelectedItems([]);
 	};
 
 	const handleExport = (type: "csv" | "pdf" | "xlsx") => {
@@ -631,6 +681,9 @@ export const PriceTagsPage: React.FC = () => {
 		handlePrint();
 	};
 
+	// Use the draft hook to preserve new item state when switching modes
+	useNewItemDraft(isEditMode);
+
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 			{/* Left Column - Controls */}
@@ -708,25 +761,19 @@ export const PriceTagsPage: React.FC = () => {
 			{items.length > 0 && (
 				<div className="lg:col-span-8">
 					{isEditMode ? (
-						<>
-							<EditTableEnhancements
-								onDuplicate={handleDuplicate}
-								onBatchEdit={handleBatchEdit}
-								onUndo={handleUndo}
-								onRedo={handleRedo}
-								onFilterChange={handleFilterChange}
-								onSortChange={handleSortChange}
-								onSearch={handleSearch}
-								onClearAll={handleClearAll}
-								onExport={handleExport}
-							/>
-							<EditTable
-								items={filteredItems}
-								onChange={setItems}
-								onSelectionChange={setSelectedItems}
-								selectedItems={selectedItems}
-							/>
-						</>
+						<OptimizedEditTable
+							items={filteredItems}
+							selectedItems={selectedItems}
+							onSelectionChange={handleSelectionChange}
+							onDuplicate={handleDuplicate}
+							onUndo={handleUndo}
+							onRedo={handleRedo}
+							onFilterChange={handleFilterChange}
+							onSortChange={handleSortChange}
+							onSearch={handleSearch}
+							onClearAll={handleClearAll}
+							onExport={handleExport}
+						/>
 					) : (
 						<div ref={componentRef}>
 							<PriceTagList

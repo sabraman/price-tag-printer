@@ -1,7 +1,8 @@
 import { Outlet } from "@tanstack/react-router";
 import type React from "react";
-import { AppSidebar } from "./components/app-sidebar";
-import FontLoader from "./components/FontLoader";
+import { Toaster } from "sonner";
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import FontLoader from "@/components/layout/FontLoader";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -13,7 +14,7 @@ import {
 	SidebarInset,
 	SidebarProvider,
 	SidebarTrigger,
-} from "./components/ui/sidebar";
+} from "@/components/ui/sidebar";
 
 const App: React.FC = () => {
 	return (
@@ -40,6 +41,7 @@ const App: React.FC = () => {
 					</div>
 				</div>
 			</SidebarInset>
+			<Toaster richColors position="top-right" />
 		</SidebarProvider>
 	);
 };

@@ -1,8 +1,8 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import AccordionInfo from "./AccordionInfo.tsx";
+import AccordionInfo from "@/components/layout/AccordionInfo";
 import InputWithClearButton from "./input-with-clear-button";
-import { Button } from "./ui/button.tsx";
+import { Button } from "@/components/ui/button";
 
 interface GoogleSheetsFormProps {
 	onSubmit: (url: string) => void;

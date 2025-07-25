@@ -10,8 +10,7 @@ export const usePrintTags = ({ onError }: UsePrintTagsOptions = {}) => {
 	const componentRef = useRef<HTMLDivElement>(null);
 	const handlePrint = useReactToPrint({
 		contentRef: componentRef,
-		onPrintError: (errorLocation: "onBeforePrint" | "print", error: Error) => {
-			console.error(`Print failed at ${errorLocation}:`, error);
+		onPrintError: (_errorLocation: "onBeforePrint" | "print", error: Error) => {
 			onError?.(error);
 		},
 		pageStyle: `
