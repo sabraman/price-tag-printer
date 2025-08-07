@@ -334,7 +334,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Начальный цвет</Label>
 										<ColorPicker
-											value={themes.default.start}
+											value={themes.default.start as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -364,7 +364,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Конечный цвет</Label>
 										<ColorPicker
-											value={themes.default.end}
+											value={themes.default.end as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -394,7 +394,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Цвет текста</Label>
 										<ColorPicker
-											value={themes.default.textColor}
+											value={themes.default.textColor as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -443,7 +443,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Начальный цвет</Label>
 										<ColorPicker
-											value={themes.new.start}
+											value={themes.new.start as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -473,7 +473,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Конечный цвет</Label>
 										<ColorPicker
-											value={themes.new.end}
+											value={themes.new.end as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -503,7 +503,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Цвет текста</Label>
 										<ColorPicker
-											value={themes.new.textColor}
+											value={themes.new.textColor as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -549,7 +549,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Начальный цвет</Label>
 										<ColorPicker
-											value={themes.sale.start}
+											value={themes.sale.start as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -579,7 +579,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Конечный цвет</Label>
 										<ColorPicker
-											value={themes.sale.end}
+											value={themes.sale.end as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -609,7 +609,7 @@ export function GradientPicker({
 									<div className="space-y-2">
 										<Label className="text-xs">Цвет текста</Label>
 										<ColorPicker
-											value={themes.sale.textColor}
+											value={themes.sale.textColor as `#${string}`}
 											onValueChange={(color) =>
 												onChange({
 													...themes,
@@ -651,13 +651,13 @@ export function GradientPicker({
 							{/* Cutting Line Color */}
 							<div className="space-y-4 p-4 border rounded-lg">
 								<h3 className="text-sm font-medium">Цвет линий отреза</h3>
-								<div className="space-y-2">
+								<div className="space-y-3">
 									<Label className="text-xs">
 										Выберите цвет линий для вырезания
 									</Label>
 									<div className="flex gap-4 items-center">
 										<ColorPicker
-											value={cuttingLineColor}
+											value={cuttingLineColor as `#${string}`}
 											onValueChange={(color) => {
 												onCuttingLineColorChange?.(color.hex);
 											}}
@@ -680,9 +680,24 @@ export function GradientPicker({
 											}}
 											placeholder="#cccccc"
 										/>
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => onCuttingLineColorChange?.("#cccccc")}
+											className="shrink-0"
+										>
+											Авто
+										</Button>
 									</div>
-									<div className="text-xs text-muted-foreground">
-										Эти линии помогают при вырезании ценников после печати
+									<div className="text-xs text-muted-foreground space-y-1">
+										<div>
+											Эти линии помогают при вырезании ценников после печати
+										</div>
+										{(!cuttingLineColor || cuttingLineColor === "#cccccc") && (
+											<div className="font-medium text-blue-600 dark:text-blue-400">
+												Авто-режим: белый для тёмных тем, чёрный для светлых
+											</div>
+										)}
 									</div>
 								</div>
 							</div>

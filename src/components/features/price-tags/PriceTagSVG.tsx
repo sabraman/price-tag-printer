@@ -75,10 +75,15 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 		safeDesignType === "black" ||
 		currentTheme.start === currentTheme.end;
 	const borderColor = safeDesignType === "white" ? "#e5e5e5" : "#333333";
-	// Use provided cuttingLineColor or fall back to theme-based logic
+	// Smart cutting line color logic
 	const isLightTheme = currentTheme.textColor !== "#ffffff";
+	const automaticCutLineColor = isLightTheme ? "#000000" : "#ffffff";
+
+	// Use automatic color if cuttingLineColor is default gray or not provided
 	const cutLineColor =
-		cuttingLineColor || (isLightTheme ? "#000000" : "#ffffff");
+		!cuttingLineColor || cuttingLineColor === "#cccccc"
+			? automaticCutLineColor
+			: cuttingLineColor;
 
 	// Theme label logic
 	const shouldShowLabel =
