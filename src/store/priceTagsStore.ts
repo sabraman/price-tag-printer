@@ -83,6 +83,7 @@ interface PriceTagsState {
 	hasTableDesigns: boolean; // Флаг, указывающий на наличие дизайнов в таблице
 	hasTableDiscounts: boolean; // Флаг, указывающий на наличие настроек скидки в таблице
 	showThemeLabels: boolean; // Показывать ли надписи NEW/SALE на ценниках
+	cuttingLineColor: string; // Цвет линии отреза
 	setItems: (items: Item[]) => void;
 	setLoading: (loading: boolean) => void;
 	setError: (error: string | null) => void;
@@ -98,6 +99,7 @@ interface PriceTagsState {
 	setHasTableDesigns: (has: boolean) => void;
 	setHasTableDiscounts: (has: boolean) => void;
 	setShowThemeLabels: (show: boolean) => void;
+	setCuttingLineColor: (color: string) => void;
 	updateItemPrices: () => void;
 	addItem: (item: Item) => void;
 	calculateDiscountPrice: (price: number) => number;
@@ -225,6 +227,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 			hasTableDesigns: false,
 			hasTableDiscounts: false,
 			showThemeLabels: true,
+			cuttingLineColor: "#cccccc",
 
 			setItems: (items) => {
 				set((state) => {
@@ -275,6 +278,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 			setHasTableDesigns: (has) => set({ hasTableDesigns: has }),
 			setHasTableDiscounts: (has) => set({ hasTableDiscounts: has }),
 			setShowThemeLabels: (show) => set({ showThemeLabels: show }),
+			setCuttingLineColor: (color) => set({ cuttingLineColor: color }),
 
 			calculateDiscountPrice: (price: number) => {
 				const state = get();

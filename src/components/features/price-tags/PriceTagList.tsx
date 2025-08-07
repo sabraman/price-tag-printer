@@ -23,6 +23,7 @@ interface PriceTagListProps {
 	useTableDesigns?: boolean;
 	useTableDiscounts?: boolean;
 	showThemeLabels?: boolean;
+	cuttingLineColor?: string;
 }
 
 const PriceTagList: React.FC<PriceTagListProps> = ({
@@ -35,6 +36,7 @@ const PriceTagList: React.FC<PriceTagListProps> = ({
 	useTableDesigns = false,
 	useTableDiscounts = false,
 	showThemeLabels = true,
+	cuttingLineColor,
 }) => {
 	// Create chunks of 9 items for each page
 	const chunkedItems = items.reduce(
@@ -87,6 +89,7 @@ const PriceTagList: React.FC<PriceTagListProps> = ({
 									priceFor2={item.priceFor2}
 									priceFrom3={item.priceFrom3}
 									showThemeLabels={showThemeLabels}
+									cuttingLineColor={cuttingLineColor}
 								/>
 							</div>
 						);

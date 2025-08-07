@@ -17,6 +17,7 @@ interface PriceTagSVGProps {
 	font: string;
 	discountText: string;
 	showThemeLabels?: boolean;
+	cuttingLineColor?: string;
 }
 
 const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
@@ -32,6 +33,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 	font,
 	discountText,
 	showThemeLabels = true,
+	cuttingLineColor,
 }) => {
 	const [fontSize, setFontSize] = useState<number>(16);
 	const [lineHeight, setLineHeight] = useState<number>(20);
@@ -73,9 +75,10 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 		safeDesignType === "black" ||
 		currentTheme.start === currentTheme.end;
 	const borderColor = safeDesignType === "white" ? "#e5e5e5" : "#333333";
-	// Light themes have dark text, dark themes have white text
+	// Use provided cuttingLineColor or fall back to theme-based logic
 	const isLightTheme = currentTheme.textColor !== "#ffffff";
-	const cutLineColor = isLightTheme ? "#000000" : "#ffffff";
+	const cutLineColor =
+		cuttingLineColor || (isLightTheme ? "#000000" : "#ffffff");
 
 	// Theme label logic
 	const shouldShowLabel =

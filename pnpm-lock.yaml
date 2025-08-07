@@ -71,6 +71,15 @@ importers:
       '@types/node-xlsx':
         specifier: ^0.21.0
         version: 0.21.0
+      '@uiw/color-convert':
+        specifier: ^2.7.3
+        version: 2.7.3(@babel/runtime@7.28.2)
+      '@uiw/react-color-hue':
+        specifier: ^2.7.3
+        version: 2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@uiw/react-color-saturation':
+        specifier: ^2.7.3
+        version: 2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       axios:
         specifier: ^1.7.9
         version: 1.7.9
@@ -2430,6 +2439,39 @@ packages:
   '@typescript-eslint/visitor-keys@8.19.0':
     resolution: {integrity: sha512-mCFtBbFBJDCNCWUl5y6sZSCHXw1DEFEk3c/M3nRK2a4XUB8StGFtmcEMizdjKuBzB6e/smJAAWYug3VrdLMr1w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@uiw/color-convert@2.7.3':
+    resolution: {integrity: sha512-34JxiQkDrw14EpBukiAO/E+GddbIWxhaXzZj202lT+olyjr/47RWu6cxJAdy0Nvg7ujfBxPbDqT22qtcwE4mYQ==}
+    peerDependencies:
+      '@babel/runtime': '>=7.19.0'
+
+  '@uiw/react-color-alpha@2.7.3':
+    resolution: {integrity: sha512-BHZD1TQJu5j4N/3924cc2tSYsHaQ3RnKWJ/v0ZbFepownl0LKi3ZTVex2YaUuJ1vhcIRi1LL2+ab194963zmQg==}
+    peerDependencies:
+      '@babel/runtime': '>=7.19.0'
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
+
+  '@uiw/react-color-hue@2.7.3':
+    resolution: {integrity: sha512-8lAoqUa5IcGn+OMDHRI9uPWqLfYtiiLk+kag7+zreA2BE0TKDcH0fH+rEiDshpBFkibSaeuN+0P4c3k/PRQPKg==}
+    peerDependencies:
+      '@babel/runtime': '>=7.19.0'
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
+
+  '@uiw/react-color-saturation@2.7.3':
+    resolution: {integrity: sha512-IcKGcokyX2n39dd0RA5QzEsbz2F627udrngvY+bUG8Ls7riBXL82BFkeMADZWn6HR83ibIAmz5ThhWDVF5vEQA==}
+    peerDependencies:
+      '@babel/runtime': '>=7.19.0'
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
+
+  '@uiw/react-drag-event-interactive@2.7.3':
+    resolution: {integrity: sha512-y+ju+Aj3cNaq2kafdprYg8i9LozfgFBvU7fga0n5kzgvofSjgCnL+qNRkXim2JywRMnuU6ak0CBS21eIpkpFGg==}
+    peerDependencies:
+      '@babel/runtime': '>=7.19.0'
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
 
   '@vitejs/plugin-react@4.3.4':
     resolution: {integrity: sha512-SCCPBJtYLdE8PX/7ZQAs1QAZ8Jqwih+0VBLum1EGqmCCQal+MIUqLCzj3ZUy8ufbC0cAM4LRlSTm7IQJwWT4ug==}
@@ -6701,6 +6743,40 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.19.0
       eslint-visitor-keys: 4.2.0
+
+  '@uiw/color-convert@2.7.3(@babel/runtime@7.28.2)':
+    dependencies:
+      '@babel/runtime': 7.28.2
+
+  '@uiw/react-color-alpha@2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      '@uiw/color-convert': 2.7.3(@babel/runtime@7.28.2)
+      '@uiw/react-drag-event-interactive': 2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
+  '@uiw/react-color-hue@2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      '@uiw/color-convert': 2.7.3(@babel/runtime@7.28.2)
+      '@uiw/react-color-alpha': 2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
+  '@uiw/react-color-saturation@2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      '@uiw/color-convert': 2.7.3(@babel/runtime@7.28.2)
+      '@uiw/react-drag-event-interactive': 2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
+  '@uiw/react-drag-event-interactive@2.7.3(@babel/runtime@7.28.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
   '@vitejs/plugin-react@4.3.4(vite@6.0.6(@types/node@22.10.2)(jiti@1.21.7)(tsx@4.19.3)(yaml@2.7.0))':
     dependencies:

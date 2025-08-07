@@ -78,6 +78,7 @@ export const PriceTagsPage: React.FC = () => {
 		hasTableDesigns,
 		hasTableDiscounts,
 		showThemeLabels,
+		cuttingLineColor,
 		setItems,
 		setLoading,
 		setError,
@@ -801,6 +802,7 @@ export const PriceTagsPage: React.FC = () => {
 								useTableDesigns={hasTableDesigns && designType === "table"}
 								useTableDiscounts={hasTableDiscounts && designType === "table"}
 								showThemeLabels={showThemeLabels}
+								cuttingLineColor={cuttingLineColor}
 							/>
 						</div>
 					)}

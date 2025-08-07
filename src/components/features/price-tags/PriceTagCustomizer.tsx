@@ -55,9 +55,11 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 		hasTableDesigns,
 		discountAmount,
 		maxDiscountPercent,
+		cuttingLineColor,
 		setDesign,
 		setDiscountAmount,
 		setMaxDiscountPercent,
+		setCuttingLineColor,
 		updateItemPrices,
 		clearSettings,
 	} = usePriceTagsStore();
@@ -199,7 +201,12 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 			{/* Custom Gradient Editor */}
 			<div className="border p-4 rounded-lg space-y-4">
 				<Label className="text-sm font-medium">Настройка градиентов</Label>
-				<GradientPicker themes={themes} onChange={onThemeChange} />
+				<GradientPicker
+					themes={themes}
+					onChange={onThemeChange}
+					cuttingLineColor={cuttingLineColor}
+					onCuttingLineColorChange={setCuttingLineColor}
+				/>
 			</div>
 
 			{/* Font and Display Settings */}
