@@ -146,7 +146,7 @@ export const PriceTagsPage: React.FC = () => {
 		if (items.length > 0) {
 			updateItemPrices();
 		}
-	}, [designType, updateItemPrices]);
+	}, [updateItemPrices, items.length]);
 
 	useEffect(() => {
 		let updatedItems = [...items];
@@ -763,7 +763,7 @@ export const PriceTagsPage: React.FC = () => {
 							onFontChange={setCurrentFont}
 							onDiscountTextChange={setDiscountText}
 							onDesignTypeChange={(type) => {
-								console.log('Setting design type to:', type);
+								console.log("Setting design type to:", type);
 								setDesignType(type);
 							}}
 							onShowThemeLabelsChange={setShowThemeLabels}

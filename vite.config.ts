@@ -16,29 +16,13 @@ export default defineConfig({
 			output: {
 				manualChunks: {
 					// Core React and routing
-					vendor: [
-						"react",
-						"react-dom",
-						"@tanstack/react-router",
-					],
+					vendor: ["react", "react-dom", "@tanstack/react-router"],
 					// State management
-					store: [
-						"zustand",
-						"immer",
-					],
+					store: ["zustand", "immer"],
 					// Heavy data processing libraries (lazy loaded)
-					dataProcessing: [
-						"xlsx",
-						"jspdf",
-						"jspdf-autotable",
-						"pdf-lib",
-					],
+					dataProcessing: ["xlsx", "jspdf", "jspdf-autotable", "pdf-lib"],
 					// Forms and validation
-					forms: [
-						"react-hook-form",
-						"zod",
-						"@hookform/resolvers",
-					],
+					forms: ["react-hook-form", "zod", "@hookform/resolvers"],
 					// UI components
 					ui: [
 						"lucide-react",
@@ -53,10 +37,7 @@ export default defineConfig({
 						"class-variance-authority",
 					],
 					// External integrations
-					integrations: [
-						"google-sheets-data-fetcher",
-						"axios",
-					],
+					integrations: ["google-sheets-data-fetcher", "axios"],
 				},
 			},
 		},

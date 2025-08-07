@@ -1,14 +1,18 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import AccordionInfo from "@/components/layout/AccordionInfo";
-import InputWithClearButton from "./input-with-clear-button";
 import { Button } from "@/components/ui/button";
+import InputWithClearButton from "./input-with-clear-button";
 
 interface GoogleSheetsFormProps {
-	onSubmit: (url: string) => void;
+	onSubmit?: (url: string) => void;
+	onFetchData?: (spreadsheetId: string) => Promise<void>;
 }
 
-const GoogleSheetsForm: React.FC<GoogleSheetsFormProps> = ({ onSubmit }) => {
+const GoogleSheetsForm: React.FC<GoogleSheetsFormProps> = ({
+	onSubmit,
+	onFetchData,
+}) => {
 	const DEFAULT_SHEET_URL =
 		"https://docs.google.com/spreadsheets/d/1hib1AcPemuxn3_8JIn9lcMTsXBGSpC7b-vEBbHgvQw8/edit?gid=585882185#gid=585882185/";
 	const [url, setUrl] = useState<string>(DEFAULT_SHEET_URL);
@@ -31,7 +35,19 @@ const GoogleSheetsForm: React.FC<GoogleSheetsFormProps> = ({ onSubmit }) => {
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
-		onSubmit(url);
+		if (onSubmit) {
+			onSubmit(url);
+		} else if (onFetchData) {
+			// Extract sheet ID from URL and call onFetchData
+			const sheetId = extractSheetIdFromUrl(url);
+			onFetchData(sheetId);
+		}
+	};
+
+	// Helper function to extract sheet ID from URL
+	const extractSheetIdFromUrl = (url: string): string => {
+		const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+		return match ? match[1] : "";
 	};
 
 	return (

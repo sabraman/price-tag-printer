@@ -1,10 +1,10 @@
 import type React from "react";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 import PlusMinusInput from "./PlusMinusInput";
 import RadioGroupSwitcher from "./RadioGroupSwitcher";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 
 const Switcher: React.FC = () => {
 	const {

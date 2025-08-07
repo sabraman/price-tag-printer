@@ -14,7 +14,7 @@ interface ThemeSelectorProps {
 const themeLabels: Record<keyof ThemeSet, string> = {
 	default: "Стандартный",
 	new: "Новинка",
-	sale: "Скидка", 
+	sale: "Скидка",
 	white: "Белый",
 	black: "Черный",
 	sunset: "Закат",
@@ -31,11 +31,20 @@ const themeLabels: Record<keyof ThemeSet, string> = {
 	snow: "Снег",
 };
 
-const basicThemes: (keyof ThemeSet)[] = ['default', 'new', 'sale'];
-const lightThemes: (keyof ThemeSet)[] = ['white', 'snow', 'paper', 'silver'];
-const darkThemes: (keyof ThemeSet)[] = ['black', 'ink', 'charcoal', 'sunset', 'ocean', 'forest', 'royal', 'vintage'];
-const colorfulThemes: (keyof ThemeSet)[] = ['neon'];
-const monochromeThemes: (keyof ThemeSet)[] = ['monochrome'];
+const basicThemes: (keyof ThemeSet)[] = ["default", "new", "sale"];
+const lightThemes: (keyof ThemeSet)[] = ["white", "snow", "paper", "silver"];
+const darkThemes: (keyof ThemeSet)[] = [
+	"black",
+	"ink",
+	"charcoal",
+	"sunset",
+	"ocean",
+	"forest",
+	"royal",
+	"vintage",
+];
+const colorfulThemes: (keyof ThemeSet)[] = ["neon"];
+const monochromeThemes: (keyof ThemeSet)[] = ["monochrome"];
 
 export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 	themes,
@@ -43,27 +52,33 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 	onThemeSelect,
 }) => {
 	// Filter themes to only include ones that actually exist
-	const availableBasicThemes = basicThemes.filter(theme => themes[theme]);
-	const availableLightThemes = lightThemes.filter(theme => themes[theme]);
-	const availableDarkThemes = darkThemes.filter(theme => themes[theme]);
-	const availableColorfulThemes = colorfulThemes.filter(theme => themes[theme]);
-	const availableMonochromeThemes = monochromeThemes.filter(theme => themes[theme]);
-	const ThemePreview: React.FC<{ themeName: keyof ThemeSet }> = ({ themeName }) => {
+	const availableBasicThemes = basicThemes.filter((theme) => themes[theme]);
+	const availableLightThemes = lightThemes.filter((theme) => themes[theme]);
+	const availableDarkThemes = darkThemes.filter((theme) => themes[theme]);
+	const availableColorfulThemes = colorfulThemes.filter(
+		(theme) => themes[theme],
+	);
+	const availableMonochromeThemes = monochromeThemes.filter(
+		(theme) => themes[theme],
+	);
+	const ThemePreview: React.FC<{ themeName: keyof ThemeSet }> = ({
+		themeName,
+	}) => {
 		const theme = themes[themeName];
 		const isSelected = selectedTheme === themeName;
-		
+
 		// Don't render if theme doesn't exist
 		if (!theme) {
 			return null;
 		}
-		
+
 		return (
-			<Card 
+			<Card
 				className={`relative cursor-pointer transition-all hover:scale-105 ${
-					isSelected ? 'ring-2 ring-primary' : ''
+					isSelected ? "ring-2 ring-primary" : ""
 				}`}
 				onClick={() => {
-					console.log('Theme selected:', themeName);
+					console.log("Theme selected:", themeName);
 					onThemeSelect(themeName);
 				}}
 			>
@@ -76,6 +91,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 							viewBox="0 0 96 64"
 							xmlns="http://www.w3.org/2000/svg"
 						>
+							<title>Предварительный просмотр темы</title>
 							<defs>
 								<linearGradient
 									id={`preview-gradient-${themeName}`}
@@ -89,18 +105,19 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 									<stop offset="100%" stopColor={theme.end} />
 								</linearGradient>
 							</defs>
-							
+
 							{/* Background */}
 							<rect
 								width="96"
 								height="64"
-								fill={theme.start === theme.end 
-									? theme.start 
-									: `url(#preview-gradient-${themeName})`
+								fill={
+									theme.start === theme.end
+										? theme.start
+										: `url(#preview-gradient-${themeName})`
 								}
 								rx="4"
 							/>
-							
+
 							{/* Sample text */}
 							<text
 								x="8"
@@ -111,7 +128,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 							>
 								Товар
 							</text>
-							
+
 							<text
 								x="8"
 								y="32"
@@ -121,20 +138,20 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 							>
 								100₽
 							</text>
-							
+
 							{/* Special styling for white/black themes */}
-							{(themeName === 'white' || themeName === 'black') && (
+							{(themeName === "white" || themeName === "black") && (
 								<rect
 									width="96"
 									height="64"
 									fill="none"
-									stroke={themeName === 'white' ? '#000000' : '#ffffff'}
+									stroke={themeName === "white" ? "#000000" : "#ffffff"}
 									strokeWidth="1"
 									rx="4"
 								/>
 							)}
 						</svg>
-						
+
 						{isSelected && (
 							<div className="absolute top-1 right-1">
 								<div className="bg-primary text-primary-foreground rounded-full p-1">
@@ -143,7 +160,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 							</div>
 						)}
 					</div>
-					
+
 					{/* Theme name */}
 					<p className="text-xs text-center font-medium">
 						{themeLabels[themeName]}
@@ -156,19 +173,18 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 	return (
 		<div className="space-y-4">
 			<h3 className="text-sm font-medium">Выберите тему ценника</h3>
-			
+
 			<ScrollArea className="h-80">
 				<div className="space-y-6 p-1">
 					{/* Basic Themes */}
 					{availableBasicThemes.length > 0 && (
 						<div className="space-y-3">
-							<h4 className="text-xs font-medium text-muted-foreground">Базовые темы</h4>
+							<h4 className="text-xs font-medium text-muted-foreground">
+								Базовые темы
+							</h4>
 							<div className="grid grid-cols-3 gap-3">
 								{availableBasicThemes.map((themeName) => (
-									<ThemePreview 
-										key={themeName} 
-										themeName={themeName} 
-									/>
+									<ThemePreview key={themeName} themeName={themeName} />
 								))}
 							</div>
 						</div>
@@ -177,13 +193,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 					{/* Light Themes */}
 					{availableLightThemes.length > 0 && (
 						<div className="space-y-3">
-							<h4 className="text-xs font-medium text-muted-foreground">Светлые темы</h4>
+							<h4 className="text-xs font-medium text-muted-foreground">
+								Светлые темы
+							</h4>
 							<div className="grid grid-cols-3 gap-3">
 								{availableLightThemes.map((themeName) => (
-									<ThemePreview 
-										key={themeName} 
-										themeName={themeName} 
-									/>
+									<ThemePreview key={themeName} themeName={themeName} />
 								))}
 							</div>
 						</div>
@@ -192,13 +207,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 					{/* Dark Themes */}
 					{availableDarkThemes.length > 0 && (
 						<div className="space-y-3">
-							<h4 className="text-xs font-medium text-muted-foreground">Темные темы</h4>
+							<h4 className="text-xs font-medium text-muted-foreground">
+								Темные темы
+							</h4>
 							<div className="grid grid-cols-3 gap-3">
 								{availableDarkThemes.map((themeName) => (
-									<ThemePreview 
-										key={themeName} 
-										themeName={themeName} 
-									/>
+									<ThemePreview key={themeName} themeName={themeName} />
 								))}
 							</div>
 						</div>
@@ -207,13 +221,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 					{/* Colorful Themes */}
 					{availableColorfulThemes.length > 0 && (
 						<div className="space-y-3">
-							<h4 className="text-xs font-medium text-muted-foreground">Яркие темы</h4>
+							<h4 className="text-xs font-medium text-muted-foreground">
+								Яркие темы
+							</h4>
 							<div className="grid grid-cols-3 gap-3">
 								{availableColorfulThemes.map((themeName) => (
-									<ThemePreview 
-										key={themeName} 
-										themeName={themeName} 
-									/>
+									<ThemePreview key={themeName} themeName={themeName} />
 								))}
 							</div>
 						</div>
@@ -222,13 +235,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 					{/* Monochrome Themes */}
 					{availableMonochromeThemes.length > 0 && (
 						<div className="space-y-3">
-							<h4 className="text-xs font-medium text-muted-foreground">Монохромные темы</h4>
+							<h4 className="text-xs font-medium text-muted-foreground">
+								Монохромные темы
+							</h4>
 							<div className="grid grid-cols-3 gap-3">
 								{availableMonochromeThemes.map((themeName) => (
-									<ThemePreview 
-										key={themeName} 
-										themeName={themeName} 
-									/>
+									<ThemePreview key={themeName} themeName={themeName} />
 								))}
 							</div>
 						</div>
@@ -242,8 +254,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => onThemeSelect('white')}
-						className={selectedTheme === 'white' ? 'bg-primary text-primary-foreground' : ''}
+						onClick={() => onThemeSelect("white")}
+						className={
+							selectedTheme === "white"
+								? "bg-primary text-primary-foreground"
+								: ""
+						}
 					>
 						Белый
 					</Button>
@@ -252,8 +268,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => onThemeSelect('black')}
-						className={selectedTheme === 'black' ? 'bg-primary text-primary-foreground' : ''}
+						onClick={() => onThemeSelect("black")}
+						className={
+							selectedTheme === "black"
+								? "bg-primary text-primary-foreground"
+								: ""
+						}
 					>
 						Черный
 					</Button>
@@ -262,8 +282,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => onThemeSelect('monochrome')}
-						className={selectedTheme === 'monochrome' ? 'bg-primary text-primary-foreground' : ''}
+						onClick={() => onThemeSelect("monochrome")}
+						className={
+							selectedTheme === "monochrome"
+								? "bg-primary text-primary-foreground"
+								: ""
+						}
 					>
 						Монохром
 					</Button>
@@ -272,8 +296,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => onThemeSelect('default')}
-						className={selectedTheme === 'default' ? 'bg-primary text-primary-foreground' : ''}
+						onClick={() => onThemeSelect("default")}
+						className={
+							selectedTheme === "default"
+								? "bg-primary text-primary-foreground"
+								: ""
+						}
 					>
 						Стандарт
 					</Button>

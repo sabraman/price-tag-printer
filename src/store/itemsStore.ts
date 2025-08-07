@@ -23,11 +23,15 @@ interface ItemsState {
 	history: Item[][];
 	historyIndex: number;
 	columnLabels: string[];
-	
+
 	// Actions
 	setItems: (items: Item[]) => void;
 	addItem: (item: Item) => void;
-	updateItem: (id: number, field: keyof Item, value: string | number | boolean) => void;
+	updateItem: (
+		id: number,
+		field: keyof Item,
+		value: string | number | boolean,
+	) => void;
 	deleteItem: (id: number) => void;
 	duplicateItems: (idsToDuplicate: number[]) => void;
 	setColumnLabels: (labels: string[]) => void;
@@ -45,7 +49,7 @@ const updateHistory = (state: ItemsState) => {
 
 export const useItemsStore = create<ItemsState>()(
 	persist(
-		immer((set, get) => ({
+		immer((set) => ({
 			items: [],
 			history: [[]],
 			historyIndex: 0,
@@ -73,7 +77,8 @@ export const useItemsStore = create<ItemsState>()(
 						if (field === "price") {
 							item.price = Number(value);
 						} else if (field === "designType") {
-							item.designType = String(value) === "" ? undefined : String(value);
+							item.designType =
+								String(value) === "" ? undefined : String(value);
 						} else if (field === "hasDiscount") {
 							item.hasDiscount = Boolean(value);
 						} else if (field === "data") {

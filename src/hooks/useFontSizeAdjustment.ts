@@ -21,7 +21,7 @@ export const useFontSizeAdjustment = ({
 	debounceMs = 100,
 }: FontSizeAdjustmentOptions) => {
 	const [fontSize, setFontSize] = useState(initialFontSize);
-	const timeoutRef = useRef<NodeJS.Timeout>();
+	const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 	const iterationCountRef = useRef(0);
 
 	const adjustFontSize = useCallback(() => {
@@ -32,31 +32,31 @@ export const useFontSizeAdjustment = ({
 
 		timeoutRef.current = setTimeout(() => {
 			const element = document.getElementById(elementId);
-			
+
 			if (!element) {
 				return;
 			}
 
 			// Reset iteration counter for new adjustment cycle
 			iterationCountRef.current = 0;
-			
+
 			const performAdjustment = () => {
 				if (iterationCountRef.current >= maxIterations) {
 					return;
 				}
 
 				const isOverflown = element.scrollHeight > element.clientHeight;
-				
+
 				if (isOverflown) {
-					setFontSize(current => {
+					setFontSize((current) => {
 						const newSize = Math.max(current - adjustmentStep, minFontSize);
-						
+
 						if (newSize > minFontSize) {
 							iterationCountRef.current++;
 							// Use requestAnimationFrame for better performance
 							requestAnimationFrame(performAdjustment);
 						}
-						
+
 						return newSize;
 					});
 				}

@@ -17,7 +17,10 @@ interface ErrorBoundaryProps {
 	resetOnPropsChange?: boolean;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+	ErrorBoundaryProps,
+	ErrorBoundaryState
+> {
 	constructor(props: ErrorBoundaryProps) {
 		super(props);
 		this.state = {
@@ -38,22 +41,25 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
 		this.setState({
 			error,
-			errorInfo: errorInfo.componentStack,
+			errorInfo: errorInfo.componentStack || null,
 		});
 
 		// Log error to external service if callback provided
-		this.props.onError?.(error, errorInfo.componentStack);
-		
+		this.props.onError?.(error, errorInfo.componentStack || "");
+
 		// Log to console in development
-		if (process.env.NODE_ENV === 'development') {
-			console.error('Error caught by boundary:', error);
-			console.error('Error info:', errorInfo);
+		if (process.env.NODE_ENV === "development") {
+			console.error("Error caught by boundary:", error);
+			console.error("Error info:", errorInfo);
 		}
 	}
 
 	componentDidUpdate(prevProps: ErrorBoundaryProps) {
 		// Reset error state when props change (useful for route changes)
-		if (this.props.resetOnPropsChange && prevProps.children !== this.props.children) {
+		if (
+			this.props.resetOnPropsChange &&
+			prevProps.children !== this.props.children
+		) {
 			if (this.state.hasError) {
 				this.resetError();
 			}
@@ -84,10 +90,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 						<AlertDescription className="mt-2">
 							<div className="space-y-2">
 								<p>
-									Произошла непредвиденная ошибка. Попробуйте обновить страницу или обратитесь к разработчику.
+									Произошла непредвиденная ошибка. Попробуйте обновить страницу
+									или обратитесь к разработчику.
 								</p>
-								
-								{process.env.NODE_ENV === 'development' && this.state.error && (
+
+								{process.env.NODE_ENV === "development" && this.state.error && (
 									<details className="mt-4">
 										<summary className="cursor-pointer text-sm font-medium">
 											Подробности ошибки (только в режиме разработки)
@@ -105,9 +112,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 									</details>
 								)}
 
-								<Button 
+								<Button
 									onClick={this.resetError}
-									size="sm" 
+									size="sm"
 									variant="outline"
 									className="mt-3"
 								>
@@ -127,18 +134,21 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
 // Specialized error boundaries for different parts of the app
 
-export const DataImportErrorBoundary: React.FC<{ children: ReactNode }> = ({ children }) => (
+export const DataImportErrorBoundary: React.FC<{ children: ReactNode }> = ({
+	children,
+}) => (
 	<ErrorBoundary
 		onError={(error, errorInfo) => {
 			// Log import-specific errors
-			console.error('Data import error:', error, errorInfo);
+			console.error("Data import error:", error, errorInfo);
 		}}
 		fallback={
 			<Alert variant="destructive">
 				<AlertTriangle className="h-4 w-4" />
 				<AlertTitle>Ошибка импорта данных</AlertTitle>
 				<AlertDescription>
-					Не удалось импортировать данные. Проверьте формат файла и попробуйте снова.
+					Не удалось импортировать данные. Проверьте формат файла и попробуйте
+					снова.
 				</AlertDescription>
 			</Alert>
 		}
@@ -147,17 +157,20 @@ export const DataImportErrorBoundary: React.FC<{ children: ReactNode }> = ({ chi
 	</ErrorBoundary>
 );
 
-export const ExportErrorBoundary: React.FC<{ children: ReactNode }> = ({ children }) => (
+export const ExportErrorBoundary: React.FC<{ children: ReactNode }> = ({
+	children,
+}) => (
 	<ErrorBoundary
 		onError={(error, errorInfo) => {
-			console.error('Export error:', error, errorInfo);
+			console.error("Export error:", error, errorInfo);
 		}}
 		fallback={
 			<Alert variant="destructive">
 				<AlertTriangle className="h-4 w-4" />
 				<AlertTitle>Ошибка экспорта</AlertTitle>
 				<AlertDescription>
-					Не удалось экспортировать данные. Попробуйте снова или обратитесь к разработчику.
+					Не удалось экспортировать данные. Попробуйте снова или обратитесь к
+					разработчику.
 				</AlertDescription>
 			</Alert>
 		}
@@ -166,10 +179,12 @@ export const ExportErrorBoundary: React.FC<{ children: ReactNode }> = ({ childre
 	</ErrorBoundary>
 );
 
-export const RenderErrorBoundary: React.FC<{ children: ReactNode }> = ({ children }) => (
+export const RenderErrorBoundary: React.FC<{ children: ReactNode }> = ({
+	children,
+}) => (
 	<ErrorBoundary
 		onError={(error, errorInfo) => {
-			console.error('Render error:', error, errorInfo);
+			console.error("Render error:", error, errorInfo);
 		}}
 		fallback={
 			<div className="p-4 text-center text-muted-foreground">

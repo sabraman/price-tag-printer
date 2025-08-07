@@ -38,7 +38,25 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 	const [key, setKey] = useState<number>(0);
 
 	// Make sure we use a valid theme, or fall back to default
-	const validThemeTypes = ["default", "new", "sale", "white", "black", "sunset", "ocean", "forest", "royal", "vintage", "neon", "monochrome", "silver", "charcoal", "paper", "ink", "snow"];
+	const validThemeTypes = [
+		"default",
+		"new",
+		"sale",
+		"white",
+		"black",
+		"sunset",
+		"ocean",
+		"forest",
+		"royal",
+		"vintage",
+		"neon",
+		"monochrome",
+		"silver",
+		"charcoal",
+		"paper",
+		"ink",
+		"snow",
+	];
 	const safeDesignType =
 		designType && validThemeTypes.includes(designType)
 			? (designType as keyof ThemeSet)
@@ -48,17 +66,20 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 
 	// Check if we have multi-tier pricing
 	const hasMultiTierPricing = priceFor2 && priceFrom3;
-	
+
 	// Determine if this is a solid color theme that needs a border
-	const needsBorder = safeDesignType === 'white' || safeDesignType === 'black' || 
-		(currentTheme.start === currentTheme.end);
-	const borderColor = safeDesignType === 'white' ? '#e5e5e5' : '#333333';
+	const needsBorder =
+		safeDesignType === "white" ||
+		safeDesignType === "black" ||
+		currentTheme.start === currentTheme.end;
+	const borderColor = safeDesignType === "white" ? "#e5e5e5" : "#333333";
 	// Light themes have dark text, dark themes have white text
-	const isLightTheme = currentTheme.textColor !== '#ffffff';
-	const cutLineColor = isLightTheme ? '#000000' : '#ffffff';
+	const isLightTheme = currentTheme.textColor !== "#ffffff";
+	const cutLineColor = isLightTheme ? "#000000" : "#ffffff";
 
 	// Theme label logic
-	const shouldShowLabel = showThemeLabels && (safeDesignType === 'new' || safeDesignType === 'sale');
+	const shouldShowLabel =
+		showThemeLabels && (safeDesignType === "new" || safeDesignType === "sale");
 
 	useEffect(() => {
 		setFontSize(16);
@@ -112,19 +133,19 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 						</linearGradient>
 					</defs>
 					{/* Фоновый градиент */}
-					<rect 
-						width="160" 
-						height="110" 
-						fill={currentTheme.start === currentTheme.end 
-							? currentTheme.start 
-							: `url(#linear-gradient-${id})`
+					<rect
+						width="160"
+						height="110"
+						fill={
+							currentTheme.start === currentTheme.end
+								? currentTheme.start
+								: `url(#linear-gradient-${id})`
 						}
 						{...(needsBorder && {
 							stroke: borderColor,
-							strokeWidth: safeDesignType === 'white' ? '1.5' : '1',
+							strokeWidth: safeDesignType === "white" ? "1.5" : "1",
 						})}
 					/>
-
 				</svg>
 				<div
 					className="absolute top-0"
@@ -272,6 +293,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 					viewBox="0 0 160 110"
 					xmlns="http://www.w3.org/2000/svg"
 				>
+					<title>Линии для вырезания</title>
 					{/* Линии для вырезания - более длинные штрихи с небольшими промежутками, 
             подходят для печати и будут заметны даже при наложении друг на друга в сетке */}
 					<line

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Item } from "@/store/priceTagsStore";
 import { OptimizedEditTable } from "@/components/features/price-tags/OptimizedEditTable";
+import type { Item } from "@/store/priceTagsStore";
 
 // Mock sonner toast
 vi.mock("sonner", () => ({

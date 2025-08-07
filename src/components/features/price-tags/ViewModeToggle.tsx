@@ -35,10 +35,12 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
 					Редактирование
 				</Button>
 			</div>
-			
+
 			<div className="text-sm text-muted-foreground">
 				{itemsCount > 0 ? (
-					<>Элементов: <span className="font-medium">{itemsCount}</span></>
+					<>
+						Элементов: <span className="font-medium">{itemsCount}</span>
+					</>
 				) : (
 					"Нет элементов для отображения"
 				)}

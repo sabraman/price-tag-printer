@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { lazy, Suspense } from "react";
 import type { WorkBook } from "xlsx";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -18,7 +18,9 @@ const LoadingSkeleton = () => (
 	</div>
 );
 
-export const ExcelUploaderLazy: React.FC<ExcelUploaderLazyProps> = ({ onUpload }) => {
+export const ExcelUploaderLazy: React.FC<ExcelUploaderLazyProps> = ({
+	onUpload,
+}) => {
 	return (
 		<Suspense fallback={<LoadingSkeleton />}>
 			<ExcelUploader onUpload={onUpload} />

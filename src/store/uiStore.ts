@@ -5,17 +5,17 @@ interface UIState {
 	loading: boolean;
 	error: string | null;
 	isEditMode: boolean;
-	
+
 	// Selection state
 	selectedItems: number[];
 	searchQuery: string;
 	currentFilter: string;
-	
+
 	// Modal/dialog states
 	showExportDialog: boolean;
 	showImportDialog: boolean;
 	showSettingsDialog: boolean;
-	
+
 	// Actions
 	setLoading: (loading: boolean) => void;
 	setError: (error: string | null) => void;
@@ -31,7 +31,7 @@ interface UIState {
 	resetUI: () => void;
 }
 
-export const useUIStore = create<UIState>((set, get) => ({
+export const useUIStore = create<UIState>((set) => ({
 	// Initial state
 	loading: false,
 	error: null,
@@ -49,7 +49,7 @@ export const useUIStore = create<UIState>((set, get) => ({
 	setIsEditMode: (isEditMode) => set({ isEditMode }),
 
 	setSelectedItems: (items) => set({ selectedItems: items }),
-	
+
 	toggleItemSelection: (id) =>
 		set((state) => {
 			const isSelected = state.selectedItems.includes(id);

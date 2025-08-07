@@ -33,16 +33,16 @@ interface SettingsState {
 	designType: string;
 	themes: ThemeSet;
 	currentFont: string;
-	
+
 	// Discount settings
 	discountAmount: number;
 	maxDiscountPercent: number;
 	discountText: string;
-	
+
 	// Table mode flags
 	hasTableDesigns: boolean;
 	hasTableDiscounts: boolean;
-	
+
 	// Actions
 	setDesign: (design: boolean) => void;
 	setDesignType: (type: string) => void;
@@ -160,7 +160,7 @@ export const useSettingsStore = create<SettingsState>()(
 
 			// Actions
 			setDesign: (design) => set({ design }),
-			
+
 			setDesignType: (type) =>
 				set((state) => {
 					// When switching to table mode and we have table discounts

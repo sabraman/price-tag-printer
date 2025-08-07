@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Theme, ThemeSet } from "@/store/priceTagsStore";
-import { Button } from "@/components/ui/button";
 
 interface GradientPickerProps {
 	themes: ThemeSet;
@@ -15,10 +15,14 @@ interface GradientPickerProps {
 
 // Create a helper to generate a complete theme set with defaults for unused themes
 const createCompleteThemeSet = (overrides: Partial<ThemeSet>): ThemeSet => {
-	const defaultTheme = { start: "#222222", end: "#dd4c9b", textColor: "#ffffff" };
+	const defaultTheme = {
+		start: "#222222",
+		end: "#dd4c9b",
+		textColor: "#ffffff",
+	};
 	const newTheme = { start: "#222222", end: "#9cdd4c", textColor: "#ffffff" };
 	const saleTheme = { start: "#222222", end: "#dd4c54", textColor: "#ffffff" };
-	
+
 	return {
 		default: defaultTheme,
 		new: newTheme,
@@ -77,96 +81,96 @@ const darkThemePresets: ThemeSet[] = [
 const lightThemePresets: ThemeSet[] = [
 	// Light Blue (like dark themes with consistent gradients)
 	createCompleteThemeSet({
-		default: { start: '#e3f2fd', end: '#90caf9', textColor: '#0d47a1' },
-		new: { start: '#e3f2fd', end: '#81c784', textColor: '#1b5e20' },
-		sale: { start: '#e3f2fd', end: '#ef5350', textColor: '#b71c1c' },
+		default: { start: "#e3f2fd", end: "#90caf9", textColor: "#0d47a1" },
+		new: { start: "#e3f2fd", end: "#81c784", textColor: "#1b5e20" },
+		sale: { start: "#e3f2fd", end: "#ef5350", textColor: "#b71c1c" },
 	}),
 	// Light Green
 	createCompleteThemeSet({
-		default: { start: '#e8f5e8', end: '#a5d6a7', textColor: '#1b5e20' },
-		new: { start: '#e8f5e8', end: '#66bb6a', textColor: '#1b5e20' },
-		sale: { start: '#e8f5e8', end: '#ef5350', textColor: '#b71c1c' },
+		default: { start: "#e8f5e8", end: "#a5d6a7", textColor: "#1b5e20" },
+		new: { start: "#e8f5e8", end: "#66bb6a", textColor: "#1b5e20" },
+		sale: { start: "#e8f5e8", end: "#ef5350", textColor: "#b71c1c" },
 	}),
 	// Light Orange
 	createCompleteThemeSet({
-		default: { start: '#fff3e0', end: '#ffb74d', textColor: '#e65100' },
-		new: { start: '#fff3e0', end: '#66bb6a', textColor: '#1b5e20' },
-		sale: { start: '#fff3e0', end: '#ef5350', textColor: '#b71c1c' },
+		default: { start: "#fff3e0", end: "#ffb74d", textColor: "#e65100" },
+		new: { start: "#fff3e0", end: "#66bb6a", textColor: "#1b5e20" },
+		sale: { start: "#fff3e0", end: "#ef5350", textColor: "#b71c1c" },
 	}),
 	// Light Purple
 	createCompleteThemeSet({
-		default: { start: '#f3e5f5', end: '#ba68c8', textColor: '#4a148c' },
-		new: { start: '#f3e5f5', end: '#66bb6a', textColor: '#1b5e20' },
-		sale: { start: '#f3e5f5', end: '#ef5350', textColor: '#b71c1c' },
+		default: { start: "#f3e5f5", end: "#ba68c8", textColor: "#4a148c" },
+		new: { start: "#f3e5f5", end: "#66bb6a", textColor: "#1b5e20" },
+		sale: { start: "#f3e5f5", end: "#ef5350", textColor: "#b71c1c" },
 	}),
 ];
 
 const lightMonochromeThemePresets: ThemeSet[] = [
 	// Pure White
 	createCompleteThemeSet({
-		default: { start: '#ffffff', end: '#ffffff', textColor: '#000000' },
-		new: { start: '#ffffff', end: '#ffffff', textColor: '#000000' },
-		sale: { start: '#ffffff', end: '#ffffff', textColor: '#000000' },
+		default: { start: "#ffffff", end: "#ffffff", textColor: "#000000" },
+		new: { start: "#ffffff", end: "#ffffff", textColor: "#000000" },
+		sale: { start: "#ffffff", end: "#ffffff", textColor: "#000000" },
 	}),
 	// Light Gray
 	createCompleteThemeSet({
-		default: { start: '#f3f4f6', end: '#f3f4f6', textColor: '#111827' },
-		new: { start: '#f3f4f6', end: '#f3f4f6', textColor: '#111827' },
-		sale: { start: '#f3f4f6', end: '#f3f4f6', textColor: '#111827' },
+		default: { start: "#f3f4f6", end: "#f3f4f6", textColor: "#111827" },
+		new: { start: "#f3f4f6", end: "#f3f4f6", textColor: "#111827" },
+		sale: { start: "#f3f4f6", end: "#f3f4f6", textColor: "#111827" },
 	}),
 	// Silver
 	createCompleteThemeSet({
-		default: { start: '#d1d5db', end: '#d1d5db', textColor: '#374151' },
-		new: { start: '#d1d5db', end: '#d1d5db', textColor: '#374151' },
-		sale: { start: '#d1d5db', end: '#d1d5db', textColor: '#374151' },
+		default: { start: "#d1d5db", end: "#d1d5db", textColor: "#374151" },
+		new: { start: "#d1d5db", end: "#d1d5db", textColor: "#374151" },
+		sale: { start: "#d1d5db", end: "#d1d5db", textColor: "#374151" },
 	}),
 ];
 
 const darkMonochromeThemePresets: ThemeSet[] = [
 	// Pure Black
 	createCompleteThemeSet({
-		default: { start: '#000000', end: '#000000', textColor: '#ffffff' },
-		new: { start: '#000000', end: '#000000', textColor: '#ffffff' },
-		sale: { start: '#000000', end: '#000000', textColor: '#ffffff' },
+		default: { start: "#000000", end: "#000000", textColor: "#ffffff" },
+		new: { start: "#000000", end: "#000000", textColor: "#ffffff" },
+		sale: { start: "#000000", end: "#000000", textColor: "#ffffff" },
 	}),
 	// Dark Gray
 	createCompleteThemeSet({
-		default: { start: '#111827', end: '#111827', textColor: '#ffffff' },
-		new: { start: '#111827', end: '#111827', textColor: '#ffffff' },
-		sale: { start: '#111827', end: '#111827', textColor: '#ffffff' },
+		default: { start: "#111827", end: "#111827", textColor: "#ffffff" },
+		new: { start: "#111827", end: "#111827", textColor: "#ffffff" },
+		sale: { start: "#111827", end: "#111827", textColor: "#ffffff" },
 	}),
 	// Charcoal
 	createCompleteThemeSet({
-		default: { start: '#374151', end: '#374151', textColor: '#ffffff' },
-		new: { start: '#374151', end: '#374151', textColor: '#ffffff' },
-		sale: { start: '#374151', end: '#374151', textColor: '#ffffff' },
+		default: { start: "#374151", end: "#374151", textColor: "#ffffff" },
+		new: { start: "#374151", end: "#374151", textColor: "#ffffff" },
+		sale: { start: "#374151", end: "#374151", textColor: "#ffffff" },
 	}),
 ];
 
 // Создаем уникальные id для тем
 const darkThemeIds = [
 	"classic-dark",
-	"ocean-deep", 
+	"ocean-deep",
 	"forest-night",
 	"royal-purple",
 	"sunset-glow",
 ];
 const lightThemeIds = [
-	'light-blue',
-	'light-green', 
-	'light-orange',
-	'light-purple'
+	"light-blue",
+	"light-green",
+	"light-orange",
+	"light-purple",
 ];
 const lightMonochromeThemeIds = [
-	'white-mono',
-	'light-gray-mono',
-	'silver-mono'
+	"white-mono",
+	"light-gray-mono",
+	"silver-mono",
 ];
 
 const darkMonochromeThemeIds = [
-	'black-mono',
-	'dark-gray-mono',
-	'charcoal-mono'
+	"black-mono",
+	"dark-gray-mono",
+	"charcoal-mono",
 ];
 
 export function GradientPicker({
@@ -255,7 +259,9 @@ export function GradientPicker({
 
 							{/* Light Monochrome Themes */}
 							<div className="space-y-3">
-								<h3 className="text-sm font-medium">Светлые монохромные темы</h3>
+								<h3 className="text-sm font-medium">
+									Светлые монохромные темы
+								</h3>
 								<div className="grid grid-cols-3 gap-2">
 									{lightMonochromeThemePresets.map((preset, i) => (
 										<Button

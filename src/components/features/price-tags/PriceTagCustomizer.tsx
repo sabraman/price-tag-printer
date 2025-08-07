@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -8,11 +9,10 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import type { ThemeSet } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
-import { GradientPicker } from "./GradientPicker";
 import { FancyDesignTypeSelector } from "./FancyDesignTypeSelector";
+import { GradientPicker } from "./GradientPicker";
 import PlusMinusInput from "./PlusMinusInput";
 
 interface PriceTagCustomizerProps {
@@ -49,9 +49,9 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	onShowThemeLabelsChange,
 }) => {
 	const currentFontData = fonts.find((f) => f.id === currentFont) || fonts[0];
-	const { 
-		design, 
-		hasTableDiscounts, 
+	const {
+		design,
+		hasTableDiscounts,
 		hasTableDesigns,
 		discountAmount,
 		maxDiscountPercent,
@@ -86,7 +86,8 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	const showDiscountSwitch = !(designType === "table" && hasTableDiscounts);
 
 	// Show discount settings if global discount is enabled OR table mode with table discounts
-	const showDiscountSettings = design || (designType === "table" && hasTableDiscounts);
+	const showDiscountSettings =
+		design || (designType === "table" && hasTableDiscounts);
 
 	const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const lines = e.target.value.split("\n");
@@ -118,7 +119,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 		if (value === "table" && hasTableDiscounts) {
 			setDesign(false);
 		}
-		
+
 		if (onDesignTypeChange) {
 			onDesignTypeChange(value);
 		}
@@ -144,7 +145,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 			{(showDiscountSwitch || showDiscountSettings) && (
 				<div className="border p-4 rounded-lg space-y-4">
 					<Label className="text-sm font-medium">Настройки скидки</Label>
-					
+
 					{/* Discount Switch */}
 					{showDiscountSwitch && (
 						<div className="flex items-center justify-between">
@@ -204,7 +205,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 			{/* Font and Display Settings */}
 			<div className="border p-4 rounded-lg space-y-4">
 				<Label className="text-sm font-medium">Настройки отображения</Label>
-				
+
 				{/* Font Selection */}
 				<div className="space-y-2">
 					<Label>Шрифт</Label>
@@ -244,13 +245,19 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 						/>
 					</div>
 					<p className="text-xs text-muted-foreground">
-						Показывать или скрывать надписи "NEW" и "SALE" на соответствующих темах
+						Показывать или скрывать надписи "NEW" и "SALE" на соответствующих
+						темах
 					</p>
 				</div>
 
 				{/* Reset Settings */}
 				<div className="pt-2 border-t">
-					<Button type="button" variant="outline" onClick={handleClearSettings} className="w-full">
+					<Button
+						type="button"
+						variant="outline"
+						onClick={handleClearSettings}
+						className="w-full"
+					>
 						Сбросить все настройки
 					</Button>
 				</div>

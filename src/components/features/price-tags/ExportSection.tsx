@@ -1,13 +1,13 @@
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { PDFGeneratorLazy } from "./PDFGeneratorLazy";
-import GenerateButton from "./GenerateButton";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { usePrintTags } from "@/hooks/usePrintTags";
 import type { Item } from "@/store/itemsStore";
 import type { ThemeSet } from "@/store/priceTagsStore";
+import GenerateButton from "./GenerateButton";
+import { PDFGeneratorLazy } from "./PDFGeneratorLazy";
 
 interface ExportSectionProps {
 	items: Item[];
@@ -42,7 +42,7 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 
 			// Simulate progress for print preparation
 			const progressInterval = setInterval(() => {
-				setExportProgress(prev => {
+				setExportProgress((prev) => {
 					if (prev >= 90) {
 						clearInterval(progressInterval);
 						return 90;
@@ -52,7 +52,7 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 			}, 100);
 
 			handlePrint();
-			
+
 			setTimeout(() => {
 				setExportProgress(100);
 				toast.success("Печать запущена");
@@ -61,8 +61,7 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 					setExportProgress(0);
 				}, 1000);
 			}, 1500);
-
-		} catch (error) {
+		} catch (_error) {
 			setIsExporting(false);
 			setExportProgress(0);
 			toast.error("Ошибка при печати");
@@ -94,7 +93,7 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 					}}
 				/>
 
-				<Button 
+				<Button
 					onClick={handlePrintTags}
 					disabled={isExporting || items.length === 0}
 					variant="outline"
@@ -102,9 +101,9 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 					{isExporting ? "Подготовка к печати..." : "Печать"}
 				</Button>
 
-				<GenerateButton 
+				<GenerateButton
 					items={items}
-					onGenerate={() => {}} 
+					onGenerate={() => {}}
 					isEditMode={false}
 				/>
 			</div>
@@ -119,7 +118,8 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 			)}
 
 			<div className="text-sm text-muted-foreground">
-				Доступно элементов для экспорта: <span className="font-medium">{items.length}</span>
+				Доступно элементов для экспорта:{" "}
+				<span className="font-medium">{items.length}</span>
 			</div>
 		</div>
 	);

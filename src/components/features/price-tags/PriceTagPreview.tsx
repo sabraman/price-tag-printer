@@ -70,18 +70,21 @@ export const PriceTagPreview: React.FC<PriceTagPreviewProps> = ({
 		);
 	}
 	// Determine if this theme needs a border (light themes)
-	const needsBorder = showBorder || theme.start === "#ffffff" || theme.start === "#f8f8f8" || theme.start === "#c0c0c0";
-	
+	const needsBorder =
+		showBorder ||
+		theme.start === "#ffffff" ||
+		theme.start === "#f8f8f8" ||
+		theme.start === "#c0c0c0";
+
 	// Light themes have dark text, dark themes have white text
-	const isLightTheme = theme.textColor !== '#ffffff';
-	
-	
+	const isLightTheme = theme.textColor !== "#ffffff";
+
 	// Scale font sizes based on the component size
 	const scale = Math.min(width / 160, height / 110);
 	const titleFontSize = Math.max(8 * scale, 4);
 	const priceFontSize = Math.max(24 * scale, 8);
 	const labelFontSize = Math.max(14 * scale, 6);
-	
+
 	// Scale positions based on size
 	const textX = 10 * scale;
 	const titleY = 20 * scale;
@@ -95,6 +98,7 @@ export const PriceTagPreview: React.FC<PriceTagPreviewProps> = ({
 			xmlns="http://www.w3.org/2000/svg"
 			className={className}
 		>
+			<title>Предварительный просмотр ценника</title>
 			<defs>
 				<linearGradient
 					id={`preview-gradient-${uniqueId}`}
@@ -108,26 +112,42 @@ export const PriceTagPreview: React.FC<PriceTagPreviewProps> = ({
 					<stop offset="1" stopColor={theme.end} />
 				</linearGradient>
 			</defs>
-			
+
 			{/* Background */}
 			<rect
 				width={width}
 				height={height}
-				fill={theme.start === theme.end ? theme.start : `url(#preview-gradient-${uniqueId})`}
+				fill={
+					theme.start === theme.end
+						? theme.start
+						: `url(#preview-gradient-${uniqueId})`
+				}
 				{...(needsBorder && {
 					stroke: isLightTheme ? "#e5e5e5" : "#333333",
 					strokeWidth: isLightTheme ? "1.5" : "1",
 				})}
 			/>
-			
+
 			{/* Sample text */}
-			<text x={textX} y={titleY} fill={theme.textColor} fontSize={titleFontSize} fontWeight="500">
+			<text
+				x={textX}
+				y={titleY}
+				fill={theme.textColor}
+				fontSize={titleFontSize}
+				fontWeight="500"
+			>
 				Товар
 			</text>
-			<text x={textX} y={priceY} fill={theme.textColor} fontSize={priceFontSize} fontWeight="bold">
+			<text
+				x={textX}
+				y={priceY}
+				fill={theme.textColor}
+				fontSize={priceFontSize}
+				fontWeight="bold"
+			>
 				299₽
 			</text>
-			
+
 			{/* Design type indicators */}
 			{showLabels && designType === "new" && (
 				<text
@@ -167,7 +187,6 @@ export const PriceTagPreview: React.FC<PriceTagPreviewProps> = ({
 					ИЗ ТАБЛИЦЫ
 				</text>
 			)}
-			
 		</svg>
 	);
 };

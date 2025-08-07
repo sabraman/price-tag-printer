@@ -4,17 +4,17 @@ import { Toaster } from "sonner";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import FontLoader from "@/components/layout/FontLoader";
 import {
+	SidebarInset,
+	SidebarProvider,
+	SidebarTrigger,
+} from "@/components/ui/sidebar";
+import {
 	Breadcrumb,
 	BreadcrumbItem,
 	BreadcrumbList,
 	BreadcrumbPage,
 } from "./components/ui/breadcrumb";
 import { Separator } from "./components/ui/separator";
-import {
-	SidebarInset,
-	SidebarProvider,
-	SidebarTrigger,
-} from "@/components/ui/sidebar";
 
 const App: React.FC = () => {
 	return (

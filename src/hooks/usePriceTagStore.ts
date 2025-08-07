@@ -1,8 +1,11 @@
 import { useEffect } from "react";
-import { useItemsStore, type Item } from "@/store/itemsStore";
+import {
+	calculateDiscountPrice,
+	updateItemPrices,
+} from "@/services/priceCalculationService";
+import { type Item, useItemsStore } from "@/store/itemsStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useUIStore } from "@/store/uiStore";
-import { PriceCalculationService } from "@/services/priceCalculationService";
 
 /**
  * Combined hook that provides all store functionality with automatic price updates
@@ -15,7 +18,7 @@ export const usePriceTagStore = () => {
 
 	// Auto-update prices when settings change
 	useEffect(() => {
-		const updatedItems = PriceCalculationService.updateItemPrices({
+		const updatedItems = updateItemPrices({
 			items: itemsStore.items,
 			discountSettings: {
 				discountAmount: settingsStore.discountAmount,
@@ -26,17 +29,24 @@ export const usePriceTagStore = () => {
 			hasTableDiscounts: settingsStore.hasTableDiscounts,
 		});
 
-		// Only update if prices actually changed
-		const hasChanges = updatedItems.some((item, index) => 
-			itemsStore.items[index] && item.discountPrice !== itemsStore.items[index].discountPrice
+		// Only update if there are actual changes
+		const hasChanges = updatedItems.some(
+			(item, index) =>
+				itemsStore.items[index] &&
+				item.discountPrice !== itemsStore.items[index].discountPrice,
 		);
 
 		if (hasChanges) {
-			// Update items without creating history entry for price recalculation
-			useItemsStore.setState((state) => ({
-				...state,
-				items: updatedItems,
-			}));
+			// Update all items with new discount prices
+			updatedItems.forEach((item, index) => {
+				if (itemsStore.items[index]) {
+					itemsStore.updateItem(
+						itemsStore.items[index].id,
+						"discountPrice",
+						item.discountPrice,
+					);
+				}
+			});
 		}
 	}, [
 		settingsStore.discountAmount,
@@ -44,20 +54,18 @@ export const usePriceTagStore = () => {
 		settingsStore.design,
 		settingsStore.designType,
 		settingsStore.hasTableDiscounts,
-		itemsStore.items.length, // Only recalculate when items count changes
+		itemsStore.items,
+		itemsStore.updateItem,
 	]);
 
 	// Enhanced actions that combine multiple stores
 	const enhancedActions = {
 		// Item actions with price calculation
-		addItemWithPriceCalc: (item: Omit<Item, 'id' | 'discountPrice'>) => {
-			const discountPrice = PriceCalculationService.calculateDiscountPrice(
-				item.price,
-				{
-					discountAmount: settingsStore.discountAmount,
-					maxDiscountPercent: settingsStore.maxDiscountPercent,
-				}
-			);
+		addItemWithPriceCalc: (item: Omit<Item, "id" | "discountPrice">) => {
+			const discountPrice = calculateDiscountPrice(item.price, {
+				discountAmount: settingsStore.discountAmount,
+				maxDiscountPercent: settingsStore.maxDiscountPercent,
+			});
 
 			itemsStore.addItem({
 				...item,
@@ -66,29 +74,38 @@ export const usePriceTagStore = () => {
 		},
 
 		// Update item with automatic price recalculation
-		updateItemWithPriceCalc: (id: number, field: keyof Item, value: string | number | boolean) => {
+		updateItemWithPriceCalc: (
+			id: number,
+			field: keyof Item,
+			value: string | number | boolean,
+		) => {
 			itemsStore.updateItem(id, field, value);
-			
-			// If price was updated, recalculate discount price
-			if (field === 'price') {
-				const item = itemsStore.items.find(item => item.id === id);
-				if (item) {
-					const discountPrice = PriceCalculationService.calculateDiscountPrice(
-						Number(value),
-						{
-							discountAmount: settingsStore.discountAmount,
-							maxDiscountPercent: settingsStore.maxDiscountPercent,
-						}
-					);
-					
-					// Update discount price based on current settings
-					const finalDiscountPrice = settingsStore.hasTableDiscounts && settingsStore.designType === 'table'
-						? (item.hasDiscount !== undefined 
-							? (item.hasDiscount ? discountPrice : Number(value))
-							: (settingsStore.design ? discountPrice : Number(value)))
-						: (settingsStore.design ? discountPrice : Number(value));
 
-					itemsStore.updateItem(id, 'discountPrice', finalDiscountPrice);
+			// If price was updated, recalculate discount price
+			if (field === "price") {
+				const item = itemsStore.items.find((item) => item.id === id);
+				if (item) {
+					const discountPrice = calculateDiscountPrice(Number(value), {
+						discountAmount: settingsStore.discountAmount,
+						maxDiscountPercent: settingsStore.maxDiscountPercent,
+					});
+
+					// Update discount price based on current settings
+					const finalDiscountPrice =
+						settingsStore.hasTableDiscounts &&
+						settingsStore.designType === "table"
+							? item.hasDiscount !== undefined
+								? item.hasDiscount
+									? discountPrice
+									: Number(value)
+								: settingsStore.design
+									? discountPrice
+									: Number(value)
+							: settingsStore.design
+								? discountPrice
+								: Number(value);
+
+					itemsStore.updateItem(id, "discountPrice", finalDiscountPrice);
 				}
 			}
 		},
@@ -109,7 +126,10 @@ export const usePriceTagStore = () => {
 		},
 
 		// Settings with automatic price recalculation
-		updateDiscountSettings: (discountAmount?: number, maxDiscountPercent?: number) => {
+		updateDiscountSettings: (
+			discountAmount?: number,
+			maxDiscountPercent?: number,
+		) => {
 			if (discountAmount !== undefined) {
 				settingsStore.setDiscountAmount(discountAmount);
 			}
@@ -154,7 +174,7 @@ export const usePriceTagStore = () => {
 		},
 
 		// Individual store actions
-		items: itemsStore,
+		itemsActions: itemsStore,
 		settingsActions: settingsStore,
 		uiActions: uiStore,
 

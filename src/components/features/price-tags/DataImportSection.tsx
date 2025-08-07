@@ -4,11 +4,11 @@ import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-import ExcelUploaderLazy from "./ExcelUploaderLazy";
-import GoogleSheetsForm from "./GoogleSheetsForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import type { Item } from "@/store/itemsStore";
+import ExcelUploaderLazy from "./ExcelUploaderLazy";
+import GoogleSheetsForm from "./GoogleSheetsForm";
 
 interface DataImportSectionProps {
 	onDataImported: (items: Item[], columnLabels: string[]) => void;
@@ -97,13 +97,18 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 				// Handle additional columns
 				if (columnLabels.length > 2) {
 					const designValue = row[columnLabels[2]];
-					if (designValue && ["default", "new", "sale"].includes(String(designValue))) {
+					if (
+						designValue &&
+						["default", "new", "sale"].includes(String(designValue))
+					) {
 						item.designType = String(designValue);
 					}
 				}
 
 				if (columnLabels.length > 3) {
-					const discountValue = parseDiscountValue(row[columnLabels[3]]);
+					const discountValue = parseDiscountValue(
+						row[columnLabels[3]] as string | number | null | undefined,
+					);
 					if (discountValue !== undefined) {
 						item.hasDiscount = discountValue;
 					}
@@ -111,14 +116,14 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 
 				if (columnLabels.length > 4) {
 					const priceFor2 = Number(row[columnLabels[4]]);
-					if (!isNaN(priceFor2) && priceFor2 > 0) {
+					if (!Number.isNaN(priceFor2) && priceFor2 > 0) {
 						item.priceFor2 = priceFor2;
 					}
 				}
 
 				if (columnLabels.length > 5) {
 					const priceFrom3 = Number(row[columnLabels[5]]);
-					if (!isNaN(priceFrom3) && priceFrom3 > 0) {
+					if (!Number.isNaN(priceFrom3) && priceFrom3 > 0) {
 						item.priceFrom3 = priceFrom3;
 					}
 				}
@@ -129,9 +134,9 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 			setImportProgress(100);
 			onDataImported(items, columnLabels);
 			toast.success(`Импортировано ${items.length} элементов из Excel`);
-
 		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : "Ошибка импорта Excel";
+			const errorMessage =
+				error instanceof Error ? error.message : "Ошибка импорта Excel";
 			onError(errorMessage);
 			toast.error(errorMessage);
 		} finally {
@@ -141,13 +146,21 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 		}
 	};
 
-	const handleGoogleSheetsData = async (spreadsheetId: string, range: string) => {
+	const handleGoogleSheetsData = async (spreadsheetId: string) => {
 		try {
 			setIsImporting(true);
 			setImportProgress(0);
 			onLoadingChange(true);
 
-			const response = await fetchGoogleSheetsData(spreadsheetId, range);
+			const response = await fetchGoogleSheetsData(
+				[
+					{
+						sheetId: spreadsheetId,
+						subSheetsIds: ["0"],
+					},
+				],
+				["JSON_COLUMNS"],
+			);
 			setImportProgress(50);
 
 			if (!response || typeof response !== "object") {
@@ -156,7 +169,7 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 
 			const data = response as GoogleSheetsResponse;
 			const columnKeys = Object.keys(data);
-			
+
 			if (columnKeys.length === 0) {
 				throw new Error("Google Sheets пустые");
 			}
@@ -178,14 +191,19 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 				// Handle design type column
 				if (columnKeys[2]) {
 					const designValue = data[columnKeys[2]]?.rows[rowKey]?.data;
-					if (designValue && ["default", "new", "sale"].includes(String(designValue))) {
+					if (
+						designValue &&
+						["default", "new", "sale"].includes(String(designValue))
+					) {
 						item.designType = String(designValue);
 					}
 				}
 
 				// Handle discount column
 				if (columnKeys[3]) {
-					const discountValue = parseDiscountValue(data[columnKeys[3]]?.rows[rowKey]?.data);
+					const discountValue = parseDiscountValue(
+						data[columnKeys[3]]?.rows[rowKey]?.data,
+					);
 					if (discountValue !== undefined) {
 						item.hasDiscount = discountValue;
 					}
@@ -194,14 +212,14 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 				// Handle multi-tier pricing
 				if (columnKeys[4]) {
 					const priceFor2 = Number(data[columnKeys[4]]?.rows[rowKey]?.data);
-					if (!isNaN(priceFor2) && priceFor2 > 0) {
+					if (!Number.isNaN(priceFor2) && priceFor2 > 0) {
 						item.priceFor2 = priceFor2;
 					}
 				}
 
 				if (columnKeys[5]) {
 					const priceFrom3 = Number(data[columnKeys[5]]?.rows[rowKey]?.data);
-					if (!isNaN(priceFrom3) && priceFrom3 > 0) {
+					if (!Number.isNaN(priceFrom3) && priceFrom3 > 0) {
 						item.priceFrom3 = priceFrom3;
 					}
 				}
@@ -212,9 +230,9 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 			setImportProgress(100);
 			onDataImported(items, columnLabels);
 			toast.success(`Импортировано ${items.length} элементов из Google Sheets`);
-
 		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : "Ошибка импорта Google Sheets";
+			const errorMessage =
+				error instanceof Error ? error.message : "Ошибка импорта Google Sheets";
 			onError(errorMessage);
 			toast.error(errorMessage);
 		} finally {

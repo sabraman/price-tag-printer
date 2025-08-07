@@ -1,9 +1,9 @@
-import { Suspense, lazy } from "react";
-import type { Item, ThemeSet } from "@/store/priceTagsStore";
+import { lazy, Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Item, ThemeSet } from "@/store/priceTagsStore";
 
-const PDFGenerator = lazy(() => 
-	import("./PDFGenerator").then(module => ({ default: module.PDFGenerator }))
+const PDFGenerator = lazy(() =>
+	import("./PDFGenerator").then((module) => ({ default: module.PDFGenerator })),
 );
 
 interface PDFGeneratorLazyProps {
