@@ -12,7 +12,6 @@ import GoogleSheetsForm from "@/components/features/price-tags/GoogleSheetsForm"
 import { OptimizedEditTable } from "@/components/features/price-tags/OptimizedEditTable";
 import { PriceTagCustomizer } from "@/components/features/price-tags/PriceTagCustomizer";
 import PriceTagList from "@/components/features/price-tags/PriceTagList";
-import Switcher from "@/components/features/price-tags/Switcher";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -78,6 +77,7 @@ export const PriceTagsPage: React.FC = () => {
 		discountText,
 		hasTableDesigns,
 		hasTableDiscounts,
+		showThemeLabels,
 		setItems,
 		setLoading,
 		setError,
@@ -86,6 +86,8 @@ export const PriceTagsPage: React.FC = () => {
 		setThemes,
 		setCurrentFont,
 		setDiscountText,
+		setDesignType,
+		setShowThemeLabels,
 		addItem,
 		updateItemPrices,
 	} = usePriceTagsStore();
@@ -138,6 +140,13 @@ export const PriceTagsPage: React.FC = () => {
 			setSelectedItems(cleanedSelection);
 		}
 	}, [filteredItemIds, selectedItems]);
+
+	// Update prices when design type changes
+	useEffect(() => {
+		if (items.length > 0) {
+			updateItemPrices();
+		}
+	}, [designType, updateItemPrices]);
 
 	useEffect(() => {
 		let updatedItems = [...items];
@@ -744,14 +753,20 @@ export const PriceTagsPage: React.FC = () => {
 								onGenerate={handleGenerate}
 							/>
 						</div>
-						<Switcher />
 						<PriceTagCustomizer
 							themes={themes}
 							currentFont={currentFont}
 							discountText={discountText}
+							designType={designType}
+							showThemeLabels={showThemeLabels}
 							onThemeChange={setThemes}
 							onFontChange={setCurrentFont}
 							onDiscountTextChange={setDiscountText}
+							onDesignTypeChange={(type) => {
+								console.log('Setting design type to:', type);
+								setDesignType(type);
+							}}
+							onShowThemeLabelsChange={setShowThemeLabels}
 						/>
 					</div>
 				)}
@@ -775,7 +790,7 @@ export const PriceTagsPage: React.FC = () => {
 							onExport={handleExport}
 						/>
 					) : (
-						<div ref={componentRef}>
+						<div ref={componentRef} className="sticky top-4">
 							<PriceTagList
 								items={items}
 								design={design}
@@ -785,6 +800,7 @@ export const PriceTagsPage: React.FC = () => {
 								discountText={discountText}
 								useTableDesigns={hasTableDesigns && designType === "table"}
 								useTableDiscounts={hasTableDiscounts && designType === "table"}
+								showThemeLabels={showThemeLabels}
 							/>
 						</div>
 					)}

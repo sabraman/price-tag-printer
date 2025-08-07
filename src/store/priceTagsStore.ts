@@ -49,6 +49,20 @@ export interface ThemeSet {
 	default: Theme;
 	new: Theme;
 	sale: Theme;
+	white: Theme;
+	black: Theme;
+	sunset: Theme;
+	ocean: Theme;
+	forest: Theme;
+	royal: Theme;
+	vintage: Theme;
+	neon: Theme;
+	monochrome: Theme;
+	silver: Theme;
+	charcoal: Theme;
+	paper: Theme;
+	ink: Theme;
+	snow: Theme;
 }
 
 interface PriceTagsState {
@@ -68,6 +82,7 @@ interface PriceTagsState {
 	discountText: string;
 	hasTableDesigns: boolean; // Флаг, указывающий на наличие дизайнов в таблице
 	hasTableDiscounts: boolean; // Флаг, указывающий на наличие настроек скидки в таблице
+	showThemeLabels: boolean; // Показывать ли надписи NEW/SALE на ценниках
 	setItems: (items: Item[]) => void;
 	setLoading: (loading: boolean) => void;
 	setError: (error: string | null) => void;
@@ -82,6 +97,7 @@ interface PriceTagsState {
 	setDiscountText: (text: string) => void;
 	setHasTableDesigns: (has: boolean) => void;
 	setHasTableDiscounts: (has: boolean) => void;
+	setShowThemeLabels: (show: boolean) => void;
 	updateItemPrices: () => void;
 	addItem: (item: Item) => void;
 	calculateDiscountPrice: (price: number) => number;
@@ -133,11 +149,82 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 					end: "#dd4c54",
 					textColor: "#ffffff",
 				},
+				white: {
+					start: "#ffffff",
+					end: "#ffffff",
+					textColor: "#000000",
+				},
+				black: {
+					start: "#000000",
+					end: "#000000",
+					textColor: "#ffffff",
+				},
+				sunset: {
+					start: "#ff7e5f",
+					end: "#feb47b",
+					textColor: "#ffffff",
+				},
+				ocean: {
+					start: "#667eea",
+					end: "#764ba2",
+					textColor: "#ffffff",
+				},
+				forest: {
+					start: "#134e5e",
+					end: "#71b280",
+					textColor: "#ffffff",
+				},
+				royal: {
+					start: "#4c63d2",
+					end: "#9c27b0",
+					textColor: "#ffffff",
+				},
+				vintage: {
+					start: "#8b4513",
+					end: "#d2b48c",
+					textColor: "#ffffff",
+				},
+				neon: {
+					start: "#00ff00",
+					end: "#ff00ff",
+					textColor: "#000000",
+				},
+				monochrome: {
+					start: "#4a4a4a",
+					end: "#888888",
+					textColor: "#ffffff",
+				},
+				silver: {
+					start: "#c0c0c0",
+					end: "#e8e8e8",
+					textColor: "#000000",
+				},
+				charcoal: {
+					start: "#2c2c2c",
+					end: "#2c2c2c",
+					textColor: "#ffffff",
+				},
+				paper: {
+					start: "#f8f8f8",
+					end: "#f0f0f0",
+					textColor: "#333333",
+				},
+				ink: {
+					start: "#1a1a1a",
+					end: "#1a1a1a",
+					textColor: "#ffffff",
+				},
+				snow: {
+					start: "#ffffff",
+					end: "#f5f5f5",
+					textColor: "#000000",
+				},
 			},
 			currentFont: "Montserrat",
 			discountText: "цена при подписке\nна телеграм канал",
 			hasTableDesigns: false,
 			hasTableDiscounts: false,
+			showThemeLabels: true,
 
 			setItems: (items) => {
 				set((state) => {
@@ -187,6 +274,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 			setDiscountText: (text) => set({ discountText: text }),
 			setHasTableDesigns: (has) => set({ hasTableDesigns: has }),
 			setHasTableDiscounts: (has) => set({ hasTableDiscounts: has }),
+			setShowThemeLabels: (show) => set({ showThemeLabels: show }),
 
 			calculateDiscountPrice: (price: number) => {
 				const state = get();
@@ -337,6 +425,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 					state.designType = "default";
 					state.hasTableDesigns = false;
 					state.hasTableDiscounts = false;
+					state.showThemeLabels = true;
 					return state;
 				}),
 		})),
@@ -358,6 +447,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 				discountText: state.discountText,
 				hasTableDesigns: state.hasTableDesigns,
 				hasTableDiscounts: state.hasTableDiscounts,
+				showThemeLabels: state.showThemeLabels,
 				// Не сохраняем временные состояния
 				// loading: false,
 				// error: null,

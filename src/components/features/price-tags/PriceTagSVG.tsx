@@ -16,6 +16,7 @@ interface PriceTagSVGProps {
 	themes: ThemeSet;
 	font: string;
 	discountText: string;
+	showThemeLabels?: boolean;
 }
 
 const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
@@ -30,14 +31,16 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 	themes,
 	font,
 	discountText,
+	showThemeLabels = true,
 }) => {
 	const [fontSize, setFontSize] = useState<number>(16);
 	const [lineHeight, setLineHeight] = useState<number>(20);
 	const [key, setKey] = useState<number>(0);
 
 	// Make sure we use a valid theme, or fall back to default
+	const validThemeTypes = ["default", "new", "sale", "white", "black", "sunset", "ocean", "forest", "royal", "vintage", "neon", "monochrome", "silver", "charcoal", "paper", "ink", "snow"];
 	const safeDesignType =
-		designType && ["default", "new", "sale"].includes(designType)
+		designType && validThemeTypes.includes(designType)
 			? (designType as keyof ThemeSet)
 			: "default";
 	const currentTheme = themes[safeDesignType];
@@ -45,6 +48,17 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 
 	// Check if we have multi-tier pricing
 	const hasMultiTierPricing = priceFor2 && priceFrom3;
+	
+	// Determine if this is a solid color theme that needs a border
+	const needsBorder = safeDesignType === 'white' || safeDesignType === 'black' || 
+		(currentTheme.start === currentTheme.end);
+	const borderColor = safeDesignType === 'white' ? '#e5e5e5' : '#333333';
+	// Light themes have dark text, dark themes have white text
+	const isLightTheme = currentTheme.textColor !== '#ffffff';
+	const cutLineColor = isLightTheme ? '#000000' : '#ffffff';
+
+	// Theme label logic
+	const shouldShowLabel = showThemeLabels && (safeDesignType === 'new' || safeDesignType === 'sale');
 
 	useEffect(() => {
 		setFontSize(16);
@@ -98,52 +112,25 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 						</linearGradient>
 					</defs>
 					{/* Фоновый градиент */}
-					<rect width="160" height="110" fill={`url(#linear-gradient-${id})`} />
+					<rect 
+						width="160" 
+						height="110" 
+						fill={currentTheme.start === currentTheme.end 
+							? currentTheme.start 
+							: `url(#linear-gradient-${id})`
+						}
+						{...(needsBorder && {
+							stroke: borderColor,
+							strokeWidth: safeDesignType === 'white' ? '1.5' : '1',
+						})}
+					/>
 
-					{/* Линии для вырезания - более длинные штрихи с небольшими промежутками, 
-            подходят для печати и будут заметны даже при наложении друг на друга в сетке */}
-					<line
-						x1="0"
-						y1="0"
-						x2="160"
-						y2="0"
-						stroke="white"
-						strokeWidth="0.75"
-						strokeDasharray="12,3"
-					/>
-					<line
-						x1="0"
-						y1="110"
-						x2="160"
-						y2="110"
-						stroke="white"
-						strokeWidth="0.75"
-						strokeDasharray="12,3"
-					/>
-					<line
-						x1="0"
-						y1="0"
-						x2="0"
-						y2="110"
-						stroke="white"
-						strokeWidth="0.75"
-						strokeDasharray="8,3"
-					/>
-					<line
-						x1="160"
-						y1="0"
-						x2="160"
-						y2="110"
-						stroke="white"
-						strokeWidth="0.75"
-						strokeDasharray="8,3"
-					/>
 				</svg>
 				<div
 					className="absolute top-0"
 					style={{ color: currentTheme.textColor }}
 				>
-					{safeDesignType === "new" ? (
+					{shouldShowLabel && safeDesignType === "new" ? (
 						<div
 							className="absolute -right-[52px] bottom-[-14px] rotate-[-90deg] text-[52px] font-black whitespace-nowrap overflow-hidden w-[118px]"
 							style={{
@@ -153,7 +140,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 						>
 							NEW
 						</div>
-					) : safeDesignType === "sale" ? (
+					) : shouldShowLabel && safeDesignType === "sale" ? (
 						<div
 							className="absolute -right-[48px] bottom-[-14px] rotate-[-90deg] text-[48px] font-black whitespace-nowrap overflow-hidden w-[124px]"
 							style={{
@@ -276,6 +263,54 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 						</div>
 					)}
 				</div>
+
+				{/* Cutting lines - positioned above everything else for proper z-index */}
+				<svg
+					className="absolute inset-0 pointer-events-none"
+					width="160"
+					height="110"
+					viewBox="0 0 160 110"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					{/* Линии для вырезания - более длинные штрихи с небольшими промежутками, 
+            подходят для печати и будут заметны даже при наложении друг на друга в сетке */}
+					<line
+						x1="0"
+						y1="0"
+						x2="160"
+						y2="0"
+						stroke={cutLineColor}
+						strokeWidth="0.75"
+						strokeDasharray="12,3"
+					/>
+					<line
+						x1="0"
+						y1="110"
+						x2="160"
+						y2="110"
+						stroke={cutLineColor}
+						strokeWidth="0.75"
+						strokeDasharray="12,3"
+					/>
+					<line
+						x1="0"
+						y1="0"
+						x2="0"
+						y2="110"
+						stroke={cutLineColor}
+						strokeWidth="0.75"
+						strokeDasharray="8,3"
+					/>
+					<line
+						x1="160"
+						y1="0"
+						x2="160"
+						y2="110"
+						stroke={cutLineColor}
+						strokeWidth="0.75"
+						strokeDasharray="8,3"
+					/>
+				</svg>
 			</div>
 		</div>
 	);

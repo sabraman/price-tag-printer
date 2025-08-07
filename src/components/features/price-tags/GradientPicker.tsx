@@ -13,70 +13,161 @@ interface GradientPickerProps {
 	className?: string;
 }
 
+// Create a helper to generate a complete theme set with defaults for unused themes
+const createCompleteThemeSet = (overrides: Partial<ThemeSet>): ThemeSet => {
+	const defaultTheme = { start: "#222222", end: "#dd4c9b", textColor: "#ffffff" };
+	const newTheme = { start: "#222222", end: "#9cdd4c", textColor: "#ffffff" };
+	const saleTheme = { start: "#222222", end: "#dd4c54", textColor: "#ffffff" };
+	
+	return {
+		default: defaultTheme,
+		new: newTheme,
+		sale: saleTheme,
+		white: { start: "#ffffff", end: "#ffffff", textColor: "#000000" },
+		black: { start: "#000000", end: "#000000", textColor: "#ffffff" },
+		sunset: { start: "#ff7e5f", end: "#feb47b", textColor: "#ffffff" },
+		ocean: { start: "#667eea", end: "#764ba2", textColor: "#ffffff" },
+		forest: { start: "#134e5e", end: "#71b280", textColor: "#ffffff" },
+		royal: { start: "#4c63d2", end: "#9c27b0", textColor: "#ffffff" },
+		vintage: { start: "#8b4513", end: "#d2b48c", textColor: "#ffffff" },
+		neon: { start: "#00ff00", end: "#ff00ff", textColor: "#000000" },
+		monochrome: { start: "#4a4a4a", end: "#888888", textColor: "#ffffff" },
+		silver: { start: "#c0c0c0", end: "#e8e8e8", textColor: "#000000" },
+		charcoal: { start: "#2c2c2c", end: "#2c2c2c", textColor: "#ffffff" },
+		paper: { start: "#f8f8f8", end: "#f0f0f0", textColor: "#333333" },
+		ink: { start: "#1a1a1a", end: "#1a1a1a", textColor: "#ffffff" },
+		snow: { start: "#ffffff", end: "#f5f5f5", textColor: "#000000" },
+		...overrides,
+	};
+};
+
 const darkThemePresets: ThemeSet[] = [
-	// Classic Dark
-	{
+	// Classic Dark (original)
+	createCompleteThemeSet({
 		default: { start: "#222222", end: "#dd4c9b", textColor: "#ffffff" },
 		new: { start: "#222222", end: "#9cdd4c", textColor: "#ffffff" },
 		sale: { start: "#222222", end: "#dd4c54", textColor: "#ffffff" },
-	},
-	// Dark Monochrome
-	{
+	}),
+	// Dark Monochrome (original)
+	createCompleteThemeSet({
 		default: { start: "#000000", end: "#666666", textColor: "#ffffff" },
 		new: { start: "#000000", end: "#808080", textColor: "#ffffff" },
 		sale: { start: "#000000", end: "#999999", textColor: "#ffffff" },
-	},
-	// Dark Slate
-	{
+	}),
+	// Dark Slate (original)
+	createCompleteThemeSet({
 		default: { start: "#2f4550", end: "#b2d1d1", textColor: "#ffffff" },
 		new: { start: "#2f4550", end: "#b8dbd9", textColor: "#ffffff" },
 		sale: { start: "#2f4550", end: "#e2e2e6", textColor: "#ffffff" },
-	},
-	// Vapar
-	{
+	}),
+	// Vapar (original)
+	createCompleteThemeSet({
 		default: { start: "#dd4c9b", end: "#f6989a", textColor: "#ffffff" },
 		new: { start: "#dd4c9b", end: "#f6989a", textColor: "#ffffff" },
 		sale: { start: "#ee4a61", end: "#f6989a", textColor: "#ffffff" },
-	},
-	// Sunset (New theme)
-	{
+	}),
+	// Sunset (original)
+	createCompleteThemeSet({
 		default: { start: "#2B2827", end: "#FF731D", textColor: "#ffffff" },
 		new: { start: "#2B2827", end: "#E2E0FF", textColor: "#ffffff" },
 		sale: { start: "#2B2827", end: "#FE4152", textColor: "#ffffff" },
-	},
+	}),
 ];
 
-// const lightThemePresets: ThemeSet[] = [
-//     // Classic Light
-//     {
-//         default: { start: '#ffffff', end: '#ffcce6', textColor: '#000000' },
-//         new: { start: '#ffffff', end: '#90eea8', textColor: '#000000' },
-//         sale: { start: '#ffffff', end: '#ffb3b3', textColor: '#000000' },
-//     },
-//     // Light Monochrome
-//     {
-//         default: { start: '#ffffff', end: '#cccccc', textColor: '#000000' },
-//         new: { start: '#ffffff', end: '#e6e6e6', textColor: '#000000' },
-//         sale: { start: '#ffffff', end: '#d9d9d9', textColor: '#000000' },
-//     },
-//     // Light Slate
-//     {
-//         default: { start: '#ffffff', end: '#d4e5e5', textColor: '#000000' },
-//         new: { start: '#ffffff', end: '#daeeed', textColor: '#000000' },
-//         sale: { start: '#ffffff', end: '#f1f1f3', textColor: '#000000' },
-//     },
+const lightThemePresets: ThemeSet[] = [
+	// Light Blue (like dark themes with consistent gradients)
+	createCompleteThemeSet({
+		default: { start: '#e3f2fd', end: '#90caf9', textColor: '#0d47a1' },
+		new: { start: '#e3f2fd', end: '#81c784', textColor: '#1b5e20' },
+		sale: { start: '#e3f2fd', end: '#ef5350', textColor: '#b71c1c' },
+	}),
+	// Light Green
+	createCompleteThemeSet({
+		default: { start: '#e8f5e8', end: '#a5d6a7', textColor: '#1b5e20' },
+		new: { start: '#e8f5e8', end: '#66bb6a', textColor: '#1b5e20' },
+		sale: { start: '#e8f5e8', end: '#ef5350', textColor: '#b71c1c' },
+	}),
+	// Light Orange
+	createCompleteThemeSet({
+		default: { start: '#fff3e0', end: '#ffb74d', textColor: '#e65100' },
+		new: { start: '#fff3e0', end: '#66bb6a', textColor: '#1b5e20' },
+		sale: { start: '#fff3e0', end: '#ef5350', textColor: '#b71c1c' },
+	}),
+	// Light Purple
+	createCompleteThemeSet({
+		default: { start: '#f3e5f5', end: '#ba68c8', textColor: '#4a148c' },
+		new: { start: '#f3e5f5', end: '#66bb6a', textColor: '#1b5e20' },
+		sale: { start: '#f3e5f5', end: '#ef5350', textColor: '#b71c1c' },
+	}),
+];
 
-// ];
+const lightMonochromeThemePresets: ThemeSet[] = [
+	// Pure White
+	createCompleteThemeSet({
+		default: { start: '#ffffff', end: '#ffffff', textColor: '#000000' },
+		new: { start: '#ffffff', end: '#ffffff', textColor: '#000000' },
+		sale: { start: '#ffffff', end: '#ffffff', textColor: '#000000' },
+	}),
+	// Light Gray
+	createCompleteThemeSet({
+		default: { start: '#f3f4f6', end: '#f3f4f6', textColor: '#111827' },
+		new: { start: '#f3f4f6', end: '#f3f4f6', textColor: '#111827' },
+		sale: { start: '#f3f4f6', end: '#f3f4f6', textColor: '#111827' },
+	}),
+	// Silver
+	createCompleteThemeSet({
+		default: { start: '#d1d5db', end: '#d1d5db', textColor: '#374151' },
+		new: { start: '#d1d5db', end: '#d1d5db', textColor: '#374151' },
+		sale: { start: '#d1d5db', end: '#d1d5db', textColor: '#374151' },
+	}),
+];
+
+const darkMonochromeThemePresets: ThemeSet[] = [
+	// Pure Black
+	createCompleteThemeSet({
+		default: { start: '#000000', end: '#000000', textColor: '#ffffff' },
+		new: { start: '#000000', end: '#000000', textColor: '#ffffff' },
+		sale: { start: '#000000', end: '#000000', textColor: '#ffffff' },
+	}),
+	// Dark Gray
+	createCompleteThemeSet({
+		default: { start: '#111827', end: '#111827', textColor: '#ffffff' },
+		new: { start: '#111827', end: '#111827', textColor: '#ffffff' },
+		sale: { start: '#111827', end: '#111827', textColor: '#ffffff' },
+	}),
+	// Charcoal
+	createCompleteThemeSet({
+		default: { start: '#374151', end: '#374151', textColor: '#ffffff' },
+		new: { start: '#374151', end: '#374151', textColor: '#ffffff' },
+		sale: { start: '#374151', end: '#374151', textColor: '#ffffff' },
+	}),
+];
 
 // Создаем уникальные id для тем
 const darkThemeIds = [
 	"classic-dark",
-	"dark-monochrome",
-	"dark-slate",
-	"vapar",
-	"sunset",
+	"ocean-deep", 
+	"forest-night",
+	"royal-purple",
+	"sunset-glow",
 ];
-// const lightThemeIds = ['classic-light', 'light-monochrome', 'light-slate'];
+const lightThemeIds = [
+	'light-blue',
+	'light-green', 
+	'light-orange',
+	'light-purple'
+];
+const lightMonochromeThemeIds = [
+	'white-mono',
+	'light-gray-mono',
+	'silver-mono'
+];
+
+const darkMonochromeThemeIds = [
+	'black-mono',
+	'dark-gray-mono',
+	'charcoal-mono'
+];
 
 export function GradientPicker({
 	themes,
@@ -104,6 +195,7 @@ export function GradientPicker({
 
 					<TabsContent value="presets" className="mt-0">
 						<div className="space-y-6">
+							{/* Dark Themes */}
 							<div className="space-y-3">
 								<h3 className="text-sm font-medium">Темные темы</h3>
 								<div className="grid grid-cols-3 gap-2">
@@ -132,25 +224,92 @@ export function GradientPicker({
 								</div>
 							</div>
 
-							{/* <div className="space-y-3">
-                                <h3 className="text-sm font-medium">Светлые темы</h3>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {lightThemePresets.map((preset, i) => (
-                                        <Button
-                                            type="button"
-                                            key={lightThemeIds[i]}
-                                            className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
-                                            onClick={() => onChange(preset)}
-                                        >
-                                            <div className="w-full h-full grid grid-rows-3">
-                                                <div style={{ background: getGradientStyle(preset.default) }} />
-                                                <div style={{ background: getGradientStyle(preset.new) }} />
-                                                <div style={{ background: getGradientStyle(preset.sale) }} />
-                                            </div>
-                                        </Button>
-                                    ))}
-                                </div>
-                            </div> */}
+							{/* Light Themes */}
+							<div className="space-y-3">
+								<h3 className="text-sm font-medium">Светлые темы</h3>
+								<div className="grid grid-cols-3 gap-2">
+									{lightThemePresets.map((preset, i) => (
+										<Button
+											type="button"
+											key={lightThemeIds[i]}
+											className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
+											onClick={() => onChange(preset)}
+										>
+											<div className="w-full h-full grid grid-rows-3">
+												<div
+													style={{
+														background: getGradientStyle(preset.default),
+													}}
+												/>
+												<div
+													style={{ background: getGradientStyle(preset.new) }}
+												/>
+												<div
+													style={{ background: getGradientStyle(preset.sale) }}
+												/>
+											</div>
+										</Button>
+									))}
+								</div>
+							</div>
+
+							{/* Light Monochrome Themes */}
+							<div className="space-y-3">
+								<h3 className="text-sm font-medium">Светлые монохромные темы</h3>
+								<div className="grid grid-cols-3 gap-2">
+									{lightMonochromeThemePresets.map((preset, i) => (
+										<Button
+											type="button"
+											key={lightMonochromeThemeIds[i]}
+											className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
+											onClick={() => onChange(preset)}
+										>
+											<div className="w-full h-full grid grid-rows-3">
+												<div
+													style={{
+														background: getGradientStyle(preset.default),
+													}}
+												/>
+												<div
+													style={{ background: getGradientStyle(preset.new) }}
+												/>
+												<div
+													style={{ background: getGradientStyle(preset.sale) }}
+												/>
+											</div>
+										</Button>
+									))}
+								</div>
+							</div>
+
+							{/* Dark Monochrome Themes */}
+							<div className="space-y-3">
+								<h3 className="text-sm font-medium">Темные монохромные темы</h3>
+								<div className="grid grid-cols-3 gap-2">
+									{darkMonochromeThemePresets.map((preset, i) => (
+										<Button
+											type="button"
+											key={darkMonochromeThemeIds[i]}
+											className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
+											onClick={() => onChange(preset)}
+										>
+											<div className="w-full h-full grid grid-rows-3">
+												<div
+													style={{
+														background: getGradientStyle(preset.default),
+													}}
+												/>
+												<div
+													style={{ background: getGradientStyle(preset.new) }}
+												/>
+												<div
+													style={{ background: getGradientStyle(preset.sale) }}
+												/>
+											</div>
+										</Button>
+									))}
+								</div>
+							</div>
 						</div>
 					</TabsContent>
 
