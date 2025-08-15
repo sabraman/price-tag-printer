@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
-  },
+  serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push({
@@ -17,11 +15,21 @@ const nextConfig = {
       type: 'asset/resource',
     });
     
+    // Fix Node.js modules in client-side
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    
     return config;
   },
   // Enable React Compiler
   compiler: {
-    reactCompiler: true,
+    // Note: reactCompiler might not be available in this version
   },
 };
 

@@ -1,4 +1,4 @@
-import { fetchGoogleSheetsData } from "google-sheets-data-fetcher";
+// Dynamic import for Google Sheets functionality to avoid SSR issues
 import { AlertCircle, Edit2, Eye } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";

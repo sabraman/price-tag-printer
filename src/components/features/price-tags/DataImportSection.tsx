@@ -1,4 +1,4 @@
-import { fetchGoogleSheetsData } from "google-sheets-data-fetcher";
+// Note: Google Sheets functionality temporarily disabled due to SSR compatibility issues
 import { AlertCircle } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
