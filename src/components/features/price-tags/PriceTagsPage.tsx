@@ -7,16 +7,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import ExcelUploader from "@/components/features/price-tags/ExcelUploader";
-import GenerateButton from "@/components/features/price-tags/GenerateButton";
 import GoogleSheetsForm from "@/components/features/price-tags/GoogleSheetsForm";
 import { OptimizedEditTable } from "@/components/features/price-tags/OptimizedEditTable";
 import { PriceTagCustomizer } from "@/components/features/price-tags/PriceTagCustomizer";
 import PriceTagList from "@/components/features/price-tags/PriceTagList";
+import { SmartPrintButton } from "@/components/features/price-tags/SmartPrintButton";
+import { BrowserWarning } from "@/components/common/BrowserWarning";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNewItemDraft } from "@/hooks/useNewItemDraft";
-import { usePrintTags } from "@/hooks/usePrintTags";
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 
@@ -728,6 +728,8 @@ export const PriceTagsPage: React.FC = () => {
 					</Alert>
 				)}
 
+				<BrowserWarning />
+
 				{items.length > 0 && (
 					<div className="space-y-4">
 						<div className="flex gap-2">
@@ -748,10 +750,11 @@ export const PriceTagsPage: React.FC = () => {
 									</>
 								)}
 							</Button>
-							<GenerateButton
+							<SmartPrintButton
 								items={items}
 								isEditMode={isEditMode}
-								onGenerate={handleGenerate}
+								onError={(error) => setError(error)}
+								onSuccess={() => setError(null)}
 							/>
 						</div>
 						<PriceTagCustomizer
@@ -791,7 +794,7 @@ export const PriceTagsPage: React.FC = () => {
 							onExport={handleExport}
 						/>
 					) : (
-						<div ref={componentRef} className="sticky top-4">
+						<div className="sticky top-4">
 							<PriceTagList
 								items={items}
 								design={design}

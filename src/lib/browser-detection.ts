@@ -1,0 +1,73 @@
+export interface BrowserInfo {
+  name: string;
+  isChromium: boolean;
+  isMobile: boolean;
+  supportsNativePrint: boolean;
+  recommendedMethod: 'browser' | 'pdf';
+  version?: string;
+}
+
+export function detectBrowser(): BrowserInfo {
+  // Server-side fallback
+  if (typeof window === 'undefined') {
+    return {
+      name: 'Unknown',
+      isChromium: false,
+      isMobile: false,
+      supportsNativePrint: false,
+      recommendedMethod: 'pdf',
+    };
+  }
+
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+  
+  // Detect browser types
+  const isChrome = /chrome/.test(userAgent) && !/edg/.test(userAgent) && !/opr/.test(userAgent);
+  const isEdge = /edg/.test(userAgent);
+  const isOpera = /opr/.test(userAgent);
+  const isSafari = /safari/.test(userAgent) && !/chrome/.test(userAgent);
+  const isFirefox = /firefox/.test(userAgent);
+  
+  // Chromium-based browsers generally have better print support
+  const isChromium = isChrome || isEdge || isOpera;
+  
+  let browserName = 'Unknown';
+  if (isChrome) browserName = 'Chrome';
+  else if (isEdge) browserName = 'Edge';
+  else if (isOpera) browserName = 'Opera';
+  else if (isSafari) browserName = 'Safari';
+  else if (isFirefox) browserName = 'Firefox';
+  
+  // Desktop Chromium browsers get native print, everything else gets PDF
+  const supportsNativePrint = isChromium && !isMobile;
+  const recommendedMethod: 'browser' | 'pdf' = supportsNativePrint ? 'browser' : 'pdf';
+  
+  return {
+    name: browserName,
+    isChromium,
+    isMobile,
+    supportsNativePrint,
+    recommendedMethod,
+  };
+}
+
+export function getBrowserWarningMessage(browserInfo: BrowserInfo): string | null {
+  if (browserInfo.supportsNativePrint) {
+    return null; // No warning needed
+  }
+  
+  if (browserInfo.isMobile) {
+    return 'Mobile browsers will generate a PDF file for download. For best print quality, use Chrome or Edge on desktop.';
+  }
+  
+  if (browserInfo.name === 'Safari') {
+    return 'Safari users will receive a PDF download. For optimal print experience, consider using Chrome or Edge.';
+  }
+  
+  if (browserInfo.name === 'Firefox') {
+    return 'Firefox users will receive a PDF download. For better print quality, consider using Chrome or Edge.';
+  }
+  
+  return 'Your browser will generate a PDF file for download. For optimal print experience, use Chrome or Edge.';
+}

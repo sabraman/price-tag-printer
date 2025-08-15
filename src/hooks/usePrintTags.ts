@@ -1,60 +1,99 @@
-import { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+'use client';
+
+import { useRef, useState } from 'react';
+import { detectBrowser } from '@/lib/browser-detection';
 
 interface UsePrintTagsOptions {
-	documentTitle?: string;
-	onError?: (error: Error) => void;
+  onError?: (error: Error) => void;
+  onSuccess?: () => void;
 }
 
-export const usePrintTags = ({ onError }: UsePrintTagsOptions = {}) => {
-	const componentRef = useRef<HTMLDivElement>(null);
-	const handlePrint = useReactToPrint({
-		contentRef: componentRef,
-		onPrintError: (_errorLocation: "onBeforePrint" | "print", error: Error) => {
-			onError?.(error);
-		},
-		pageStyle: `
-      @page {
-        size: A4 portrait;
-        margin: 0;
-        }
-        
-        @media print {
-          html, body {
-          height: 100%;
-          margin: 0;
-          padding: 0;
-          -webkit-print-color-adjust: exact;
-          }
-          
-          .print-page {
-            break-inside: avoid;
-            page-break-after: always;
-            margin: 0;
-            padding-top: 36px;
-            height: 100%;
-            display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
-            align-items: center;
-            justify-items: center;
-            justify-content: center;
-          transform: scale(1.4);
-          transform-origin: top center;
-        }
-        
-        .price-tag {
-          margin: 0;
-        }
-        
-        .print-page:last-child {
-          page-break-after: auto;
-        }
-      }
-    `,
-	});
+interface PrintTagsData {
+  items: any[];
+  design: boolean;
+  designType: string;
+  themes: any;
+  font: string;
+  discountText: string;
+  useTableDesigns?: boolean;
+  useTableDiscounts?: boolean;
+  showThemeLabels?: boolean;
+  cuttingLineColor?: string;
+}
 
-	return {
-		componentRef,
-		handlePrint,
-	};
+export const usePrintTags = ({ onError, onSuccess }: UsePrintTagsOptions = {}) => {
+  const componentRef = useRef<HTMLDivElement>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleBrowserPrint = () => {
+    try {
+      window.print();
+      onSuccess?.();
+    } catch (error) {
+      onError?.(error instanceof Error ? error : new Error('Print failed'));
+    }
+  };
+
+  const handlePuppeteerPDF = async (data: PrintTagsData) => {
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`PDF generation failed: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'price-tags.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      onSuccess?.();
+    } catch (error) {
+      onError?.(error instanceof Error ? error : new Error('PDF generation failed'));
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleSmartPrint = (data?: PrintTagsData) => {
+    const browserInfo = detectBrowser();
+    
+    if (browserInfo.recommendedMethod === 'browser') {
+      handleBrowserPrint();
+    } else if (data) {
+      handlePuppeteerPDF(data);
+    } else {
+      onError?.(new Error('PDF generation requires price tag data'));
+    }
+  };
+
+  const handleForceBrowserPrint = () => {
+    handleBrowserPrint();
+  };
+
+  const handleForcePDFDownload = (data: PrintTagsData) => {
+    handlePuppeteerPDF(data);
+  };
+
+  return {
+    componentRef,
+    handlePrint: handleSmartPrint,
+    handleBrowserPrint: handleForceBrowserPrint,
+    handlePDFDownload: handleForcePDFDownload,
+    isGenerating,
+    browserInfo: detectBrowser(),
+  };
 };
