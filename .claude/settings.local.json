@@ -15,7 +15,8 @@
       "Bash(pnpm remove:*)",
       "Bash(mkdir:*)",
       "Bash(rm:*)",
-      "Bash(pnpm dlx:*)"
+      "Bash(pnpm dlx:*)",
+      "Bash(npx biome check:*)"
     ],
     "deny": []
   }

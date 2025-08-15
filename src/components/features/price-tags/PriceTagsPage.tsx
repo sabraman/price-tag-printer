@@ -4,13 +4,13 @@ import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
+import { BrowserWarning } from "@/components/common/BrowserWarning";
 import ExcelUploader from "@/components/features/price-tags/ExcelUploader";
 import GoogleSheetsForm from "@/components/features/price-tags/GoogleSheetsForm";
 import { OptimizedEditTable } from "@/components/features/price-tags/OptimizedEditTable";
 import { PriceTagCustomizer } from "@/components/features/price-tags/PriceTagCustomizer";
 import PriceTagList from "@/components/features/price-tags/PriceTagList";
 import { SmartPrintButton } from "@/components/features/price-tags/SmartPrintButton";
-import { BrowserWarning } from "@/components/common/BrowserWarning";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -340,9 +340,7 @@ export const PriceTagsPage: React.FC = () => {
 		XLSX.writeFile(wb, "price_tags.xlsx");
 	};
 
-	const { componentRef, handlePrint } = usePrintTags({
-		onError: (error) => setError(error.message),
-	});
+	// Note: Print functionality now handled by SmartPrintButton component
 
 	const extractSheetIdFromUrl = useCallback((url: string): string => {
 		const parts = url.split("/");
@@ -685,9 +683,6 @@ export const PriceTagsPage: React.FC = () => {
 		setError(null);
 	};
 
-	const handleGenerate = () => {
-		handlePrint();
-	};
 
 	// Use the draft hook to preserve new item state when switching modes
 	useNewItemDraft(isEditMode);

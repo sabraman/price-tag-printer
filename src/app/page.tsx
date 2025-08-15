@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { PriceTagsPage } from '@/components/features/price-tags/PriceTagsPage';
+import { PriceTagsPage } from "@/components/features/price-tags/PriceTagsPage";
 
 export default function HomePage() {
-  return <PriceTagsPage />;
+	return <PriceTagsPage />;
 }
