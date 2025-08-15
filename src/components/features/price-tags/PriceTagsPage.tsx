@@ -1,6 +1,4 @@
 import { fetchGoogleSheetsData } from "google-sheets-data-fetcher";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
 import { AlertCircle, Edit2, Eye } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
