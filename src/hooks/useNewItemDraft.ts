@@ -25,8 +25,8 @@ export function useNewItemDraft(isEditMode: boolean) {
 						} else {
 							localStorage.removeItem("newPriceTagDraft");
 						}
-					} catch (_e) {
-						localStorage.removeItem("newPriceTagDraft");
+					} catch {
+						console.error("Failed to save draft");
 					}
 				}
 			}
@@ -47,7 +47,7 @@ export function useNewItemDraft(isEditMode: boolean) {
 							toast.info("Восстановлен черновик товара", { duration: 3000 });
 						});
 					}
-				} catch (_e) {
+				} catch {
 					localStorage.removeItem("newPriceTagDraft");
 				}
 			}

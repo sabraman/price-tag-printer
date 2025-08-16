@@ -139,7 +139,7 @@ export const useFontSizeAdjustment = ({
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				// Force a reflow to ensure accurate measurements
-				element.offsetHeight;
+				void element.offsetHeight;
 
 				if (debug)
 					console.log(`[FontAdjust] ${elementId}: Ready for font adjustment`);
@@ -229,7 +229,7 @@ export const useFontSizeAdjustment = ({
 			}
 
 			// Force a reflow to ensure accurate measurements
-			element.offsetHeight;
+			void element.offsetHeight;
 
 			// Get current font size from the element
 			const computedStyle = window.getComputedStyle(element);
@@ -302,8 +302,9 @@ export const useFontSizeAdjustment = ({
 	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
-			if (timeoutRef.current) {
-				clearTimeout(timeoutRef.current);
+			const currentTimeout = timeoutRef.current;
+			if (currentTimeout) {
+				clearTimeout(currentTimeout);
 			}
 		};
 	}, []);

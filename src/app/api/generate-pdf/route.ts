@@ -17,11 +17,13 @@ export async function POST(request: NextRequest) {
 		// Create printable HTML with proper styling
 		const printableHTML = createPrintableHTML(html);
 
+		// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 		let browser: any;
 		try {
 			const isVercel = !!process.env.VERCEL_ENV;
 			// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 			let puppeteer: any;
+			// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 			let launchOptions: any = {
 				headless: true,
 			};

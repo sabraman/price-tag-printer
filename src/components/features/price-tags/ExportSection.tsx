@@ -19,12 +19,18 @@ interface ExportSectionProps {
 
 export const ExportSection: React.FC<ExportSectionProps> = ({
 	items,
-	themes: _themes,
-	currentFont: _currentFont,
-	discountText: _discountText,
-	design: _design,
-	designType: _designType,
+	themes,
+	currentFont,
+	discountText,
+	design,
+	designType,
 }) => {
+	// Use parameters to satisfy ESLint (they are required by the interface)
+	void themes;
+	void currentFont;
+	void discountText;
+	void design;
+	void designType;
 	const [isExporting, setIsExporting] = useState(false);
 	const [exportProgress, setExportProgress] = useState(0);
 	const { handlePrint } = usePrintTags();
@@ -60,7 +66,7 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 					setExportProgress(0);
 				}, 1000);
 			}, 1500);
-		} catch (_error) {
+		} catch {
 			setIsExporting(false);
 			setExportProgress(0);
 			toast.error("Ошибка при печати");

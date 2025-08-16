@@ -118,7 +118,7 @@ const NewItemForm = memo<{
 				setNewItem(draft);
 				toast.info("Восстановлен черновик товара", { duration: 2000 });
 			}
-		} catch (_error) {
+		} catch {
 			localStorage.removeItem("newPriceTagDraft");
 		}
 	}, []);
@@ -435,8 +435,9 @@ export const OptimizedEditTable: React.FC<OptimizedEditTableProps> = ({
 				};
 				addItem(completeItem);
 				toast.success("Товар добавлен", { duration: 2000 });
-			} catch (_error) {
-				toast.error("Ошибка при добавлении товара");
+			} catch {
+				console.error("Failed to save item");
+				toast.error("Ошибка при сохранении элемента");
 			} finally {
 				setIsAddingItem(false);
 			}
@@ -468,7 +469,9 @@ export const OptimizedEditTable: React.FC<OptimizedEditTableProps> = ({
 
 	// Enhanced selection logic with visual feedback and validation
 	const handleSelectionChange = useCallback(
-		(id: number, _checked: boolean) => {
+		(id: number, checked: boolean) => {
+			// Parameter is required by interface
+			void checked;
 			// Validate that the item exists in current items
 			if (!items.some((item) => item.id === id)) {
 				return;
@@ -556,7 +559,7 @@ export const OptimizedEditTable: React.FC<OptimizedEditTableProps> = ({
 			toast.success(`Удалено товаров: ${validSelectedItems.length}`, {
 				duration: 3000,
 			});
-		} catch (_error) {
+		} catch {
 			toast.error("Ошибка при удалении товаров");
 		} finally {
 			setIsDeleting(false);
@@ -873,7 +876,12 @@ export const OptimizedEditTable: React.FC<OptimizedEditTableProps> = ({
 									onSelect={handleSelectionChange}
 									onEdit={(id, field, value) => {
 										if (field === "id" || field === "discountPrice") return;
-										updateItem(id, field, value);
+										try {
+											updateItem(id, field, value);
+										} catch {
+											console.error("Failed to update item");
+											toast.error("Ошибка при обновлении элемента");
+										}
 									}}
 									onDelete={deleteItem}
 									isHovered={hoveredRowId === item.id}

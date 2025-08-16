@@ -232,7 +232,8 @@ export async function validateFileIntegrity(
 		}
 
 		return { isValid: true };
-	} catch (_error) {
+	} catch {
+		console.error("Failed to validate file");
 		return {
 			isValid: false,
 			error: "Не удалось прочитать файл",

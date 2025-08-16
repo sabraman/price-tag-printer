@@ -243,9 +243,8 @@ export const PriceTagsPage: React.FC = () => {
 				duration: 3000,
 				description: "Копии добавлены в конец списка",
 			});
-		} catch (_error) {
-			toast.dismiss("duplication");
-			toast.error("Ошибка при дублировании товаров");
+		} catch {
+			toast.error("Ошибка при дублировании товара");
 		}
 	};
 
@@ -309,7 +308,9 @@ export const PriceTagsPage: React.FC = () => {
 		document.body.removeChild(link);
 	};
 
-	const exportToPdf = (_items: Item[]) => {
+	const exportToPdf = (items: Item[]) => {
+		// Parameter is required by interface
+		void items;
 		// PDF export functionality has been moved to SmartPrintButton component
 		// This is kept for compatibility but users should use the print functionality instead
 		toast.info("PDF export is now handled by the Print button");
