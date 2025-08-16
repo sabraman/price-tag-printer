@@ -15,57 +15,68 @@ interface FontSizeAdjustmentOptions {
 export const useFontSizeAdjustment = ({
 	elementId,
 	initialFontSize = 16,
-	minFontSize = 8,
+	minFontSize = 4,
 	adjustmentStep = 0.5,
 	maxIterations = 30,
-	debounceMs = 100,
+	debounceMs: _debounceMs = 0, // No debounce for instant response
 }: FontSizeAdjustmentOptions) => {
 	const [fontSize, setFontSize] = useState(initialFontSize);
 	const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 	const iterationCountRef = useRef(0);
 
 	const adjustFontSize = useCallback(() => {
-		// Clear any pending adjustment
-		if (timeoutRef.current) {
-			clearTimeout(timeoutRef.current);
+		const element = document.getElementById(elementId);
+
+		if (!element) {
+			return;
 		}
 
-		timeoutRef.current = setTimeout(() => {
-			const element = document.getElementById(elementId);
+		// Reset iteration counter for new adjustment cycle
+		iterationCountRef.current = 0;
 
-			if (!element) {
+		// Start with initial font size
+		element.style.fontSize = `${initialFontSize}px`;
+		setFontSize(initialFontSize);
+
+		const performAdjustment = () => {
+			if (iterationCountRef.current >= maxIterations) {
 				return;
 			}
 
-			// Reset iteration counter for new adjustment cycle
-			iterationCountRef.current = 0;
+			// Force a reflow to ensure accurate measurements
+			element.offsetWidth;
 
-			const performAdjustment = () => {
-				if (iterationCountRef.current >= maxIterations) {
-					return;
+			// Check for horizontal overflow (text width exceeding container width)
+			const isOverflown = element.scrollWidth > element.clientWidth;
+
+			if (isOverflown) {
+				// Get current font size from the element
+				const computedStyle = window.getComputedStyle(element);
+				const currentFontSize = parseFloat(computedStyle.fontSize);
+
+				if (currentFontSize > minFontSize) {
+					const newSize = Math.max(
+						currentFontSize - adjustmentStep,
+						minFontSize,
+					);
+
+					// Apply the new font size directly to the element
+					element.style.fontSize = `${newSize}px`;
+
+					// Update React state
+					setFontSize(newSize);
+
+					iterationCountRef.current++;
+
+					// Continue checking regardless of font size - keep going until no overflow
+					performAdjustment();
 				}
+			}
+		};
 
-				const isOverflown = element.scrollHeight > element.clientHeight;
-
-				if (isOverflown) {
-					setFontSize((current) => {
-						const newSize = Math.max(current - adjustmentStep, minFontSize);
-
-						if (newSize > minFontSize) {
-							iterationCountRef.current++;
-							// Use requestAnimationFrame for better performance
-							requestAnimationFrame(performAdjustment);
-						}
-
-						return newSize;
-					});
-				}
-			};
-
-			// Use requestAnimationFrame for smoother updates
-			requestAnimationFrame(performAdjustment);
-		}, debounceMs);
-	}, [elementId, minFontSize, adjustmentStep, maxIterations, debounceMs]);
+		// Start adjustment immediately
+		performAdjustment();
+	}, [elementId, initialFontSize, minFontSize, adjustmentStep, maxIterations]);
 
 	// Reset font size when elementId changes
 	const resetFontSize = useCallback(() => {

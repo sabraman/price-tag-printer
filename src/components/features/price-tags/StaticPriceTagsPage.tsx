@@ -1,25 +1,10 @@
-import React from "react";
+import type { Item, ThemeSet } from "@/store/priceTagsStore";
 
 interface StaticPriceTagsPageProps {
-	items: {
-		id: number;
-		data: string | number;
-		price: number;
-		discountPrice: number;
-		designType?: string;
-		hasDiscount?: boolean;
-		priceFor2?: number;
-		priceFrom3?: number;
-	}[];
+	items: Item[];
 	design: boolean;
 	designType: string;
-	themes: {
-		[key: string]: {
-			start: string;
-			end: string;
-			textColor: string;
-		};
-	};
+	themes: ThemeSet;
 	font: string;
 	discountText: string;
 	useTableDesigns?: boolean;
@@ -77,7 +62,7 @@ export function StaticPriceTagsPage({
 		"snow",
 	];
 
-	const getThemeForItem = (item: any) => {
+	const getThemeForItem = (item: Item) => {
 		const itemDesignType =
 			useTableDesigns && item.designType ? item.designType : designType;
 
@@ -89,18 +74,18 @@ export function StaticPriceTagsPage({
 		return themes[safeDesignType] || themes.default;
 	};
 
-	const shouldShowDiscount = (item: any) => {
+	const shouldShowDiscount = (item: Item) => {
 		if (useTableDiscounts && item.hasDiscount !== undefined) {
 			return item.hasDiscount;
 		}
 		return design;
 	};
 
-	const hasMultiTierPricing = (item: any) => {
+	const hasMultiTierPricing = (item: Item) => {
 		return item.priceFor2 && item.priceFrom3;
 	};
 
-	const needsBorder = (theme: any, designType: string) => {
+	const needsBorder = (theme: ThemeSet[string], designType: string) => {
 		return (
 			designType === "white" ||
 			designType === "black" ||
@@ -118,13 +103,13 @@ export function StaticPriceTagsPage({
 		);
 	};
 
-	const getAutomaticCutLineColor = (theme: any) => {
+	const getAutomaticCutLineColor = (theme: ThemeSet[string]) => {
 		const isLightTheme = theme.textColor !== "#ffffff";
 		return isLightTheme ? "#000000" : "#ffffff";
 	};
 
 	// Single price tag component for static rendering
-	const StaticPriceTag = ({ item }: { item: any }) => {
+	const StaticPriceTag = ({ item }: { item: Item }) => {
 		const theme = getThemeForItem(item);
 		const showDiscount = shouldShowDiscount(item);
 		const hasMultiTier = hasMultiTierPricing(item);

@@ -1,7 +1,8 @@
 // PriceTagSVG.tsx
 import "@/App.css";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useFontSizeAdjustment } from "@/hooks/useFontSizeAdjustment";
 import type { ThemeSet } from "@/store/priceTagsStore";
 
 interface PriceTagSVGProps {
@@ -35,10 +36,6 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 	showThemeLabels = true,
 	cuttingLineColor,
 }) => {
-	const [fontSize, setFontSize] = useState<number>(16);
-	const [lineHeight, setLineHeight] = useState<number>(20);
-	const [key, setKey] = useState<number>(0);
-
 	// Make sure we use a valid theme, or fall back to default
 	const validThemeTypes = [
 		"default",
@@ -89,32 +86,22 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 	const shouldShowLabel =
 		showThemeLabels && (safeDesignType === "new" || safeDesignType === "sale");
 
+	// Universal font size adjustment using optimized DOM measurement
+	const productNameElementId = `product-name-${id}`;
+	const { fontSize: calculatedFontSize, adjustFontSize } =
+		useFontSizeAdjustment({
+			elementId: productNameElementId,
+			initialFontSize: 16,
+			minFontSize: 4,
+			adjustmentStep: 0.5,
+			maxIterations: 20,
+			debounceMs: 10, // Faster response
+		});
+
+	// Trigger font adjustment when data or font changes, and on mount
 	useEffect(() => {
-		setFontSize(16);
-		setKey(0);
-	}, []);
-
-	useEffect(() => {
-		setLineHeight(design ? 60 : 75);
-
-		const adjustFontSize = () => {
-			const element = document.getElementById(`product-name-${id}`);
-			if (element) {
-				const isOverflown = element.scrollHeight > element.clientHeight;
-				if (isOverflown) {
-					setKey((prevKey) => prevKey + 1);
-					setFontSize((prevFontSize) => Math.max(prevFontSize - 0.4, 2));
-					return setTimeout(adjustFontSize, 50);
-				}
-			}
-		};
-
-		const timeoutId = adjustFontSize();
-
-		return () => {
-			if (timeoutId) clearTimeout(timeoutId);
-		};
-	}, [id, design]);
+		adjustFontSize();
+	}, [adjustFontSize]);
 
 	return (
 		<div className="relative w-[160px] h-[110px] overflow-hidden">
@@ -181,10 +168,14 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 						</div>
 					) : null}
 					<div
-						id={`product-name-${id}`}
-						className="w-[146px] h-6 overflow-hidden relative top-2 left-2.5 text-left text-base leading-6 font-medium uppercase"
-						style={{ fontSize: `${fontSize}mm`, fontFamily: font }}
-						key={key}
+						id={productNameElementId}
+						className="w-[146px] h-6 overflow-hidden relative top-2 left-2.5 text-left font-medium uppercase flex items-center"
+						style={{
+							fontSize: `${calculatedFontSize}px`,
+							fontFamily: font,
+							lineHeight: "1.2",
+							whiteSpace: "nowrap", // Force single line
+						}}
 					>
 						{data}
 					</div>
@@ -261,7 +252,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 						// Original layout for single price
 						<div
 							className="pt-[5px] font-bold w-[160px] h-[60px] text-[52px] text-center"
-							style={{ lineHeight: `${lineHeight}px`, fontFamily: font }}
+							style={{ lineHeight: design ? "60px" : "75px", fontFamily: font }}
 						>
 							<span className="relative">
 								{new Intl.NumberFormat("ru-RU").format(price)}

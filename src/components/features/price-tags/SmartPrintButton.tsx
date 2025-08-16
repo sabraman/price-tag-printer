@@ -1,23 +1,17 @@
 "use client";
 
-import { ChevronDown, Download, FileDown, Printer } from "lucide-react";
-import React from "react";
+import { FileDown, Printer } from "lucide-react";
+import type React from "react";
 import { Button } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { usePrintTags } from "@/hooks/usePrintTags";
-import { usePriceTagsStore } from "@/store/priceTagsStore";
+import { type Item, usePriceTagsStore } from "@/store/priceTagsStore";
 
 interface SmartPrintButtonProps {
-	items: any[];
+	items: Item[];
 	onError?: (error: string) => void;
 	onSuccess?: () => void;
 	isEditMode?: boolean;
+	componentRef?: React.RefObject<HTMLDivElement>;
 }
 
 export function SmartPrintButton({
@@ -25,6 +19,7 @@ export function SmartPrintButton({
 	onError,
 	onSuccess,
 	isEditMode = false,
+	componentRef,
 }: SmartPrintButtonProps) {
 	const {
 		design,
@@ -47,6 +42,7 @@ export function SmartPrintButton({
 	} = usePrintTags({
 		onError: (error) => onError?.(error.message),
 		onSuccess,
+		componentRef,
 	});
 
 	if (items.length === 0 || isEditMode) return null;
@@ -68,11 +64,11 @@ export function SmartPrintButton({
 		handlePrint(printData);
 	};
 
-	const handleForceBrowser = () => {
+	const _handleForceBrowser = () => {
 		handleBrowserPrint();
 	};
 
-	const handleForcePDF = () => {
+	const _handleForcePDF = () => {
 		handlePDFDownload(printData);
 	};
 
@@ -87,11 +83,11 @@ export function SmartPrintButton({
 		);
 
 	return (
-		<div className="flex w-full mb-4">
+		<div className="flex flex-col w-full gap-2 mb-4">
 			<Button
 				onClick={handleSmartPrint}
 				disabled={isGenerating}
-				className="flex-1 mr-1"
+				className="w-full"
 				variant="default"
 			>
 				{isGenerating ? (
@@ -106,41 +102,6 @@ export function SmartPrintButton({
 					</>
 				)}
 			</Button>
-
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button
-						variant="default"
-						size="icon"
-						className="ml-1"
-						disabled={isGenerating}
-					>
-						<ChevronDown className="h-4 w-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DropdownMenuItem onClick={handleForceBrowser}>
-						<Printer className="h-4 w-4 mr-2" />
-						Печать в браузере
-					</DropdownMenuItem>
-					<DropdownMenuItem onClick={handleForcePDF}>
-						<Download className="h-4 w-4 mr-2" />
-						Скачать PDF
-					</DropdownMenuItem>
-					<DropdownMenuSeparator />
-					<DropdownMenuItem disabled>
-						<div className="text-sm text-muted-foreground">
-							Браузер: {browserInfo.name}
-							{browserInfo.recommendedMethod === "browser" && (
-								<span className="text-green-600 ml-1">✓ Поддерживается</span>
-							)}
-							{browserInfo.recommendedMethod === "pdf" && (
-								<span className="text-yellow-600 ml-1">⚠ PDF режим</span>
-							)}
-						</div>
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
 		</div>
 	);
 }
