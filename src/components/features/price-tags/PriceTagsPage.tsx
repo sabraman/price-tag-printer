@@ -1,22 +1,22 @@
-import { fetchGoogleSheetsData } from "google-sheets-data-fetcher";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+// Dynamic import for Google Sheets functionality to avoid SSR issues
 import { AlertCircle, Edit2, Eye } from "lucide-react";
 import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
+import { BrowserWarning } from "@/components/common/BrowserWarning";
+import { BackupPrintButtons } from "@/components/features/price-tags/BackupPrintButtons";
 import ExcelUploader from "@/components/features/price-tags/ExcelUploader";
-import GenerateButton from "@/components/features/price-tags/GenerateButton";
 import GoogleSheetsForm from "@/components/features/price-tags/GoogleSheetsForm";
 import { OptimizedEditTable } from "@/components/features/price-tags/OptimizedEditTable";
 import { PriceTagCustomizer } from "@/components/features/price-tags/PriceTagCustomizer";
 import PriceTagList from "@/components/features/price-tags/PriceTagList";
+import { SmartPrintButton } from "@/components/features/price-tags/SmartPrintButton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNewItemDraft } from "@/hooks/useNewItemDraft";
-import { usePrintTags } from "@/hooks/usePrintTags";
+import { fetchGoogleSheetsData } from "@/lib/googleSheets";
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 
@@ -100,6 +100,10 @@ export const PriceTagsPage: React.FC = () => {
 	// Enhanced selection state management with filtering support
 	const [selectedItems, setSelectedItems] = useState<number[]>([]);
 	const [lastDuplicationTime, setLastDuplicationTime] = useState<number>(0);
+	const [_showDebugPreview, _setShowDebugPreview] = useState<boolean>(false);
+
+	// Create componentRef for react-to-print
+	const componentRef = useRef<HTMLDivElement>(null);
 
 	// Memoized filtered IDs for stable reference
 	const filteredItemIds = useMemo(
@@ -306,22 +310,10 @@ export const PriceTagsPage: React.FC = () => {
 		document.body.removeChild(link);
 	};
 
-	const exportToPdf = (items: Item[]) => {
-		const doc = new jsPDF();
-		autoTable(doc, {
-			head: [
-				["Название", "Цена", "Дизайн", "Скидка", "Цена за 2", "Цена от 3"],
-			],
-			body: items.map((item) => [
-				String(item.data),
-				String(item.price),
-				item.designType || "",
-				String(item.hasDiscount || ""),
-				String(item.priceFor2 || ""),
-				String(item.priceFrom3 || ""),
-			]),
-		});
-		doc.save("price_tags.pdf");
+	const exportToPdf = (_items: Item[]) => {
+		// PDF export functionality has been moved to SmartPrintButton component
+		// This is kept for compatibility but users should use the print functionality instead
+		toast.info("PDF export is now handled by the Print button");
 	};
 
 	const exportToXlsx = (items: Item[]) => {
@@ -342,9 +334,7 @@ export const PriceTagsPage: React.FC = () => {
 		XLSX.writeFile(wb, "price_tags.xlsx");
 	};
 
-	const { componentRef, handlePrint } = usePrintTags({
-		onError: (error) => setError(error.message),
-	});
+	// Note: Print functionality now handled by SmartPrintButton component
 
 	const extractSheetIdFromUrl = useCallback((url: string): string => {
 		const parts = url.split("/");
@@ -687,10 +677,6 @@ export const PriceTagsPage: React.FC = () => {
 		setError(null);
 	};
 
-	const handleGenerate = () => {
-		handlePrint();
-	};
-
 	// Use the draft hook to preserve new item state when switching modes
 	useNewItemDraft(isEditMode);
 
@@ -728,6 +714,8 @@ export const PriceTagsPage: React.FC = () => {
 					</Alert>
 				)}
 
+				<BrowserWarning />
+
 				{items.length > 0 && (
 					<div className="space-y-4">
 						<div className="flex gap-2">
@@ -748,10 +736,12 @@ export const PriceTagsPage: React.FC = () => {
 									</>
 								)}
 							</Button>
-							<GenerateButton
+							<SmartPrintButton
 								items={items}
 								isEditMode={isEditMode}
-								onGenerate={handleGenerate}
+								onError={(error) => setError(error)}
+								onSuccess={() => setError(null)}
+								componentRef={componentRef}
 							/>
 						</div>
 						<PriceTagCustomizer
@@ -768,6 +758,14 @@ export const PriceTagsPage: React.FC = () => {
 								setDesignType(type);
 							}}
 							onShowThemeLabelsChange={setShowThemeLabels}
+						/>
+
+						{/* Backup print buttons after customizer */}
+						<BackupPrintButtons
+							items={items}
+							onError={(error) => setError(error)}
+							onSuccess={() => setError(null)}
+							componentRef={componentRef}
 						/>
 					</div>
 				)}
@@ -791,19 +789,24 @@ export const PriceTagsPage: React.FC = () => {
 							onExport={handleExport}
 						/>
 					) : (
-						<div ref={componentRef} className="sticky top-4">
-							<PriceTagList
-								items={items}
-								design={design}
-								designType={designType}
-								themes={themes}
-								font={currentFont}
-								discountText={discountText}
-								useTableDesigns={hasTableDesigns && designType === "table"}
-								useTableDiscounts={hasTableDiscounts && designType === "table"}
-								showThemeLabels={showThemeLabels}
-								cuttingLineColor={cuttingLineColor}
-							/>
+						<div className="space-y-4">
+							<div className="sticky top-4">
+								<PriceTagList
+									items={items}
+									design={design}
+									designType={designType}
+									themes={themes}
+									font={currentFont}
+									discountText={discountText}
+									useTableDesigns={hasTableDesigns && designType === "table"}
+									useTableDiscounts={
+										hasTableDiscounts && designType === "table"
+									}
+									showThemeLabels={showThemeLabels}
+									cuttingLineColor={cuttingLineColor}
+									printRef={componentRef}
+								/>
+							</div>
 						</div>
 					)}
 				</div>

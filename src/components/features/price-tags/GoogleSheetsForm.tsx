@@ -53,17 +53,19 @@ const GoogleSheetsForm: React.FC<GoogleSheetsFormProps> = ({
 	return (
 		<div className="mb-4">
 			<form onSubmit={handleSubmit} className="space-y-4">
-				<p className="text-base font-medium">
-					Или вставь ссылку на Гугл таблицы:{" "}
-				</p>
-				<a
-					href="https://docs.google.com/spreadsheets/d/1hib1AcPemuxn3_8JIn9lcMTsXBGSpC7b-vEBbHgvQw8/edit?gid=585882185#gid=585882185/"
-					target="_blank"
-					rel="noopener noreferrer"
-					className="text-gray-200 hover:text-gray-500 underline"
-				>
-					Пример таблицы
-				</a>
+				<div className="space-y-2">
+					<p className="text-base font-medium">
+						Или вставь ссылку на Гугл таблицы:{" "}
+					</p>
+					<a
+						href="https://docs.google.com/spreadsheets/d/1hib1AcPemuxn3_8JIn9lcMTsXBGSpC7b-vEBbHgvQw8/edit?gid=585882185#gid=585882185/"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-primary hover:text-primary/80 underline inline-block"
+					>
+						📊 Пример таблицы
+					</a>
+				</div>
 				<div className="flex flex-col space-y-4">
 					<InputWithClearButton
 						value={url}

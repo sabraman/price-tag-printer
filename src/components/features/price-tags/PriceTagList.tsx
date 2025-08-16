@@ -24,6 +24,7 @@ interface PriceTagListProps {
 	useTableDiscounts?: boolean;
 	showThemeLabels?: boolean;
 	cuttingLineColor?: string;
+	printRef?: React.RefObject<HTMLDivElement>;
 }
 
 const PriceTagList: React.FC<PriceTagListProps> = ({
@@ -37,6 +38,7 @@ const PriceTagList: React.FC<PriceTagListProps> = ({
 	useTableDiscounts = false,
 	showThemeLabels = true,
 	cuttingLineColor,
+	printRef,
 }) => {
 	// Create chunks of 9 items for each page
 	const chunkedItems = items.reduce(
@@ -52,7 +54,7 @@ const PriceTagList: React.FC<PriceTagListProps> = ({
 	);
 
 	return (
-		<div className="w-full flex flex-col items-center">
+		<div ref={printRef} className="w-full flex flex-col items-center">
 			{chunkedItems.map((chunk, pageIndex) => (
 				<div
 					key={chunk.map((item) => item.id).join("-")}

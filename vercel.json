@@ -1,3 +1,8 @@
 {
-	"rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "functions": {
+    "src/app/api/pdf/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "regions": ["iad1"]
 }
