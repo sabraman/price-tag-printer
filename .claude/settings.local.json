@@ -16,7 +16,16 @@
       "Bash(mkdir:*)",
       "Bash(rm:*)",
       "Bash(pnpm dlx:*)",
-      "Bash(npx biome check:*)"
+      "Bash(npx biome check:*)",
+      "Bash(timeout 10 pnpm dev)",
+      "Bash(cp:*)",
+      "Bash(pnpm list:*)",
+      "Bash(git rm:*)",
+      "Bash(gh pr create:*)",
+      "Bash(pnpm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm add:*)",
+      "Bash(npx biome format:*)"
     ],
     "deny": []
   }

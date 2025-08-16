@@ -9,7 +9,7 @@ import type { Item, ThemeSet } from "@/store/priceTagsStore";
 interface UsePrintTagsOptions {
 	onError?: (error: Error) => void;
 	onSuccess?: () => void;
-	componentRef?: React.RefObject<HTMLDivElement>;
+	componentRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 interface PrintTagsData {
@@ -30,7 +30,7 @@ export const usePrintTags = ({
 	onSuccess,
 	componentRef: externalRef,
 }: UsePrintTagsOptions = {}) => {
-	const internalRef = useRef<HTMLDivElement>(null);
+	const internalRef = useRef<HTMLDivElement | null>(null);
 	const componentRef = externalRef || internalRef;
 	const [isGenerating, setIsGenerating] = useState(false);
 

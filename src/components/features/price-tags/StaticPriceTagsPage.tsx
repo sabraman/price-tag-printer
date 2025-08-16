@@ -1,4 +1,4 @@
-import type { Item, ThemeSet } from "@/store/priceTagsStore";
+import type { Item, Theme, ThemeSet } from "@/store/priceTagsStore";
 
 interface StaticPriceTagsPageProps {
 	items: Item[];
@@ -71,7 +71,7 @@ export function StaticPriceTagsPage({
 				? itemDesignType
 				: "default";
 
-		return themes[safeDesignType] || themes.default;
+		return themes[safeDesignType as keyof ThemeSet] || themes.default;
 	};
 
 	const shouldShowDiscount = (item: Item) => {
@@ -85,7 +85,7 @@ export function StaticPriceTagsPage({
 		return item.priceFor2 && item.priceFrom3;
 	};
 
-	const needsBorder = (theme: ThemeSet[string], designType: string) => {
+	const needsBorder = (theme: Theme, designType: string) => {
 		return (
 			designType === "white" ||
 			designType === "black" ||
@@ -103,7 +103,7 @@ export function StaticPriceTagsPage({
 		);
 	};
 
-	const getAutomaticCutLineColor = (theme: ThemeSet[string]) => {
+	const getAutomaticCutLineColor = (theme: Theme) => {
 		const isLightTheme = theme.textColor !== "#ffffff";
 		return isLightTheme ? "#000000" : "#ffffff";
 	};
@@ -161,6 +161,8 @@ export function StaticPriceTagsPage({
 					height={originalHeight}
 					viewBox={`0 0 ${originalWidth} ${originalHeight}`}
 					style={{ display: "block" }}
+					role="img"
+					aria-label={`Price tag for ${titleText}`}
 				>
 					<defs>
 						{isGradient && (
@@ -514,13 +516,13 @@ export function StaticPriceTagsPage({
 					}}
 				>
 					{/* Create exactly 18 slots (6 rows × 3 columns) */}
-					{Array.from({ length: 18 }, (_, index) => {
-						const item = chunk[index];
+					{Array.from({ length: 18 }, (_, slotIndex) => {
+						const item = chunk[slotIndex];
 						return item ? (
 							<StaticPriceTag key={item.id} item={item} />
 						) : (
 							<div
-								key={`empty-${pageIndex}-${index}`}
+								key={`empty-page-${pageIndex}-slot-${slotIndex}-${Date.now()}`}
 								style={{
 									width: originalWidth,
 									height: originalHeight,

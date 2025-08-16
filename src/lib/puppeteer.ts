@@ -1,3 +1,5 @@
+import type { Browser, LaunchOptions } from "puppeteer-core";
+
 export interface PDFGenerationOptions {
 	html: string;
 	filename?: string;
@@ -19,13 +21,14 @@ export async function generatePDF(
 		margin = { top: "0", right: "0", bottom: "0", left: "0" },
 	} = options;
 
-	let browser = null;
+	let browser: Browser | null = null;
 
 	try {
 		// Configure for different environments based on Vercel's official guide
 		const isVercel = !!process.env.VERCEL_ENV;
+		// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 		let puppeteer: any;
-		let launchOptions: any = { headless: true };
+		let launchOptions: LaunchOptions = { headless: true };
 
 		if (isVercel) {
 			// Production/Vercel configuration
@@ -51,6 +54,9 @@ export async function generatePDF(
 		}
 
 		browser = await puppeteer.launch(launchOptions);
+		if (!browser) {
+			throw new Error("Failed to launch browser");
+		}
 
 		const page = await browser.newPage();
 

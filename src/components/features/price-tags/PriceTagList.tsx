@@ -24,7 +24,7 @@ interface PriceTagListProps {
 	useTableDiscounts?: boolean;
 	showThemeLabels?: boolean;
 	cuttingLineColor?: string;
-	printRef?: React.RefObject<HTMLDivElement>;
+	printRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 const PriceTagList: React.FC<PriceTagListProps> = ({

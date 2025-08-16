@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import { fetchGoogleSheetsData } from "@/lib/googleSheets";
 import type { Item } from "@/store/itemsStore";
 import ExcelUploaderLazy from "./ExcelUploaderLazy";
 import GoogleSheetsForm from "./GoogleSheetsForm";

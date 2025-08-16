@@ -7,7 +7,6 @@ import { usePrintTags } from "@/hooks/usePrintTags";
 import type { Item } from "@/store/itemsStore";
 import type { ThemeSet } from "@/store/priceTagsStore";
 import GenerateButton from "./GenerateButton";
-import { PDFGeneratorLazy } from "./PDFGeneratorLazy";
 
 interface ExportSectionProps {
 	items: Item[];
@@ -20,11 +19,11 @@ interface ExportSectionProps {
 
 export const ExportSection: React.FC<ExportSectionProps> = ({
 	items,
-	themes,
-	currentFont,
-	discountText,
-	design,
-	designType,
+	themes: _themes,
+	currentFont: _currentFont,
+	discountText: _discountText,
+	design: _design,
+	designType: _designType,
 }) => {
 	const [isExporting, setIsExporting] = useState(false);
 	const [exportProgress, setExportProgress] = useState(0);
@@ -71,27 +70,7 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 	return (
 		<div className="space-y-4">
 			<div className="flex flex-wrap gap-4">
-				<PDFGeneratorLazy
-					items={items}
-					themes={themes}
-					currentFont={currentFont}
-					discountText={discountText}
-					design={design}
-					designType={designType}
-					onGenerateStart={() => {
-						setIsExporting(true);
-						setExportProgress(0);
-					}}
-					onGenerateComplete={() => {
-						setIsExporting(false);
-						setExportProgress(0);
-					}}
-					onError={(error) => {
-						setIsExporting(false);
-						setExportProgress(0);
-						toast.error(error);
-					}}
-				/>
+				{/* PDF Generator functionality moved to SmartPrintButton */}
 
 				<Button
 					onClick={handlePrintTags}

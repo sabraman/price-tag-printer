@@ -162,7 +162,7 @@ function generatePriceTagSVG({
 	showThemeLabels,
 	cuttingLineColor,
 }: SVGOptions): string {
-	const theme = themes[designType] || themes.default;
+	const theme = themes[designType as keyof ThemeSet] || themes.default;
 	if (!theme) return "";
 
 	const id = item.id;

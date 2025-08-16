@@ -11,7 +11,7 @@ interface SmartPrintButtonProps {
 	onError?: (error: string) => void;
 	onSuccess?: () => void;
 	isEditMode?: boolean;
-	componentRef?: React.RefObject<HTMLDivElement>;
+	componentRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export function SmartPrintButton({

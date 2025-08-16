@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type NextRequest, NextResponse } from "next/server";
+import type { Browser, LaunchOptions } from "puppeteer-core";
 import { createPrintableHTML } from "@/lib/puppeteer";
 
 export async function POST(request: NextRequest) {
@@ -16,13 +16,14 @@ export async function POST(request: NextRequest) {
 		// Create printable HTML with proper styling
 		const printableHTML = createPrintableHTML(html);
 
-		let browser: any;
+		let browser: Browser | undefined;
 		try {
 			const isVercel = !!process.env.VERCEL_ENV;
-			let puppeteer: any,
-				launchOptions: any = {
-					headless: true,
-				};
+			// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
+			let puppeteer: any;
+			let launchOptions: LaunchOptions = {
+				headless: true,
+			};
 
 			if (isVercel) {
 				const chromium = (await import("@sparticuz/chromium")).default;
@@ -37,6 +38,9 @@ export async function POST(request: NextRequest) {
 			}
 
 			browser = await puppeteer.launch(launchOptions);
+			if (!browser) {
+				throw new Error("Failed to launch browser");
+			}
 			const page = await browser.newPage();
 
 			// Set viewport for consistent rendering

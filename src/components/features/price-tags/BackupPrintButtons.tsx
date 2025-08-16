@@ -10,7 +10,7 @@ interface BackupPrintButtonsProps {
 	items: Item[];
 	onError?: (error: string) => void;
 	onSuccess?: () => void;
-	componentRef?: React.RefObject<HTMLDivElement>;
+	componentRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export function BackupPrintButtons({
