@@ -45,8 +45,9 @@ export function detectBrowser(): BrowserInfo {
 	else if (isSafari) browserName = "Safari";
 	else if (isFirefox) browserName = "Firefox";
 
-	// Desktop Chromium browsers get native print, everything else gets PDF
-	const supportsNativePrint = isChromium && !isMobile;
+	// Desktop browsers (Chrome, Edge, Opera, Safari, Firefox) support native print, mobile gets PDF
+	const supportsNativePrint =
+		!isMobile && (isChromium || isSafari || isFirefox);
 	const recommendedMethod: "browser" | "pdf" = supportsNativePrint
 		? "browser"
 		: "pdf";
@@ -68,16 +69,8 @@ export function getBrowserWarningMessage(
 	}
 
 	if (browserInfo.isMobile) {
-		return "Mobile browsers will generate a PDF file for download. For best print quality, use Chrome or Edge on desktop.";
+		return "Мобильные браузеры будут генерировать PDF для загрузки. Для лучшего качества печати используйте Chrome или Edge на компьютере.";
 	}
 
-	if (browserInfo.name === "Safari") {
-		return "Safari users will receive a PDF download. For optimal print experience, consider using Chrome or Edge.";
-	}
-
-	if (browserInfo.name === "Firefox") {
-		return "Firefox users will receive a PDF download. For better print quality, consider using Chrome or Edge.";
-	}
-
-	return "Your browser will generate a PDF file for download. For optimal print experience, use Chrome or Edge.";
+	return "Ваш браузер будет генерировать PDF файл для загрузки. Для оптимального опыта печати используйте Chrome или Edge.";
 }

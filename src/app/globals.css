@@ -81,6 +81,25 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		font-family:
+			var(--font-inter), "Inter", system-ui, "Segoe UI", "Roboto", sans-serif;
+	}
+
+	/* Font family utilities for dynamic switching */
+	.font-montserrat {
+		font-family: var(--font-montserrat), "Montserrat", sans-serif;
+	}
+
+	.font-nunito {
+		font-family: var(--font-nunito), "Nunito", sans-serif;
+	}
+
+	.font-inter {
+		font-family: var(--font-inter), "Inter", sans-serif;
+	}
+
+	.font-mont {
+		font-family: "Mont", "Montserrat", sans-serif;
 	}
 }
 

@@ -1,6 +1,6 @@
 @font-face {
 	font-family: "Mont";
-	src: url("./assets/mont_heavydemo.ttf") format("truetype");
+	src: url("/fonts/mont_heavydemo.ttf") format("truetype");
 	font-weight: 900;
 	font-style: normal;
 }
