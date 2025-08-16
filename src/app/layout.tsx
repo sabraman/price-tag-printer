@@ -6,6 +6,7 @@ import FontLoader from "@/components/layout/FontLoader";
 import { inter, montserrat, nunito } from "@/config/fonts";
 import { metadata as siteMetadata } from "@/config/metadata";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata: Metadata = siteMetadata;
 
 export default function RootLayout({
