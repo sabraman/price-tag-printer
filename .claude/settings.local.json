@@ -25,7 +25,8 @@
       "Bash(pnpm run:*)",
       "Bash(npx tsc:*)",
       "Bash(pnpm add:*)",
-      "Bash(npx biome format:*)"
+      "Bash(npx biome format:*)",
+      "Bash(git pull:*)"
     ],
     "deny": []
   }

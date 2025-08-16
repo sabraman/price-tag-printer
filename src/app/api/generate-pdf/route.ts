@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import type { Browser, LaunchOptions } from "puppeteer-core";
 import { createPrintableHTML } from "@/lib/puppeteer";
 
+export const maxDuration = 30;
+
 export async function POST(request: NextRequest) {
 	try {
 		const { html } = await request.json();

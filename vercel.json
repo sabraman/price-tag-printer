@@ -1,8 +1,3 @@
 {
-  "functions": {
-    "src/app/api/generate-pdf/route.ts": {
-      "maxDuration": 30
-    }
-  },
   "regions": ["iad1"]
 }
