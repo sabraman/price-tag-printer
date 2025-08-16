@@ -106,36 +106,23 @@ function ColorPicker({
 
 	// Debounced function to add color to recent colors
 	const debouncedAddToRecentColors = React.useCallback(
-		React.useMemo(() => {
-			let timeoutId: NodeJS.Timeout | null = null;
-			const cleanup = () => {
-				if (timeoutId) {
-					clearTimeout(timeoutId);
-					timeoutId = null;
-				}
-			};
-			const debounced = (color: string) => {
-				cleanup();
-				timeoutId = setTimeout(() => {
-					addToRecentColors(color);
-					timeoutId = null;
-				}, 500); // Wait 500ms after user stops adjusting
-			};
-			// Return both the debounced function and cleanup
-			debounced.cleanup = cleanup;
-			return debounced;
-		}, [addToRecentColors]),
-		[],
+		(color: string) => {
+			const timeoutId = setTimeout(() => {
+				addToRecentColors(color);
+			}, 500); // Wait 500ms after user stops adjusting
+			
+			// Return cleanup function
+			return () => clearTimeout(timeoutId);
+		},
+		[addToRecentColors],
 	);
 
 	// Cleanup timeout on unmount
 	React.useEffect(() => {
 		return () => {
-			if (debouncedAddToRecentColors.cleanup) {
-				debouncedAddToRecentColors.cleanup();
-			}
+			// No cleanup needed as we return cleanup function from debounced function
 		};
-	}, [debouncedAddToRecentColors]);
+	}, []);
 
 	const handleValueChange = (color: HsvaColor) => {
 		setColorHsv(color);

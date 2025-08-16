@@ -1,35 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Montserrat, Nunito } from "next/font/google";
 import "./globals.css";
 import "../App.css"; // Import Mont font
 import { Toaster } from "sonner";
 import FontLoader from "@/components/layout/FontLoader";
+import { inter, montserrat, nunito } from "@/config/fonts";
+import { metadata as siteMetadata } from "@/config/metadata";
 
-const inter = Inter({
-	subsets: ["latin"],
-	variable: "--font-inter",
-	display: "swap",
-	weight: ["400", "500", "600", "700"],
-});
-
-const montserrat = Montserrat({
-	subsets: ["latin"],
-	variable: "--font-montserrat",
-	display: "swap",
-	weight: ["300", "400", "500", "600", "700", "900"],
-});
-
-const nunito = Nunito({
-	subsets: ["latin"],
-	variable: "--font-nunito",
-	display: "swap",
-	weight: ["300", "400", "500", "600", "700", "900"],
-});
-
-export const metadata: Metadata = {
-	title: "Price Tag Generator",
-	description: "Generate and print price tags with various themes and designs",
-};
+export const metadata: Metadata = siteMetadata;
 
 export default function RootLayout({
 	children,

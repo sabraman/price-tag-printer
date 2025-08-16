@@ -27,7 +27,6 @@ export const useFontSizeAdjustment = ({
 }: FontSizeAdjustmentOptions) => {
 	const [fontSize, setFontSize] = useState(initialFontSize);
 	const [isReady, setIsReady] = useState(false);
-	const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 	const iterationCountRef = useRef(0);
 	const elementRef = useRef<HTMLElement | null>(null);
 
@@ -302,10 +301,7 @@ export const useFontSizeAdjustment = ({
 	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
-			const currentTimeout = timeoutRef.current;
-			if (currentTimeout) {
-				clearTimeout(currentTimeout);
-			}
+			// No cleanup needed
 		};
 	}, []);
 
