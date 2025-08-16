@@ -33,13 +33,7 @@ export function SmartPrintButton({
 		cuttingLineColor,
 	} = usePriceTagsStore();
 
-	const {
-		handlePrint,
-		handleBrowserPrint,
-		handlePDFDownload,
-		isGenerating,
-		browserInfo,
-	} = usePrintTags({
+	const { handlePrint, isGenerating, browserInfo } = usePrintTags({
 		onError: (error) => onError?.(error.message),
 		onSuccess,
 		componentRef,
@@ -62,14 +56,6 @@ export function SmartPrintButton({
 
 	const handleSmartPrint = () => {
 		handlePrint(printData);
-	};
-
-	const _handleForceBrowser = () => {
-		handleBrowserPrint();
-	};
-
-	const _handleForcePDF = () => {
-		handlePDFDownload(printData);
 	};
 
 	const primaryButtonText =

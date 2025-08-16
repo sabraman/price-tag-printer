@@ -36,13 +36,12 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 		const [key, setKey] = useState<number>(0);
 
 		// Use optimized font size adjustment hook
-		const { fontSize, adjustFontSize, resetFontSize } = useFontSizeAdjustment({
+		const { fontSize, adjustFontSize, isReady } = useFontSizeAdjustment({
 			elementId: `product-name-${id}`,
 			initialFontSize: 16,
-			minFontSize: 8,
+			minFontSize: 4,
 			adjustmentStep: 0.5,
 			maxIterations: 20,
-			debounceMs: 50,
 		});
 
 		// Ensure we use a valid theme
@@ -58,21 +57,23 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 
 		// Reset font size when component mounts or data changes
 		useEffect(() => {
-			resetFontSize();
+			// resetFontSize(); // This line was removed as per the edit hint
 			setKey((prev) => prev + 1);
-		}, [resetFontSize]);
+		}, []); // Removed resetFontSize from dependency array
 
 		// Adjust line height and trigger font size adjustment when design changes
 		useEffect(() => {
 			setLineHeight(design ? 60 : 75);
 
-			// Delay font adjustment to allow layout to settle
-			const timeoutId = setTimeout(() => {
-				adjustFontSize();
-			}, 100);
+			// Delay font adjustment to allow layout to settle and wait for hook to be ready
+			if (isReady) {
+				const timeoutId = setTimeout(() => {
+					adjustFontSize();
+				}, 100);
 
-			return () => clearTimeout(timeoutId);
-		}, [design, adjustFontSize]);
+				return () => clearTimeout(timeoutId);
+			}
+		}, [design, adjustFontSize, isReady]);
 
 		return (
 			<div className="relative w-[160px] h-[110px] overflow-hidden">

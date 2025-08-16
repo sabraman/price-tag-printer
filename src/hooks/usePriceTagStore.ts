@@ -56,6 +56,7 @@ export const usePriceTagStore = () => {
 		settingsStore.hasTableDiscounts,
 		itemsStore.items,
 		itemsStore.updateItem,
+		itemsStore,
 	]);
 
 	// Enhanced actions that combine multiple stores

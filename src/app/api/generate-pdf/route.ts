@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-import type { Browser, LaunchOptions } from "puppeteer-core";
 import { createPrintableHTML } from "@/lib/puppeteer";
 
 export const maxDuration = 30;
@@ -18,12 +17,12 @@ export async function POST(request: NextRequest) {
 		// Create printable HTML with proper styling
 		const printableHTML = createPrintableHTML(html);
 
-		let browser: Browser | undefined;
+		let browser: any;
 		try {
 			const isVercel = !!process.env.VERCEL_ENV;
 			// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 			let puppeteer: any;
-			let launchOptions: LaunchOptions = {
+			let launchOptions: any = {
 				headless: true,
 			};
 

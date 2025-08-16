@@ -20,12 +20,10 @@ interface GoogleSheetsResponse {
 /**
  * Fetches data from Google Sheets using the reliable google-sheets-data-fetcher package
  * @param configs Array of sheet configurations
- * @param options Request options (currently unused, kept for compatibility)
  * @returns Promise resolving to Google Sheets data in the expected format
  */
 export async function fetchGoogleSheetsData(
 	configs: GoogleSheetsConfig[],
-	_options: string[] = [],
 ): Promise<GoogleSheetsResponse> {
 	try {
 		console.log("Fetching Google Sheets data with configs:", configs);

@@ -153,22 +153,18 @@ export const DataImportSection: React.FC<DataImportSectionProps> = ({
 			setImportProgress(0);
 			onLoadingChange(true);
 
-			const response = await fetchGoogleSheetsData(
-				[
-					{
-						sheetId: spreadsheetId,
-						subSheetsIds: ["0"],
-					},
-				],
-				["JSON_COLUMNS"],
-			);
+			const data: GoogleSheetsResponse = await fetchGoogleSheetsData([
+				{
+					sheetId: spreadsheetId,
+					subSheetsIds: ["0"],
+				},
+			]);
 			setImportProgress(50);
 
-			if (!response || typeof response !== "object") {
+			if (!data || typeof data !== "object") {
 				throw new Error("Некорректные данные из Google Sheets");
 			}
 
-			const data = response as GoogleSheetsResponse;
 			const columnKeys = Object.keys(data);
 
 			if (columnKeys.length === 0) {

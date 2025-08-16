@@ -100,7 +100,6 @@ export const PriceTagsPage: React.FC = () => {
 	// Enhanced selection state management with filtering support
 	const [selectedItems, setSelectedItems] = useState<number[]>([]);
 	const [lastDuplicationTime, setLastDuplicationTime] = useState<number>(0);
-	const [_showDebugPreview, _setShowDebugPreview] = useState<boolean>(false);
 
 	// Create componentRef for react-to-print
 	const componentRef = useRef<HTMLDivElement>(null);
@@ -348,15 +347,12 @@ export const PriceTagsPage: React.FC = () => {
 			try {
 				const sheetId = extractSheetIdFromUrl(url);
 
-				const data: GoogleSheetsResponse = await fetchGoogleSheetsData(
-					[
-						{
-							sheetId: sheetId,
-							subSheetsIds: ["0"],
-						},
-					],
-					["JSON_COLUMNS"],
-				);
+				const data: GoogleSheetsResponse = await fetchGoogleSheetsData([
+					{
+						sheetId: sheetId,
+						subSheetsIds: ["0"],
+					},
+				]);
 
 				if (data) {
 					const columnKeys = Object.keys(data);

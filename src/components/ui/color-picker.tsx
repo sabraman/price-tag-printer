@@ -496,15 +496,17 @@ function ObjectColorInput({
 }: ObjectColorInputProps) {
 	function handleChange(val: HslaColor | RgbaColor) {
 		if (onValueChange) {
-			label === "hsl"
-				? onValueChange({
-						...value,
-						...val,
-					})
-				: onValueChange({
-						...value,
-						...val,
-					});
+			if (label === "hsl") {
+				onValueChange({
+					...value,
+					...val,
+				} as HslaColor);
+			} else {
+				onValueChange({
+					...value,
+					...val,
+				} as RgbaColor);
+			}
 		}
 	}
 	return (

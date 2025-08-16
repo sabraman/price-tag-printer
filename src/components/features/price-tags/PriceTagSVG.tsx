@@ -88,20 +88,25 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 
 	// Universal font size adjustment using optimized DOM measurement
 	const productNameElementId = `product-name-${id}`;
-	const { fontSize: calculatedFontSize, adjustFontSize } =
-		useFontSizeAdjustment({
-			elementId: productNameElementId,
-			initialFontSize: 16,
-			minFontSize: 4,
-			adjustmentStep: 0.5,
-			maxIterations: 20,
-			debounceMs: 10, // Faster response
-		});
+	const {
+		fontSize: calculatedFontSize,
+		adjustFontSize,
+		isReady,
+	} = useFontSizeAdjustment({
+		elementId: productNameElementId,
+		initialFontSize: 16,
+		minFontSize: 4,
+		adjustmentStep: 0.5,
+		maxIterations: 20,
+		debug: false, // Set to true to enable debug logging
+	});
 
 	// Trigger font adjustment when data or font changes, and on mount
 	useEffect(() => {
-		adjustFontSize();
-	}, [adjustFontSize]);
+		if (isReady) {
+			adjustFontSize();
+		}
+	}, [adjustFontSize, isReady]);
 
 	return (
 		<div className="relative w-[160px] h-[110px] overflow-hidden">

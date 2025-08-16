@@ -69,21 +69,6 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	const showDiscountText =
 		design || (designType === "table" && hasTableDiscounts);
 
-	// Design type options
-	let designItems = [
-		{ value: "default", label: "Обычный" },
-		{ value: "new", label: "Новинка" },
-		{ value: "sale", label: "Распродажа" },
-	];
-
-	// Add "table" option if there are designs in the table
-	if (hasTableDesigns) {
-		designItems = [
-			...designItems,
-			{ value: "table", label: "Взять из таблицы" },
-		];
-	}
-
 	// Show discount switch only if not "table mode" with table discounts
 	const showDiscountSwitch = !(designType === "table" && hasTableDiscounts);
 
