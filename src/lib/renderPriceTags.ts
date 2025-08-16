@@ -55,7 +55,9 @@ export function renderPriceTagsHTML(options: RenderOptions): string {
 		if (pageItems.length === 0) continue;
 
 		const pageSVGs = pageItems
-			.map((item, _index) => {
+			.map((item, index) => {
+				// biome-ignore lint: Parameter is required by interface
+				void index;
 				const itemDesignType = useTableDesigns
 					? item.designType || designType
 					: designType;
