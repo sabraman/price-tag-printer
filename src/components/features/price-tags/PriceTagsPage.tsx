@@ -665,13 +665,8 @@ export const PriceTagsPage: React.FC = () => {
 			{/* Main Container */}
 			<div className="container mx-auto px-6 py-8">
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-					{/* Left Sidebar - Make wider for customizer */}
-					<div
-						className={cn(
-							"lg:col-span-6 space-y-6",
-							items.length === 0 && "lg:col-span-12",
-						)}
-					>
+					{/* Left Sidebar - Always maintain grid structure */}
+					<div className="lg:col-span-6 space-y-6">
 						{/* Import Section */}
 						<div className="space-y-4">
 							<ExcelUploader onUpload={handleExcelUpload} />
@@ -787,9 +782,9 @@ export const PriceTagsPage: React.FC = () => {
 						)}
 					</div>
 
-					{/* Main Content Area - Adjust for wider sidebar */}
-					{items.length > 0 && (
-						<div className="lg:col-span-6">
+					{/* Main Content Area - Always show to maintain grid structure */}
+					<div className="lg:col-span-6">
+						{items.length > 0 ? (
 							<div className="space-y-4">
 								{isEditMode && (
 									<div className="flex items-center justify-between">
@@ -843,8 +838,34 @@ export const PriceTagsPage: React.FC = () => {
 									</div>
 								)}
 							</div>
-						</div>
-					)}
+						) : (
+							/* Empty State in Main Content Area */
+							<div className="text-center py-16">
+								<div className="flex justify-center mb-6">
+									<div className="w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center">
+										<FileSpreadsheet className="w-10 h-10 text-muted-foreground" />
+									</div>
+								</div>
+								<h2 className="text-2xl font-semibold text-foreground mb-3">
+									Здесь будут ваши ценники
+								</h2>
+								<p className="text-muted-foreground mb-6 max-w-md mx-auto text-lg">
+									Загрузите файл Excel, подключите Google Sheets или создайте ценники вручную, чтобы начать работу
+								</p>
+								<div className="flex flex-col sm:flex-row gap-3 justify-center">
+									<Button
+										onClick={handleManualEntry}
+										variant="default"
+										size="lg"
+										className="px-8"
+									>
+										<FileSpreadsheet className="w-5 h-5 mr-2" />
+										Создать вручную
+									</Button>
+								</div>
+							</div>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>
