@@ -44,9 +44,17 @@ export function renderPriceTagsHTML(options: RenderOptions): string {
 		cuttingLineColor = "#e5e5e5",
 	} = options;
 
-	// Group items into pages (18 items per page: 3 columns × 6 rows)
-	const itemsPerPage = 18;
+	// Group items into pages (more flexible layout)
+	const itemsPerPage = 18; // Maximum items per page, but we'll be flexible
 	const pages: string[] = [];
+
+	// Only create pages if there are items
+	if (items.length === 0) {
+		return "";
+	}
+
+	// Calculate total pages needed
+	const _totalPages = Math.ceil(items.length / itemsPerPage);
 
 	for (let i = 0; i < items.length; i += itemsPerPage) {
 		const pageItems = items.slice(i, i + itemsPerPage);
@@ -54,9 +62,12 @@ export function renderPriceTagsHTML(options: RenderOptions): string {
 		// Skip empty pages
 		if (pageItems.length === 0) continue;
 
+		// Calculate the exact number of rows needed for this page (3 columns)
+		const rowsNeeded = Math.ceil(pageItems.length / 3);
+		const isLastPage = i + itemsPerPage >= items.length;
+
 		const pageSVGs = pageItems
 			.map((item, index) => {
-				// biome-ignore lint: Parameter is required by interface
 				void index;
 				const itemDesignType = useTableDesigns
 					? item.designType || designType
@@ -78,8 +89,13 @@ export function renderPriceTagsHTML(options: RenderOptions): string {
 			})
 			.join("");
 
+		// Only add page break if this is not the last page
+		const pageBreakClass = isLastPage
+			? "print-page print-page-last"
+			: "print-page";
+
 		pages.push(`
-			<div class="print-page">
+			<div class="${pageBreakClass}" data-rows="${rowsNeeded}" data-is-last="${isLastPage}">
 				${pageSVGs}
 			</div>
 		`);
@@ -91,7 +107,7 @@ export function renderPriceTagsHTML(options: RenderOptions): string {
 			? `
 		<script>
 			// Universal font adjustment function (same logic as useFontSizeAdjustment hook)
-			function adjustFontSizeForElement(elementId, initialFontSize = 16, minFontSize = 4, adjustmentStep = 0.5, maxIterations = 20) {
+			function adjustFontSizeForElement(elementId, initialFontSize = 20, minFontSize = 4, adjustmentStep = 0.5, maxIterations = 20) {
 				const element = document.getElementById(elementId);
 				if (!element) return;
 				
@@ -108,8 +124,9 @@ export function renderPriceTagsHTML(options: RenderOptions): string {
 					// Force a reflow to ensure accurate measurements
 					element.offsetWidth;
 					
-					// Check only horizontal overflow for single-line text
-					const isOverflown = element.scrollWidth > element.clientWidth;
+					// Use the actual container width (178px) instead of clientWidth
+					const containerWidth = 178;
+					const isOverflown = element.scrollWidth > containerWidth;
 					
 					if (isOverflown) {
 						if (fontSize > minFontSize) {
@@ -137,7 +154,7 @@ export function renderPriceTagsHTML(options: RenderOptions): string {
 				});
 			}
 		</script>
-		`
+	`
 			: "";
 
 	return pages.join("") + scriptSection;
@@ -196,19 +213,19 @@ function generatePriceTagSVG({
 
 	// Structure exactly like React component: div > svg (background) + div (content) + svg (cutting lines)
 	return `
-		<div style="position: relative; width: 160px; height: 110px; overflow: hidden; display: inline-block;">
+		<div style="position: relative; width: 200px; height: 140px; overflow: hidden; display: inline-block;">
 			<div style="position: absolute; inset: 0;">
 				<!-- Background SVG (same as React component) -->
-				<svg width="160" height="110" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
+				<svg width="200" height="140" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
 					<defs>
-						<linearGradient id="${gradientId}" x1="13.75" y1="108.41" x2="148.83" y2="10.42" gradientUnits="userSpaceOnUse">
+						<linearGradient id="${gradientId}" x1="17.5" y1="138" x2="186" y2="13.3" gradientUnits="userSpaceOnUse">
 							<stop offset="0" stop-color="${theme.start}" />
 							<stop offset="1" stop-color="${theme.end}" />
 						</linearGradient>
 					</defs>
-					<rect width="160" height="110" 
+					<rect width="200" height="140" 
 					      fill="${theme.start === theme.end ? theme.start : `url(#${gradientId})`}"
-					      ${needsBorder ? `stroke="${borderColor}" stroke-width="${designType === "white" ? "1.5" : "1"}"` : ""} />
+					      ${needsBorder ? `stroke="${borderColor}" stroke-width="${designType === "white" ? "2" : "1.5"}"` : ""} />
 				</svg>
 				
 				<!-- Content overlay (same structure as React component) -->
@@ -216,13 +233,13 @@ function generatePriceTagSVG({
 					${
 						shouldShowLabel && designType === "new"
 							? `
-						<div style="position: absolute; right: -52px; bottom: -4px; transform: rotate(-90deg); font-size: 52px; font-weight: 900; white-space: nowrap; overflow: hidden; width: 118px; font-family: ${fontFamily}; color: ${themes.new.start};">
+						<div style="position: absolute; right: -65px; bottom: -5px; transform: rotate(-90deg); font-size: 65px; font-weight: 900; white-space: nowrap; overflow: hidden; width: 148px; font-family: ${fontFamily}; color: ${themes.new.start};">
 							NEW
 						</div>
 					`
 							: shouldShowLabel && designType === "sale"
 								? `
-						<div style="position: absolute; right: -48px; bottom: -4px; transform: rotate(-90deg); font-size: 48px; font-weight: 900; white-space: nowrap; overflow: hidden; width: 124px; font-family: ${fontFamily}; color: ${themes.sale.start};">
+						<div style="position: absolute; right: -60px; bottom: -5px; transform: rotate(-90deg); font-size: 60px; font-weight: 900; white-space: nowrap; overflow: hidden; width: 155px; font-family: ${fontFamily}; color: ${themes.sale.start};">
 							SALE
 						</div>
 					`
@@ -230,7 +247,7 @@ function generatePriceTagSVG({
 					}
 					
 					<!-- Product name -->
-					<div id="product-name-${id}" style="width: 146px; height: 24px; overflow: hidden; position: relative; top: 8px; left: 10px; text-align: left; font-size: 16px; line-height: 1.2; font-weight: 500; text-transform: uppercase; font-family: ${fontFamily}; white-space: nowrap; display: flex; align-items: center;">
+					<div id="product-name-${id}" style="width: 178px; height: 30px; overflow: hidden; position: relative; top: 10px; left: 12px; text-align: left; font-size: 20px; line-height: 1.2; font-weight: 500; text-transform: uppercase; font-family: ${fontFamily}; white-space: nowrap; display: flex; align-items: center;">
 						${String(item.data)}
 					</div>
 
@@ -238,34 +255,34 @@ function generatePriceTagSVG({
 						hasMultiTierPricing
 							? `
 						<!-- Multi-tier pricing layout -->
-				<div style="width: 168px; height: 60px; position: relative; font-family: ${fontFamily};">
-					<div style="display: flex; flex-direction: column; gap: 0px; padding-left: 10px; padding-right: 14px; padding-top: 4px; line-height: normal;">
-						<div style="display: flex; justify-content: space-between; align-items: center; padding-top: -12px;">
-							<div style="display: flex; flex-direction: column; gap: -3px; width: 100%;">
-								<span style="font-size: 6px; text-align: left; width: 100%; font-family: ${fontFamily};">
+				<div style="width: 210px; height: 76px; position: relative; font-family: ${fontFamily};">
+					<div style="display: flex; flex-direction: column; gap: 0px; padding-left: 12px; padding-right: 18px; padding-top: 5px; line-height: normal;">
+						<div style="display: flex; justify-content: space-between; align-items: center; padding-top: -15px;">
+							<div style="display: flex; flex-direction: column; gap: -4px; width: 100%;">
+								<span style="font-size: 8px; text-align: left; width: 100%; font-family: ${fontFamily};">
 									При покупке:
 								</span>
-								<span style="font-size: 10px; width: 100%; font-family: ${fontFamily};">
+								<span style="font-size: 12px; width: 100%; font-family: ${fontFamily};">
 									от 3 шт.
 								</span>
 							</div>
-								<span style="font-size: 26px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
+								<span style="font-size: 32px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
 									${item.priceFrom3 !== undefined ? new Intl.NumberFormat("ru-RU").format(item.priceFrom3) : ""}
 								</span>
 							</div>
-							<div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-								<span style="font-size: 10px; width: 100%; font-family: ${fontFamily};">
+							<div style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
+								<span style="font-size: 12px; width: 100%; font-family: ${fontFamily};">
 									2 шт.
 								</span>
-								<span style="font-size: 20px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
+								<span style="font-size: 24px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
 									${item.priceFor2 !== undefined ? new Intl.NumberFormat("ru-RU").format(item.priceFor2) : ""}
 								</span>
 							</div>
-							<div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-								<span style="font-size: 10px; width: 100%; font-family: ${fontFamily};">
+							<div style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
+								<span style="font-size: 12px; width: 100%; font-family: ${fontFamily};">
 									1 шт.
 								</span>
-								<span style="font-size: 16px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
+								<span style="font-size: 20px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
 									${originalPrice !== undefined ? new Intl.NumberFormat("ru-RU").format(originalPrice) : ""}
 								</span>
 							</div>
@@ -274,7 +291,7 @@ function generatePriceTagSVG({
 					`
 							: `
 						<!-- Single price layout -->
-						<div style="padding-top: 5px; font-weight: bold; width: 160px; height: 60px; font-size: 52px; text-align: center; line-height: ${hasDiscount ? "60px" : "75px"}; font-family: ${fontFamily};">
+						<div style="padding-top: 6px; font-weight: bold; width: 200px; height: 76px; font-size: 65px; text-align: center; line-height: ${hasDiscount ? "76px" : "95px"}; font-family: ${fontFamily};">
 							<span style="position: relative;">
 								${new Intl.NumberFormat("ru-RU").format(originalPrice)}
 							</span>
@@ -282,7 +299,7 @@ function generatePriceTagSVG({
 								hasDiscount && discountPrice !== originalPrice
 									? `
 								<br>
-								<span style="position: absolute; bottom: 3px; left: 10px; width: 70px; height: 18px; font-weight: normal; font-size: 18px; text-align: left; opacity: 0.8; font-family: ${fontFamily};">
+								<span style="position: absolute; bottom: 4px; left: 12px; width: 88px; height: 22px; font-weight: normal; font-size: 22px; text-align: left; opacity: 0.8; font-family: ${fontFamily};">
 									${new Intl.NumberFormat("ru-RU").format(discountPrice)}
 								</span>
 							`
@@ -296,7 +313,7 @@ function generatePriceTagSVG({
 						hasDiscount && !hasMultiTierPricing && discountText
 							? `
 						<!-- Discount text -->
-						<div style="position: absolute; bottom: -16px; left: 65px; font-size: 8px; font-weight: 500; line-height: 1; max-width: 100px; display: flex; flex-direction: column; opacity: 0.8; font-family: ${fontFamily};">
+						<div style="position: absolute; bottom: -20px; left: 81px; font-size: 10px; font-weight: 500; line-height: 1; max-width: 125px; display: flex; flex-direction: column; opacity: 0.8; font-family: ${fontFamily};">
 							${discountText
 								.split("\n")
 								.slice(0, 2)
@@ -309,11 +326,11 @@ function generatePriceTagSVG({
 				</div>
 
 				<!-- Cutting lines SVG (same as React component) -->
-				<svg style="position: absolute; inset: 0; pointer-events: none;" width="160" height="110" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
-					<line x1="0" y1="0" x2="160" y2="0" stroke="${cutLineColor}" stroke-width="0.75" stroke-dasharray="12,3"/>
-					<line x1="0" y1="110" x2="160" y2="110" stroke="${cutLineColor}" stroke-width="0.75" stroke-dasharray="12,3"/>
-					<line x1="0" y1="0" x2="0" y2="110" stroke="${cutLineColor}" stroke-width="0.75" stroke-dasharray="8,3"/>
-					<line x1="160" y1="0" x2="160" y2="110" stroke="${cutLineColor}" stroke-width="0.75" stroke-dasharray="8,3"/>
+				<svg style="position: absolute; inset: 0; pointer-events: none;" width="200" height="140" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+					<line x1="0" y1="0" x2="200" y2="0" stroke="${cutLineColor}" stroke-width="1" stroke-dasharray="15,4"/>
+					<line x1="0" y1="140" x2="200" y2="140" stroke="${cutLineColor}" stroke-width="1" stroke-dasharray="15,4"/>
+					<line x1="0" y1="0" x2="0" y2="140" stroke="${cutLineColor}" stroke-width="1" stroke-dasharray="10,4"/>
+					<line x1="200" y1="0" x2="200" y2="140" stroke="${cutLineColor}" stroke-width="1" stroke-dasharray="10,4"/>
 				</svg>
 			</div>
 		</div>

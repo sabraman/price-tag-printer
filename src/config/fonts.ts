@@ -19,4 +19,4 @@ export const nunito = Nunito({
 	variable: "--font-nunito",
 	display: "swap",
 	weight: ["300", "400", "500", "600", "700", "900"],
-}); 
+});

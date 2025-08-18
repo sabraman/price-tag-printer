@@ -115,7 +115,6 @@ export function createPrintableHTML(content: string): string {
           
           @media print {
             html, body {
-              height: 100%;
               margin: 0;
               padding: 0;
               -webkit-print-color-adjust: exact;
@@ -125,23 +124,27 @@ export function createPrintableHTML(content: string): string {
             
             .print-page {
               break-inside: avoid;
-              page-break-after: always;
               margin: 0;
-              padding-top: 36px;
-              height: 100%;
+              padding: 0;
+              padding-top: 40px;
+              min-height: auto;
               display: grid !important;
-              grid-template-columns: repeat(3, 160px) !important;
-              grid-template-rows: repeat(6, 110px) !important;
+              grid-template-columns: repeat(3, 200px) !important;
+              grid-template-rows: repeat(6, 140px) !important;
               gap: 0 !important;
               align-items: center !important;
               justify-items: center !important;
               justify-content: center !important;
-              transform: scale(2.1) !important;
+              width: 100% !important;
+              max-width: 600px !important;
+              margin: 0 auto !important;
+              box-sizing: border-box !important;
+              transform: scale(1.13) !important;
               transform-origin: top center !important;
             }
             
-            .print-page:last-child {
-              page-break-after: auto;
+            .print-page-last {
+              /* No special handling needed */
             }
           }
           
@@ -152,7 +155,6 @@ export function createPrintableHTML(content: string): string {
           }
           
           html, body {
-            height: 100%;
             margin: 0;
             padding: 0;
             -webkit-print-color-adjust: exact;
@@ -214,23 +216,27 @@ export function createPrintableHTML(content: string): string {
           
           .print-page {
             break-inside: avoid;
-            page-break-after: always;
             margin: 0;
-            padding-top: 36px;
-            height: 100%;
+            padding: 0;
+            padding-top: 40px;
+            min-height: auto;
             display: grid;
-            grid-template-columns: repeat(3, 160px);
-            grid-template-rows: repeat(6, 110px);
+            grid-template-columns: repeat(3, 200px);
+            grid-template-rows: repeat(6, 140px);
             gap: 0;
             align-items: center;
             justify-items: center;
             justify-content: center;
-            transform: scale(2.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            transform: scale(1.13);
             transform-origin: top center;
           }
           
-          .print-page:last-child {
-            page-break-after: auto;
+          .print-page-last {
+            /* No special handling needed */
           }
           
           .price-tag {
@@ -249,6 +255,26 @@ export function createPrintableHTML(content: string): string {
             font-family: inherit;
           }
         </style>
+        <script>
+          // Dynamic grid layout based on content
+          document.addEventListener('DOMContentLoaded', function() {
+            const pages = document.querySelectorAll('.print-page');
+            pages.forEach(page => {
+              const rows = parseInt(page.getAttribute('data-rows') || '6');
+              const isLast = page.getAttribute('data-is-last') === 'true';
+              
+              // Set dynamic grid rows based on actual content
+              page.style.gridTemplateRows = \`repeat(\${rows}, 140px)\`;
+              
+              // Remove page break after for the last page
+              if (isLast) {
+                page.style.pageBreakAfter = 'auto';
+                page.style.breakAfter = 'auto';
+                page.classList.add('print-page-last');
+              }
+            });
+          });
+        </script>
       </head>
       <body>
         ${content}

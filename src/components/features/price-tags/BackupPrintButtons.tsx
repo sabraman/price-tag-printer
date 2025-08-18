@@ -37,8 +37,6 @@ export function BackupPrintButtons({
 		componentRef,
 	});
 
-	if (items.length === 0) return null;
-
 	const printData = {
 		items,
 		design,
@@ -61,27 +59,25 @@ export function BackupPrintButtons({
 	};
 
 	return (
-		<div className="mt-8 pt-6 border-t border-gray-200">
-			<div className="flex gap-3 justify-center">
-				<Button
-					onClick={handleForceBrowser}
-					disabled={isGenerating}
-					variant="outline"
-					size="sm"
-				>
-					<Printer className="h-4 w-4 mr-2" />
-					Печать в браузере
-				</Button>
-				<Button
-					onClick={handleForcePDF}
-					disabled={isGenerating}
-					variant="outline"
-					size="sm"
-				>
-					<Download className="h-4 w-4 mr-2" />
-					Скачать PDF
-				</Button>
-			</div>
+		<div className="flex flex-col gap-3">
+			<Button
+				onClick={handleForceBrowser}
+				disabled={isGenerating || items.length === 0}
+				variant="outline"
+				className="w-full"
+			>
+				<Printer className="h-4 w-4 mr-2" />
+				Печать в браузере
+			</Button>
+			<Button
+				onClick={handleForcePDF}
+				disabled={isGenerating || items.length === 0}
+				variant="outline"
+				className="w-full"
+			>
+				<Download className="h-4 w-4 mr-2" />
+				Скачать PDF
+			</Button>
 		</div>
 	);
 }

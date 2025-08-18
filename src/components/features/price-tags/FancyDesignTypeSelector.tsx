@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import type React from "react";
 import { Label } from "@/components/ui/label";
 import type { ThemeSet } from "@/store/priceTagsStore";
@@ -19,19 +20,19 @@ export const FancyDesignTypeSelector: React.FC<
 			value: "default",
 			label: "Обычный",
 			theme: themes.default,
-			description: "Стандартный дизайн ценника",
+			description: "Стандартный дизайн",
 		},
 		{
 			value: "new",
 			label: "Новинка",
 			theme: themes.new,
-			description: "Ценник с пометкой NEW",
+			description: "С пометкой NEW",
 		},
 		{
 			value: "sale",
 			label: "Распродажа",
 			theme: themes.sale,
-			description: "Ценник с пометкой SALE",
+			description: "С пометкой SALE",
 		},
 	];
 
@@ -39,33 +40,35 @@ export const FancyDesignTypeSelector: React.FC<
 	if (hasTableDesigns) {
 		designItems.push({
 			value: "table",
-			label: "Взять из таблицы",
+			label: "Из таблицы",
 			theme: themes.default, // Use default theme for preview
-			description: "Использовать дизайн из загруженной таблицы",
+			description: "Дизайн из файла",
 		});
 	}
 
 	return (
-		<div className="border p-4 rounded-lg space-y-4">
-			<Label className="text-sm font-medium">Тип дизайна ценника</Label>
-			<div className="flex flex-col space-y-1">
+		<div className="space-y-4">
+			<div className="space-y-2">
+				<Label className="text-sm font-medium text-foreground">
+					Тип дизайна ценника
+				</Label>
 				<p className="text-xs text-muted-foreground">
 					Выберите тип дизайна для ваших ценников
 				</p>
 			</div>
 
-			{/* Full width layout for design types */}
-			<div className="flex flex-col gap-4">
+			{/* Responsive grid layout */}
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 				{designItems.map((item) => {
 					const isSelected = designType === item.value;
 
 					return (
 						<button
 							key={item.value}
-							className={`relative cursor-pointer rounded-lg border-2 transition-all duration-200 hover:scale-105 ${
+							className={`group relative overflow-hidden rounded-xl border-2 transition-all duration-200 hover:scale-[1.02] ${
 								isSelected
-									? "border-primary bg-primary/10 shadow-lg"
-									: "border-border bg-background hover:border-primary/50"
+									? "border-primary bg-primary/5 shadow-lg shadow-primary/20"
+									: "border-border bg-card/50 hover:border-primary/50 hover:bg-card/80"
 							}`}
 							onClick={() => onDesignTypeChange(item.value)}
 							onKeyDown={(e) => {
@@ -77,21 +80,21 @@ export const FancyDesignTypeSelector: React.FC<
 							aria-label={`Выбрать дизайн: ${item.label}`}
 							type="button"
 						>
-							<div className="p-4">
-								{/* Price tag preview - full width and height */}
-								<div className="relative w-full h-40 mb-3 rounded-lg overflow-hidden">
+							{/* Compact preview section */}
+							<div className="p-3">
+								<div className="relative w-full h-24 mb-3 rounded-lg overflow-hidden bg-muted/20">
 									<PriceTagPreview
 										theme={item.theme}
 										designType={
 											item.value as "default" | "new" | "sale" | "table"
 										}
-										width={160}
-										height={110}
-										viewBox="0 0 160 110"
+										width={120}
+										height={80}
+										viewBox="0 0 120 80"
 										showLabels={item.value !== "table"}
 										showBorder={false}
 										uniqueId={`design-${item.value}`}
-										className="w-full h-full"
+										className="w-full h-full object-contain"
 										showThreeGradients={item.value === "table"}
 										themes={
 											item.value === "table"
@@ -105,10 +108,12 @@ export const FancyDesignTypeSelector: React.FC<
 									/>
 								</div>
 
-								{/* Type name and description */}
+								{/* Compact text section */}
 								<div className="text-center space-y-1">
-									<h3 className="font-medium text-sm">{item.label}</h3>
-									<p className="text-xs text-muted-foreground line-clamp-2">
+									<h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+										{item.label}
+									</h3>
+									<p className="text-xs text-muted-foreground leading-tight">
 										{item.description}
 									</p>
 								</div>
@@ -116,29 +121,16 @@ export const FancyDesignTypeSelector: React.FC<
 
 							{/* Selection indicator */}
 							{isSelected && (
-								<div className="absolute top-2 right-2">
-									<div className="bg-primary text-primary-foreground rounded-full p-1.5">
-										<svg
-											className="h-3 w-3"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											strokeWidth={3}
-										>
-											<title>Выбрано</title>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M5 13l4 4L19 7"
-											/>
-										</svg>
+								<div className="absolute top-2 right-2 z-10">
+									<div className="bg-primary text-white rounded-full p-1 shadow-lg">
+										<Check className="h-3 w-3" strokeWidth={3} />
 									</div>
 								</div>
 							)}
 
-							{/* Selection glow effect */}
+							{/* Selection highlight */}
 							{isSelected && (
-								<div className="absolute inset-0 bg-primary/5 rounded-xl pointer-events-none" />
+								<div className="absolute inset-0 bg-primary/10 pointer-events-none" />
 							)}
 						</button>
 					);

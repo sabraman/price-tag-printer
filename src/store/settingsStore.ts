@@ -151,7 +151,7 @@ export const useSettingsStore = create<SettingsState>()(
 			design: false,
 			designType: "default",
 			themes: defaultThemes,
-			currentFont: "Montserrat",
+			currentFont: "montserrat",
 			discountAmount: 500,
 			maxDiscountPercent: 5,
 			discountText: "цена при подписке\nна телеграм канал",

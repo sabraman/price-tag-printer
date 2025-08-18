@@ -222,7 +222,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 					textColor: "#000000",
 				},
 			},
-			currentFont: "Montserrat",
+			currentFont: "montserrat",
 			discountText: "цена при подписке\nна телеграм канал",
 			hasTableDesigns: false,
 			hasTableDiscounts: false,

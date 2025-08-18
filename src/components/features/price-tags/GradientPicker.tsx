@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -187,468 +186,484 @@ export function GradientPicker({
 	const defaultTab = useMemo(() => "presets", []);
 
 	const getGradientStyle = (theme: Theme) => {
-		return `linear-gradient(to right, ${theme.start}, ${theme.end})`;
+		return `linear-gradient(135deg, ${theme.start}, ${theme.end})`;
+	};
+
+	const _isMonochrome = (theme: Theme) => {
+		return theme.start === theme.end;
 	};
 
 	return (
-		<Card className={className}>
-			<CardContent className="p-4">
-				<Tabs defaultValue={defaultTab} className="w-full">
-					<TabsList className="w-full mb-4">
-						<TabsTrigger className="flex-1" value="presets">
-							Готовые схемы
-						</TabsTrigger>
-						<TabsTrigger className="flex-1" value="custom">
-							Настроить
-						</TabsTrigger>
-					</TabsList>
+		<div className={className}>
+			<Tabs defaultValue={defaultTab} className="w-full">
+				<TabsList className="grid w-full grid-cols-2 h-9 mb-3">
+					<TabsTrigger value="presets" className="text-xs">
+						🎨 Готовые
+					</TabsTrigger>
+					<TabsTrigger value="custom" className="text-xs">
+						⚙️ Настроить
+					</TabsTrigger>
+				</TabsList>
 
-					<TabsContent value="presets" className="mt-0">
-						<div className="space-y-6">
-							{/* Dark Themes */}
-							<div className="space-y-3">
-								<h3 className="text-sm font-medium">Темные темы</h3>
-								<div className="grid grid-cols-3 gap-2">
-									{darkThemePresets.map((preset, i) => (
-										<Button
-											type="button"
-											key={darkThemeIds[i]}
-											className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
-											onClick={() => onChange(preset)}
-										>
-											<div className="w-full h-full grid grid-rows-3">
-												<div
-													style={{
-														background: getGradientStyle(preset.default),
-													}}
-												/>
-												<div
-													style={{ background: getGradientStyle(preset.new) }}
-												/>
-												<div
-													style={{ background: getGradientStyle(preset.sale) }}
-												/>
-											</div>
-										</Button>
-									))}
-								</div>
-							</div>
-
-							{/* Light Themes */}
-							<div className="space-y-3">
-								<h3 className="text-sm font-medium">Светлые темы</h3>
-								<div className="grid grid-cols-3 gap-2">
-									{lightThemePresets.map((preset, i) => (
-										<Button
-											type="button"
-											key={lightThemeIds[i]}
-											className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
-											onClick={() => onChange(preset)}
-										>
-											<div className="w-full h-full grid grid-rows-3">
-												<div
-													style={{
-														background: getGradientStyle(preset.default),
-													}}
-												/>
-												<div
-													style={{ background: getGradientStyle(preset.new) }}
-												/>
-												<div
-													style={{ background: getGradientStyle(preset.sale) }}
-												/>
-											</div>
-										</Button>
-									))}
-								</div>
-							</div>
-
-							{/* Light Monochrome Themes */}
-							<div className="space-y-3">
-								<h3 className="text-sm font-medium">
-									Светлые монохромные темы
-								</h3>
-								<div className="grid grid-cols-3 gap-2">
-									{lightMonochromeThemePresets.map((preset, i) => (
-										<Button
-											type="button"
-											key={lightMonochromeThemeIds[i]}
-											className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
-											onClick={() => onChange(preset)}
-										>
-											<div className="w-full h-full grid grid-rows-3">
-												<div
-													style={{
-														background: getGradientStyle(preset.default),
-													}}
-												/>
-												<div
-													style={{ background: getGradientStyle(preset.new) }}
-												/>
-												<div
-													style={{ background: getGradientStyle(preset.sale) }}
-												/>
-											</div>
-										</Button>
-									))}
-								</div>
-							</div>
-
-							{/* Dark Monochrome Themes */}
-							<div className="space-y-3">
-								<h3 className="text-sm font-medium">Темные монохромные темы</h3>
-								<div className="grid grid-cols-3 gap-2">
-									{darkMonochromeThemePresets.map((preset, i) => (
-										<Button
-											type="button"
-											key={darkMonochromeThemeIds[i]}
-											className="p-0 h-auto aspect-square overflow-hidden rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
-											onClick={() => onChange(preset)}
-										>
-											<div className="w-full h-full grid grid-rows-3">
-												<div
-													style={{
-														background: getGradientStyle(preset.default),
-													}}
-												/>
-												<div
-													style={{ background: getGradientStyle(preset.new) }}
-												/>
-												<div
-													style={{ background: getGradientStyle(preset.sale) }}
-												/>
-											</div>
-										</Button>
-									))}
-								</div>
+				<TabsContent value="presets" className="mt-0">
+					<div className="space-y-4">
+						{/* Dark Themes */}
+						<div className="space-y-2">
+							<h3 className="text-xs font-semibold text-foreground flex items-center gap-1">
+								🌑 Темные темы
+							</h3>
+							<div className="grid grid-cols-4 gap-2">
+								{darkThemePresets.map((preset, i) => (
+									<button
+										type="button"
+										key={darkThemeIds[i]}
+										className="group relative overflow-hidden rounded-lg hover:border-primary/50 transition-all duration-200 hover:scale-105 aspect-square"
+										onClick={() => onChange(preset)}
+									>
+										<div className="w-full h-full grid grid-rows-3">
+											<div
+												style={{
+													background: getGradientStyle(preset.default),
+												}}
+												className="w-full h-full"
+											/>
+											<div
+												style={{ background: getGradientStyle(preset.new) }}
+												className="w-full h-full"
+											/>
+											<div
+												style={{ background: getGradientStyle(preset.sale) }}
+												className="w-full h-full"
+											/>
+										</div>
+										<div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
+									</button>
+								))}
 							</div>
 						</div>
-					</TabsContent>
 
-					<TabsContent value="custom" className="mt-0">
-						<div className="space-y-6">
-							{/* Default Theme */}
-							<div className="space-y-4 p-4 border rounded-lg">
-								<h3 className="text-sm font-medium">Обычный ценник</h3>
-								<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-									<div className="space-y-2">
-										<Label className="text-xs">Начальный цвет</Label>
-										<ColorPicker
-											value={themes.default.start as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													default: { ...themes.default, start: color.hex },
-												})
-											}
+						{/* Light Themes */}
+						<div className="space-y-2">
+							<h3 className="text-xs font-semibold text-foreground flex items-center gap-1">
+								☀️ Светлые темы
+							</h3>
+							<div className="grid grid-cols-4 gap-2">
+								{lightThemePresets.map((preset, i) => (
+									<button
+										type="button"
+										key={lightThemeIds[i]}
+										className="group relative overflow-hidden rounded-lg hover:border-primary/50 transition-all duration-200 hover:scale-105 aspect-square"
+										onClick={() => onChange(preset)}
+									>
+										<div className="w-full h-full grid grid-rows-3">
+											<div
+												style={{
+													background: getGradientStyle(preset.default),
+												}}
+												className="w-full h-full"
+											/>
+											<div
+												style={{ background: getGradientStyle(preset.new) }}
+												className="w-full h-full"
+											/>
+											<div
+												style={{ background: getGradientStyle(preset.sale) }}
+												className="w-full h-full"
+											/>
+										</div>
+										<div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
+									</button>
+								))}
+							</div>
+						</div>
+
+						{/* Light Monochrome Themes */}
+						<div className="space-y-2">
+							<h3 className="text-xs font-semibold text-foreground flex items-center gap-1">
+								⚪ Светлые монохром
+							</h3>
+							<div className="grid grid-cols-4 gap-2">
+								{lightMonochromeThemePresets.map((preset, i) => (
+									<button
+										type="button"
+										key={lightMonochromeThemeIds[i]}
+										className="group relative overflow-hidden rounded-lg hover:border-primary/50 transition-all duration-200 hover:scale-105 aspect-square"
+										onClick={() => onChange(preset)}
+									>
+										<div
+											className="w-full h-full flex items-center justify-center"
+											style={{ backgroundColor: preset.default.start }}
 										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.default.start }}
+											<span
+												className="text-xs font-medium"
+												style={{ color: preset.default.textColor }}
 											>
-												<span className="sr-only">Выбрать начальный цвет</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.default.start}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													default: { ...themes.default, start: e.target.value },
-												})
-											}
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label className="text-xs">Конечный цвет</Label>
-										<ColorPicker
-											value={themes.default.end as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													default: { ...themes.default, end: color.hex },
-												})
-											}
+												Аа
+											</span>
+										</div>
+										<div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
+									</button>
+								))}
+							</div>
+						</div>
+
+						{/* Dark Monochrome Themes */}
+						<div className="space-y-2">
+							<h3 className="text-xs font-semibold text-foreground flex items-center gap-1">
+								⚫ Темные монохром
+							</h3>
+							<div className="grid grid-cols-4 gap-2">
+								{darkMonochromeThemePresets.map((preset, i) => (
+									<button
+										type="button"
+										key={darkMonochromeThemeIds[i]}
+										className="group relative overflow-hidden rounded-lg hover:border-primary/50 transition-all duration-200 hover:scale-105 aspect-square"
+										onClick={() => onChange(preset)}
+									>
+										<div
+											className="w-full h-full flex items-center justify-center"
+											style={{ backgroundColor: preset.default.start }}
 										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.default.end }}
+											<span
+												className="text-xs font-medium"
+												style={{ color: preset.default.textColor }}
 											>
-												<span className="sr-only">Выбрать конечный цвет</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.default.end}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													default: { ...themes.default, end: e.target.value },
-												})
-											}
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label className="text-xs">Цвет текста</Label>
-										<ColorPicker
-											value={themes.default.textColor as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													default: { ...themes.default, textColor: color.hex },
-												})
-											}
+												Аа
+											</span>
+										</div>
+										<div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
+									</button>
+								))}
+							</div>
+						</div>
+					</div>
+				</TabsContent>
+
+				<TabsContent value="custom" className="mt-0">
+					<div className="space-y-6">
+						{/* Default Theme */}
+						<div className="space-y-4 p-4 border rounded-lg">
+							<h3 className="text-sm font-medium">Обычный ценник</h3>
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div className="space-y-2">
+									<Label className="text-xs">Начальный цвет</Label>
+									<ColorPicker
+										value={themes.default.start as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												default: { ...themes.default, start: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.default.start }}
 										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.default.textColor }}
-											>
-												<span className="sr-only">Выбрать цвет текста</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.default.textColor}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													default: {
-														...themes.default,
-														textColor: e.target.value,
-													},
-												})
-											}
-										/>
-									</div>
+											<span className="sr-only">Выбрать начальный цвет</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.default.start}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												default: { ...themes.default, start: e.target.value },
+											})
+										}
+									/>
 								</div>
-								<div
-									className="h-8 rounded-md border flex items-center justify-center text-sm font-medium"
-									style={{
-										background: getGradientStyle(themes.default),
-										color: themes.default.textColor,
-									}}
-								>
-									Превью обычного ценника
+								<div className="space-y-2">
+									<Label className="text-xs">Конечный цвет</Label>
+									<ColorPicker
+										value={themes.default.end as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												default: { ...themes.default, end: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.default.end }}
+										>
+											<span className="sr-only">Выбрать конечный цвет</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.default.end}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												default: { ...themes.default, end: e.target.value },
+											})
+										}
+									/>
+								</div>
+								<div className="space-y-2">
+									<Label className="text-xs">Цвет текста</Label>
+									<ColorPicker
+										value={themes.default.textColor as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												default: { ...themes.default, textColor: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.default.textColor }}
+										>
+											<span className="sr-only">Выбрать цвет текста</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.default.textColor}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												default: {
+													...themes.default,
+													textColor: e.target.value,
+												},
+											})
+										}
+									/>
 								</div>
 							</div>
+							<div
+								className="h-8 rounded-md border flex items-center justify-center text-sm font-medium"
+								style={{
+									background: getGradientStyle(themes.default),
+									color: themes.default.textColor,
+								}}
+							>
+								Превью обычного ценника
+							</div>
+						</div>
 
-							{/* New Theme */}
-							<div className="space-y-4 p-4 border rounded-lg">
-								<h3 className="text-sm font-medium">Новинка</h3>
-								<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-									<div className="space-y-2">
-										<Label className="text-xs">Начальный цвет</Label>
-										<ColorPicker
-											value={themes.new.start as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													new: { ...themes.new, start: color.hex },
-												})
-											}
+						{/* New Theme */}
+						<div className="space-y-4 p-4 border rounded-lg">
+							<h3 className="text-sm font-medium">Новинка</h3>
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div className="space-y-2">
+									<Label className="text-xs">Начальный цвет</Label>
+									<ColorPicker
+										value={themes.new.start as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												new: { ...themes.new, start: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.new.start }}
 										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.new.start }}
-											>
-												<span className="sr-only">Выбрать начальный цвет</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.new.start}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													new: { ...themes.new, start: e.target.value },
-												})
-											}
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label className="text-xs">Конечный цвет</Label>
-										<ColorPicker
-											value={themes.new.end as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													new: { ...themes.new, end: color.hex },
-												})
-											}
-										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.new.end }}
-											>
-												<span className="sr-only">Выбрать конечный цвет</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.new.end}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													new: { ...themes.new, end: e.target.value },
-												})
-											}
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label className="text-xs">Цвет текста</Label>
-										<ColorPicker
-											value={themes.new.textColor as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													new: { ...themes.new, textColor: color.hex },
-												})
-											}
-										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.new.textColor }}
-											>
-												<span className="sr-only">Выбрать цвет текста</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.new.textColor}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													new: { ...themes.new, textColor: e.target.value },
-												})
-											}
-										/>
-									</div>
+											<span className="sr-only">Выбрать начальный цвет</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.new.start}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												new: { ...themes.new, start: e.target.value },
+											})
+										}
+									/>
 								</div>
-								<div
-									className="h-8 rounded-md border flex items-center justify-center text-sm font-medium"
-									style={{
-										background: getGradientStyle(themes.new),
-										color: themes.new.textColor,
-									}}
-								>
-									Превью новинки
+								<div className="space-y-2">
+									<Label className="text-xs">Конечный цвет</Label>
+									<ColorPicker
+										value={themes.new.end as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												new: { ...themes.new, end: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.new.end }}
+										>
+											<span className="sr-only">Выбрать конечный цвет</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.new.end}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												new: { ...themes.new, end: e.target.value },
+											})
+										}
+									/>
+								</div>
+								<div className="space-y-2">
+									<Label className="text-xs">Цвет текста</Label>
+									<ColorPicker
+										value={themes.new.textColor as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												new: { ...themes.new, textColor: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.new.textColor }}
+										>
+											<span className="sr-only">Выбрать цвет текста</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.new.textColor}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												new: { ...themes.new, textColor: e.target.value },
+											})
+										}
+									/>
 								</div>
 							</div>
+							<div
+								className="h-8 rounded-md border flex items-center justify-center text-sm font-medium"
+								style={{
+									background: getGradientStyle(themes.new),
+									color: themes.new.textColor,
+								}}
+							>
+								Превью новинки
+							</div>
+						</div>
 
-							{/* Sale Theme */}
-							<div className="space-y-4 p-4 border rounded-lg">
-								<h3 className="text-sm font-medium">Распродажа</h3>
-								<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-									<div className="space-y-2">
-										<Label className="text-xs">Начальный цвет</Label>
-										<ColorPicker
-											value={themes.sale.start as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													sale: { ...themes.sale, start: color.hex },
-												})
-											}
+						{/* Sale Theme */}
+						<div className="space-y-4 p-4 border rounded-lg">
+							<h3 className="text-sm font-medium">Распродажа</h3>
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div className="space-y-2">
+									<Label className="text-xs">Начальный цвет</Label>
+									<ColorPicker
+										value={themes.sale.start as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												sale: { ...themes.sale, start: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.sale.start }}
 										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.sale.start }}
-											>
-												<span className="sr-only">Выбрать начальный цвет</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.sale.start}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													sale: { ...themes.sale, start: e.target.value },
-												})
-											}
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label className="text-xs">Конечный цвет</Label>
-										<ColorPicker
-											value={themes.sale.end as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													sale: { ...themes.sale, end: color.hex },
-												})
-											}
-										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.sale.end }}
-											>
-												<span className="sr-only">Выбрать конечный цвет</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.sale.end}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													sale: { ...themes.sale, end: e.target.value },
-												})
-											}
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label className="text-xs">Цвет текста</Label>
-										<ColorPicker
-											value={themes.sale.textColor as `#${string}`}
-											onValueChange={(color) =>
-												onChange({
-													...themes,
-													sale: { ...themes.sale, textColor: color.hex },
-												})
-											}
-										>
-											<Button
-												variant="outline"
-												className="w-full h-10 p-1"
-												style={{ backgroundColor: themes.sale.textColor }}
-											>
-												<span className="sr-only">Выбрать цвет текста</span>
-											</Button>
-										</ColorPicker>
-										<Input
-											value={themes.sale.textColor}
-											className="h-8 text-xs"
-											onChange={(e) =>
-												onChange({
-													...themes,
-													sale: { ...themes.sale, textColor: e.target.value },
-												})
-											}
-										/>
-									</div>
+											<span className="sr-only">Выбрать начальный цвет</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.sale.start}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												sale: { ...themes.sale, start: e.target.value },
+											})
+										}
+									/>
 								</div>
-								<div
-									className="h-8 rounded-md border flex items-center justify-center text-sm font-medium"
-									style={{
-										background: getGradientStyle(themes.sale),
-										color: themes.sale.textColor,
-									}}
-								>
-									Превью распродажи
+								<div className="space-y-2">
+									<Label className="text-xs">Конечный цвет</Label>
+									<ColorPicker
+										value={themes.sale.end as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												sale: { ...themes.sale, end: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.sale.end }}
+										>
+											<span className="sr-only">Выбрать конечный цвет</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.sale.end}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												sale: { ...themes.sale, end: e.target.value },
+											})
+										}
+									/>
+								</div>
+								<div className="space-y-2">
+									<Label className="text-xs">Цвет текста</Label>
+									<ColorPicker
+										value={themes.sale.textColor as `#${string}`}
+										onValueChange={(color) =>
+											onChange({
+												...themes,
+												sale: { ...themes.sale, textColor: color.hex },
+											})
+										}
+									>
+										<Button
+											variant="outline"
+											className="w-full h-10 p-1"
+											style={{ backgroundColor: themes.sale.textColor }}
+										>
+											<span className="sr-only">Выбрать цвет текста</span>
+										</Button>
+									</ColorPicker>
+									<Input
+										value={themes.sale.textColor}
+										className="h-8 text-xs"
+										onChange={(e) =>
+											onChange({
+												...themes,
+												sale: { ...themes.sale, textColor: e.target.value },
+											})
+										}
+									/>
 								</div>
 							</div>
+							<div
+								className="h-8 rounded-md border flex items-center justify-center text-sm font-medium"
+								style={{
+									background: getGradientStyle(themes.sale),
+									color: themes.sale.textColor,
+								}}
+							>
+								Превью распродажи
+							</div>
+						</div>
 
-							{/* Cutting Line Color */}
+						{/* Cutting Line Color */}
+						{onCuttingLineColorChange && (
 							<div className="space-y-4 p-4 border rounded-lg">
 								<h3 className="text-sm font-medium">Цвет линий отреза</h3>
 								<div className="space-y-3">
@@ -701,7 +716,7 @@ export function GradientPicker({
 									</div>
 								</div>
 							</div>
-						</div>
+						)}
 
 						{/* Reset Button */}
 						<div className="flex justify-center pt-4 w-full">
@@ -802,9 +817,9 @@ export function GradientPicker({
 								Сбросить к значениям по умолчанию
 							</Button>
 						</div>
-					</TabsContent>
-				</Tabs>
-			</CardContent>
-		</Card>
+					</div>
+				</TabsContent>
+			</Tabs>
+		</div>
 	);
 }

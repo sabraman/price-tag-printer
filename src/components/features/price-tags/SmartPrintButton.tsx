@@ -59,35 +59,33 @@ export function SmartPrintButton({
 	};
 
 	const primaryButtonText =
-		browserInfo.recommendedMethod === "browser" ? "Распечатать" : "Скачать PDF";
+		browserInfo.recommendedMethod === "browser" ? "Печать" : "Скачать PDF";
 
 	const primaryButtonIcon =
 		browserInfo.recommendedMethod === "browser" ? (
-			<Printer className="h-4 w-4 mr-2" />
+			<Printer className="h-4 w-4" />
 		) : (
-			<FileDown className="h-4 w-4 mr-2" />
+			<FileDown className="h-4 w-4" />
 		);
 
 	return (
-		<div className="flex flex-col w-full gap-2 mb-4">
-			<Button
-				onClick={handleSmartPrint}
-				disabled={isGenerating}
-				className="w-full"
-				variant="default"
-			>
-				{isGenerating ? (
-					<>
-						<div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
-						Генерация...
-					</>
-				) : (
-					<>
-						{primaryButtonIcon}
-						{primaryButtonText}
-					</>
-				)}
-			</Button>
-		</div>
+		<Button
+			onClick={handleSmartPrint}
+			disabled={isGenerating || isEditMode}
+			variant="default"
+			className="flex-1"
+		>
+			{isGenerating ? (
+				<>
+					<div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+					<span>Генерация...</span>
+				</>
+			) : (
+				<>
+					{primaryButtonIcon}
+					<span className="ml-2">{primaryButtonText}</span>
+				</>
+			)}
+		</Button>
 	);
 }

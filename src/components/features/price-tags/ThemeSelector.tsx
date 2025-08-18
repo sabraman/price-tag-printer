@@ -3,7 +3,7 @@ import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { ThemeSet } from "@/store/settingsStore";
+import type { ThemeSet } from "@/store/priceTagsStore";
 
 interface ThemeSelectorProps {
 	themes: ThemeSet;

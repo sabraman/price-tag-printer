@@ -1,77 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
 	:root {
-		--background: 0 0% 100%;
-		--foreground: 222.2 84% 4.9%;
-		--card: 0 0% 100%;
-		--card-foreground: 222.2 84% 4.9%;
-		--popover: 0 0% 100%;
-		--popover-foreground: 222.2 84% 4.9%;
-		--primary: 221.2 83.2% 53.3%;
-		--primary-foreground: 210 40% 98%;
-		--secondary: 210 40% 96%;
-		--secondary-foreground: 222.2 84% 4.9%;
-		--muted: 210 40% 96%;
-		--muted-foreground: 215.4 16.3% 46.9%;
-		--accent: 210 40% 96%;
-		--accent-foreground: 222.2 84% 4.9%;
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 210 40% 98%;
-		--border: 214.3 31.8% 91.4%;
-		--input: 214.3 31.8% 91.4%;
-		--ring: 221.2 83.2% 53.3%;
-		--chart-1: 12 76% 61%;
-		--chart-2: 173 58% 39%;
-		--chart-3: 197 37% 24%;
-		--chart-4: 43 74% 66%;
-		--chart-5: 27 87% 67%;
-		--radius: 0.5rem;
-		--sidebar-background: 0 0% 98%;
-		--sidebar-foreground: 240 5.3% 26.1%;
-		--sidebar-primary: 240 5.9% 10%;
-		--sidebar-primary-foreground: 0 0% 98%;
-		--sidebar-accent: 240 4.8% 95.9%;
-		--sidebar-accent-foreground: 240 5.9% 10%;
-		--sidebar-border: 220 13% 91%;
-		--sidebar-ring: 217.2 91.2% 59.8%;
-	}
-
-	.dark {
-		--background: 222.2 84% 4.9%;
-		--foreground: 210 40% 98%;
-		--card: 222.2 84% 4.9%;
-		--card-foreground: 210 40% 98%;
-		--popover: 222.2 84% 4.9%;
-		--popover-foreground: 210 40% 98%;
-		--primary: 217.2 91.2% 59.8%;
-		--primary-foreground: 222.2 84% 4.9%;
-		--secondary: 217.2 32.6% 17.5%;
-		--secondary-foreground: 210 40% 98%;
-		--muted: 217.2 32.6% 17.5%;
-		--muted-foreground: 215 20.2% 65.1%;
-		--accent: 217.2 32.6% 17.5%;
-		--accent-foreground: 210 40% 98%;
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 210 40% 98%;
-		--border: 217.2 32.6% 17.5%;
-		--input: 217.2 32.6% 17.5%;
-		--ring: 224.3 76.3% 94.1%;
-		--chart-1: 220 70% 50%;
-		--chart-2: 160 60% 45%;
-		--chart-3: 30 80% 55%;
-		--chart-4: 280 65% 60%;
-		--chart-5: 340 75% 55%;
-		--sidebar-background: 240 5.9% 10%;
-		--sidebar-foreground: 240 4.8% 95.9%;
-		--sidebar-primary: 224.3 76.3% 94.1%;
-		--sidebar-primary-foreground: 240 5.9% 10%;
-		--sidebar-accent: 240 3.7% 15.9%;
-		--sidebar-accent-foreground: 240 4.8% 95.9%;
-		--sidebar-border: 240 3.7% 15.9%;
-		--sidebar-ring: 217.2 91.2% 59.8%;
+		--background: 220 16% 8%;
+		--foreground: 210 20% 98%;
+		--card: 220 16% 12%;
+		--card-foreground: 210 20% 98%;
+		--popover: 220 16% 10%;
+		--popover-foreground: 210 20% 98%;
+		--primary: 333 100% 55%; /* #ff197c */
+		--primary-foreground: 210 20% 98%;
+		--secondary: 217 19% 18%;
+		--secondary-foreground: 210 20% 98%;
+		--muted: 215 20% 20%;
+		--muted-foreground: 217 10% 65%;
+		--accent: 217 19% 15%;
+		--accent-foreground: 210 20% 98%;
+		--destructive: 0 84% 60%;
+		--destructive-foreground: 210 20% 98%;
+		--border: 217 19% 20%;
+		--input: 217 19% 18%;
+		--ring: 333 100% 55%; /* #ff197c */
+		--radius: 0.75rem;
+		--sidebar-background: 220 16% 10%;
+		--sidebar-foreground: 210 20% 98%;
+		--sidebar-primary: 333 100% 55%; /* #ff197c */
+		--sidebar-primary-foreground: 210 20% 98%;
+		--sidebar-accent: 217 19% 15%;
+		--sidebar-accent-foreground: 210 20% 98%;
+		--sidebar-border: 217 19% 18%;
+		--sidebar-ring: 333 100% 55%; /* #ff197c */
 	}
 }
 
@@ -79,31 +41,46 @@
 	* {
 		@apply border-border;
 	}
+
+	html {
+		@apply antialiased;
+	}
+
 	body {
 		@apply bg-background text-foreground;
-		font-family:
-			var(--font-inter), "Inter", system-ui, "Segoe UI", "Roboto", sans-serif;
+		font-family: "Montserrat", system-ui, -apple-system, sans-serif;
+		font-optical-sizing: auto;
 	}
 
-	/* Font family utilities for dynamic switching */
-	.font-montserrat {
-		font-family: var(--font-montserrat), "Montserrat", sans-serif;
+	/* Custom scrollbar */
+	::-webkit-scrollbar {
+		width: 6px;
+		height: 6px;
 	}
 
-	.font-nunito {
-		font-family: var(--font-nunito), "Nunito", sans-serif;
+	::-webkit-scrollbar-track {
+		@apply bg-transparent;
 	}
 
-	.font-inter {
-		font-family: var(--font-inter), "Inter", sans-serif;
+	::-webkit-scrollbar-thumb {
+		@apply bg-border rounded-full;
 	}
 
-	.font-mont {
-		font-family: "Mont", "Montserrat", sans-serif;
+	::-webkit-scrollbar-thumb:hover {
+		@apply bg-muted-foreground/50;
 	}
 }
 
-/* Print styles for browser printing */
+/* Font utilities */
+.font-montserrat {
+	font-family: "Montserrat", sans-serif;
+}
+
+.font-mont {
+	font-family: "Mont", "Montserrat", sans-serif;
+}
+
+/* Print styles */
 @media print {
 	html,
 	body {
@@ -111,6 +88,7 @@
 		margin: 0;
 		padding: 0;
 		-webkit-print-color-adjust: exact;
+		background-color: #fff;
 	}
 
 	.print-page {

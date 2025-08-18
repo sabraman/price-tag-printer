@@ -15,7 +15,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<html lang="en" className="dark">
+		<html lang="ru" className="dark">
 			<head>
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link
@@ -25,11 +25,21 @@ export default function RootLayout({
 				/>
 			</head>
 			<body
-				className={`dark bg-background text-foreground ${inter.variable} ${montserrat.variable} ${nunito.variable} font-sans antialiased`}
+				className={`dark bg-background text-foreground ${montserrat.variable} ${inter.variable} ${nunito.variable} font-montserrat antialiased`}
 			>
 				<FontLoader />
 				{children}
-				<Toaster position="top-right" />
+				<Toaster
+					position="top-right"
+					theme="dark"
+					toastOptions={{
+						style: {
+							background: "hsl(var(--card))",
+							color: "hsl(var(--card-foreground))",
+							border: "1px solid hsl(var(--border))",
+						},
+					}}
+				/>
 			</body>
 		</html>
 	);

@@ -67,6 +67,22 @@ export async function POST(request: NextRequest) {
 				console.warn("Font loading timeout, proceeding anyway:", error);
 			}
 
+			// Wait for JavaScript to execute and apply dynamic grid layout
+			await page.evaluate(() => {
+				return new Promise((resolve) => {
+					// Wait for any existing DOMContentLoaded handlers
+					if (document.readyState === "loading") {
+						document.addEventListener("DOMContentLoaded", resolve);
+					} else {
+						// DOM is already loaded, wait a bit for scripts to execute
+						setTimeout(resolve, 500);
+					}
+				});
+			});
+
+			// Additional wait to ensure dynamic styles are applied
+			await new Promise((resolve) => setTimeout(resolve, 500));
+
 			// Generate PDF
 			const pdf = await page.pdf({
 				format: "A4",
@@ -77,7 +93,8 @@ export async function POST(request: NextRequest) {
 					bottom: "0",
 					left: "0",
 				},
-				preferCSSPageSize: true,
+				preferCSSPageSize: false,
+				displayHeaderFooter: false,
 			});
 
 			return new NextResponse(pdf, {

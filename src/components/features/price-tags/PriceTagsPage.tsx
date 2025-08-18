@@ -1,5 +1,5 @@
 // Dynamic import for Google Sheets functionality to avoid SSR issues
-import { AlertCircle, Edit2, Eye } from "lucide-react";
+import { AlertCircle, Edit2, Eye, FileSpreadsheet } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNewItemDraft } from "@/hooks/useNewItemDraft";
 import { fetchGoogleSheetsData } from "@/lib/googleSheets";
+import { cn } from "@/lib/utils";
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 
@@ -97,12 +98,11 @@ export const PriceTagsPage: React.FC = () => {
 	const [currentFilter, setCurrentFilter] = useState<string>("all");
 	const [currentSort, setCurrentSort] = useState<string>("nameAsc");
 	const [currentSearchQuery, setCurrentSearchQuery] = useState<string>("");
-	// Enhanced selection state management with filtering support
 	const [selectedItems, setSelectedItems] = useState<number[]>([]);
-	const [lastDuplicationTime, setLastDuplicationTime] = useState<number>(0);
+	const [lastDuplicationTime, setLastDuplicationTime] = useState(0);
 
 	// Create componentRef for react-to-print
-	const componentRef = useRef<HTMLDivElement>(null);
+	const componentRef = useRef<HTMLDivElement | null>(null);
 
 	// Memoized filtered IDs for stable reference
 	const filteredItemIds = useMemo(
@@ -153,46 +153,29 @@ export const PriceTagsPage: React.FC = () => {
 	}, [updateItemPrices, items.length]);
 
 	useEffect(() => {
-		let updatedItems = [...items];
+		const searchQuery = currentSearchQuery.toLowerCase();
 
-		// Apply search
-		if (currentSearchQuery) {
-			updatedItems = updatedItems.filter((item) =>
-				String(item.data)
-					.toLowerCase()
-					.includes(currentSearchQuery.toLowerCase()),
-			);
-		}
+		const updatedItems = items.filter((item) => {
+			// Apply search filter
+			const matchesSearch =
+				searchQuery === "" ||
+				String(item.data).toLowerCase().includes(searchQuery) ||
+				String(item.price).includes(searchQuery);
 
-		// Apply filter
-		switch (currentFilter) {
-			case "hasDiscount":
-				updatedItems = updatedItems.filter((item) => item.hasDiscount === true);
-				break;
-			case "noDiscount":
-				updatedItems = updatedItems.filter(
-					(item) => item.hasDiscount === false,
-				);
-				break;
-			case "defaultDesign":
-				updatedItems = updatedItems.filter(
-					(item) => item.designType === "default",
-				);
-				break;
-			case "newDesign":
-				updatedItems = updatedItems.filter((item) => item.designType === "new");
-				break;
-			case "saleDesign":
-				updatedItems = updatedItems.filter(
-					(item) => item.designType === "sale",
-				);
-				break;
-			default:
-				// 'all' or unknown filter, no change
-				break;
-		}
+			// Apply type filter
+			let matchesFilter = true;
+			if (currentFilter === "withDiscount") {
+				matchesFilter = item.hasDiscount === true;
+			} else if (currentFilter === "withoutDiscount") {
+				matchesFilter = item.hasDiscount !== true;
+			} else if (["default", "new", "sale"].includes(currentFilter)) {
+				matchesFilter = (item.designType || "default") === currentFilter;
+			}
 
-		// Apply sort
+			return matchesSearch && matchesFilter;
+		});
+
+		// Apply sorting
 		updatedItems.sort((a, b) => {
 			switch (currentSort) {
 				case "nameAsc":
@@ -678,136 +661,192 @@ export const PriceTagsPage: React.FC = () => {
 	useNewItemDraft(isEditMode);
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-			{/* Left Column - Controls */}
-			<div className="lg:col-span-4 space-y-4">
-				<div className="space-y-4">
-					<ExcelUploader onUpload={handleExcelUpload} />
-					<GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
-					{!items.length ? (
-						<Button
-							onClick={handleManualEntry}
-							variant="outline"
-							className="w-full"
-						>
-							Добавить самому
-						</Button>
-					) : null}
-				</div>
-
-				{loading && (
-					<div className="w-full">
-						<Progress value={33} className="w-full" />
-						<p className="text-sm text-muted-foreground mt-2">
-							Загрузка данных...
-						</p>
-					</div>
-				)}
-
-				{error && (
-					<Alert variant="destructive">
-						<AlertCircle className="h-4 w-4" />
-						<AlertDescription>{error}</AlertDescription>
-					</Alert>
-				)}
-
-				<BrowserWarning />
-
-				{items.length > 0 && (
-					<div className="space-y-4">
-						<div className="flex gap-2">
-							<Button
-								onClick={() => setIsEditMode(!isEditMode)}
-								variant="outline"
-								className="flex-1"
-							>
-								{isEditMode ? (
-									<>
-										<Eye className="h-4 w-4 mr-2" />
-										Просмотр
-									</>
-								) : (
-									<>
-										<Edit2 className="h-4 w-4 mr-2" />
-										Редактировать
-									</>
-								)}
-							</Button>
-							<SmartPrintButton
-								items={items}
-								isEditMode={isEditMode}
-								onError={(error) => setError(error)}
-								onSuccess={() => setError(null)}
-								componentRef={componentRef}
-							/>
-						</div>
-						<PriceTagCustomizer
-							themes={themes}
-							currentFont={currentFont}
-							discountText={discountText}
-							designType={designType}
-							showThemeLabels={showThemeLabels}
-							onThemeChange={setThemes}
-							onFontChange={setCurrentFont}
-							onDiscountTextChange={setDiscountText}
-							onDesignTypeChange={(type) => {
-								console.log("Setting design type to:", type);
-								setDesignType(type);
-							}}
-							onShowThemeLabelsChange={setShowThemeLabels}
-						/>
-
-						{/* Backup print buttons after customizer */}
-						<BackupPrintButtons
-							items={items}
-							onError={(error) => setError(error)}
-							onSuccess={() => setError(null)}
-							componentRef={componentRef}
-						/>
-					</div>
-				)}
-			</div>
-
-			{/* Right Column - Preview/Edit */}
-			{items.length > 0 && (
-				<div className="lg:col-span-8">
-					{isEditMode ? (
-						<OptimizedEditTable
-							items={filteredItems}
-							selectedItems={selectedItems}
-							onSelectionChange={handleSelectionChange}
-							onDuplicate={handleDuplicate}
-							onUndo={handleUndo}
-							onRedo={handleRedo}
-							onFilterChange={handleFilterChange}
-							onSortChange={handleSortChange}
-							onSearch={handleSearch}
-							onClearAll={handleClearAll}
-							onExport={handleExport}
-						/>
-					) : (
+		<div className="min-h-screen bg-background">
+			{/* Main Container */}
+			<div className="container mx-auto px-6 py-8">
+				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+					{/* Left Sidebar - Make wider for customizer */}
+					<div
+						className={cn(
+							"lg:col-span-6 space-y-6",
+							items.length === 0 && "lg:col-span-12",
+						)}
+					>
+						{/* Import Section */}
 						<div className="space-y-4">
-							<div className="sticky top-4">
-								<PriceTagList
-									items={items}
-									design={design}
-									designType={designType}
-									themes={themes}
-									font={currentFont}
-									discountText={discountText}
-									useTableDesigns={hasTableDesigns && designType === "table"}
-									useTableDiscounts={
-										hasTableDiscounts && designType === "table"
-									}
-									showThemeLabels={showThemeLabels}
-									cuttingLineColor={cuttingLineColor}
-									printRef={componentRef}
-								/>
+							<ExcelUploader onUpload={handleExcelUpload} />
+							<div className="relative">
+								<div className="absolute inset-0 flex items-center">
+									<div className="w-full border-t border-border/30" />
+								</div>
+								<div className="relative flex justify-center text-xs">
+									<span className="bg-background px-3 text-muted-foreground">
+										или
+									</span>
+								</div>
+							</div>
+							<GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
+							{!items.length && (
+								<Button
+									onClick={handleManualEntry}
+									variant="outline"
+									className="w-full"
+								>
+									<FileSpreadsheet className="w-4 h-4 mr-2" />
+									Создать вручную
+								</Button>
+							)}
+						</div>
+
+						{/* Loading State */}
+						{loading && (
+							<div className="space-y-2">
+								<Progress value={33} className="w-full" />
+								<p className="text-sm text-muted-foreground text-center">
+									Загрузка данных...
+								</p>
+							</div>
+						)}
+
+						{/* Error State */}
+						{error && (
+							<Alert variant="destructive">
+								<AlertCircle className="h-4 w-4" />
+								<AlertDescription>{error}</AlertDescription>
+							</Alert>
+						)}
+
+						<BrowserWarning />
+
+						{/* Customization Panel - Now wider with more space */}
+						{items.length > 0 && (
+							<div className="space-y-6">
+								{/* Control Buttons */}
+								<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+									<Button
+										onClick={() => setIsEditMode(!isEditMode)}
+										variant="outline"
+										className="flex-1"
+									>
+										{isEditMode ? (
+											<>
+												<Eye className="w-4 h-4 mr-2" />
+												Просмотр
+											</>
+										) : (
+											<>
+												<Edit2 className="w-4 h-4 mr-2" />
+												Редактировать
+											</>
+										)}
+									</Button>
+									<SmartPrintButton
+										items={items}
+										isEditMode={isEditMode}
+										onError={(error) => setError(error)}
+										onSuccess={() => setError(null)}
+										componentRef={componentRef}
+									/>
+								</div>
+
+								{/* Expanded Customizer */}
+								<div className="border border-border rounded-lg p-4 bg-card/50">
+									<h3 className="text-sm font-medium text-foreground mb-4">
+										Настройки дизайна
+									</h3>
+									<PriceTagCustomizer
+										themes={themes}
+										currentFont={currentFont}
+										discountText={discountText}
+										designType={designType}
+										showThemeLabels={showThemeLabels}
+										onThemeChange={setThemes}
+										onFontChange={setCurrentFont}
+										onDiscountTextChange={setDiscountText}
+										onDesignTypeChange={(type) => {
+											console.log("Setting design type to:", type);
+											setDesignType(type);
+										}}
+										onShowThemeLabelsChange={setShowThemeLabels}
+									/>
+								</div>
+
+								{/* Backup print buttons */}
+								<div className="border border-border rounded-lg p-4 bg-card/50">
+									<h3 className="text-sm font-medium text-foreground mb-4">
+										Дополнительная печать
+									</h3>
+									<BackupPrintButtons
+										items={items}
+										onError={(error) => setError(error)}
+										onSuccess={() => setError(null)}
+										componentRef={componentRef}
+									/>
+								</div>
+							</div>
+						)}
+					</div>
+
+					{/* Main Content Area - Adjust for wider sidebar */}
+					{items.length > 0 && (
+						<div className="lg:col-span-6">
+							<div className="space-y-4">
+								{isEditMode && (
+									<div className="flex items-center justify-between">
+										<h2 className="text-lg font-semibold text-foreground">
+											Редактор ценников
+										</h2>
+										<div className="flex items-center gap-2">
+											<Button onClick={handleUndo} variant="ghost" size="sm">
+												Отменить
+											</Button>
+											<Button onClick={handleRedo} variant="ghost" size="sm">
+												Повторить
+											</Button>
+										</div>
+									</div>
+								)}
+
+								{isEditMode ? (
+									<OptimizedEditTable
+										items={filteredItems}
+										selectedItems={selectedItems}
+										onSelectionChange={handleSelectionChange}
+										onDuplicate={handleDuplicate}
+										onUndo={handleUndo}
+										onRedo={handleRedo}
+										onFilterChange={handleFilterChange}
+										onSortChange={handleSortChange}
+										onSearch={handleSearch}
+										onClearAll={handleClearAll}
+										onExport={handleExport}
+									/>
+								) : (
+									<div className="sticky top-4 flex justify-center">
+										<PriceTagList
+											items={items}
+											design={design}
+											designType={designType}
+											themes={themes}
+											font={currentFont}
+											discountText={discountText}
+											useTableDesigns={
+												hasTableDesigns && designType === "table"
+											}
+											useTableDiscounts={
+												hasTableDiscounts && designType === "table"
+											}
+											showThemeLabels={showThemeLabels}
+											cuttingLineColor={cuttingLineColor}
+											printRef={componentRef}
+										/>
+									</div>
+								)}
 							</div>
 						</div>
 					)}
 				</div>
-			)}
+			</div>
 		</div>
 	);
 };

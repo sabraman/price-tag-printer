@@ -29,11 +29,10 @@ interface PriceTagCustomizerProps {
 }
 
 const fonts = [
-	{ id: "Montserrat", name: "Montserrat" },
-	// { id: "Roboto", name: "Roboto" },
-	{ id: "Inter", name: "Inter" },
-	{ id: "Nunito", name: "Nunito" },
-	// { id: "Open Sans", name: "Open Sans" }
+	{ id: "montserrat", name: "Montserrat" },
+	{ id: "inter", name: "Inter" },
+	{ id: "nunito", name: "Nunito" },
+	{ id: "mont", name: "Mont" },
 ];
 
 export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
@@ -48,7 +47,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	onDesignTypeChange,
 	onShowThemeLabelsChange,
 }) => {
-	const currentFontData = fonts.find((f) => f.id === currentFont) || fonts[0];
+	const _currentFontData = fonts.find((f) => f.id === currentFont) || fonts[0];
 	const {
 		design,
 		hasTableDiscounts,
@@ -75,6 +74,9 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	// Show discount settings if global discount is enabled OR table mode with table discounts
 	const showDiscountSettings =
 		design || (designType === "table" && hasTableDiscounts);
+
+	// Always show theme section
+	const showThemeSection = true;
 
 	const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const lines = e.target.value.split("\n");
@@ -119,24 +121,28 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	};
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-6">
 			{/* Fancy Design Type Selection - Always visible */}
-			<FancyDesignTypeSelector
-				designType={designType}
-				themes={themes}
-				hasTableDesigns={hasTableDesigns}
-				onDesignTypeChange={handleDesignTypeChange}
-			/>
+			<div className="space-y-4">
+				<FancyDesignTypeSelector
+					designType={designType}
+					themes={themes}
+					hasTableDesigns={hasTableDesigns}
+					onDesignTypeChange={handleDesignTypeChange}
+				/>
+			</div>
 
 			{/* Discount Settings - Only for non-table modes or table modes with discounts */}
 			{(showDiscountSwitch || showDiscountSettings) && (
-				<div className="border p-4 rounded-lg space-y-4">
-					<Label className="text-sm font-medium">Настройки скидки</Label>
+				<div className="border border-border/50 p-4 rounded-xl bg-card/30 space-y-4">
+					<Label className="text-sm font-semibold text-foreground">
+						Настройки скидки
+					</Label>
 
 					{/* Discount Switch */}
 					{showDiscountSwitch && (
-						<div className="flex items-center justify-between">
-							<Label htmlFor="discount-switch">
+						<div className="flex items-center justify-between p-3 rounded-lg bg-card/50">
+							<Label htmlFor="discount-switch" className="text-sm font-medium">
 								Использовать ценник со скидкой
 							</Label>
 							<Switch
@@ -149,7 +155,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 
 					{/* Discount Settings */}
 					{showDiscountSettings && (
-						<div className="space-y-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<PlusMinusInput
 								label="Максимальная скидка в рублях"
 								defaultValue={discountAmount}
@@ -158,7 +164,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 								onChange={handleDiscountAmountChange}
 							/>
 							<PlusMinusInput
-								label="Максимальный процent скидки"
+								label="Максимальный процент скидки"
 								defaultValue={maxDiscountPercent}
 								minValue={0}
 								step={1}
@@ -170,7 +176,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 					{/* Discount Text */}
 					{showDiscountText && (
 						<div className="space-y-2">
-							<Label>Текст скидки</Label>
+							<Label className="text-sm font-medium">Текст скидки</Label>
 							<Textarea
 								placeholder="Введите текст скидки (максимум 2 строки)"
 								value={discountText}
@@ -183,76 +189,74 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 				</div>
 			)}
 
-			{/* Custom Gradient Editor */}
-			<div className="border p-4 rounded-lg space-y-4">
-				<Label className="text-sm font-medium">Настройка градиентов</Label>
-				<GradientPicker
-					themes={themes}
-					onChange={onThemeChange}
-					cuttingLineColor={cuttingLineColor}
-					onCuttingLineColorChange={setCuttingLineColor}
-				/>
+			{/* Theme Selector */}
+			{showThemeSection && (
+				<div className="border border-border/50 p-4 rounded-xl bg-card/30 space-y-4">
+					<Label className="text-sm font-semibold text-foreground">
+						Цветовая схема
+					</Label>
+					<GradientPicker
+						themes={themes}
+						onChange={onThemeChange}
+						cuttingLineColor={cuttingLineColor}
+						onCuttingLineColorChange={setCuttingLineColor}
+					/>
+				</div>
+			)}
+
+			{/* Font Selector */}
+			<div className="border border-border/50 p-4 rounded-xl bg-card/30 space-y-4">
+				<Label className="text-sm font-semibold text-foreground">
+					Настройки шрифта
+				</Label>
+				<div className="space-y-4">
+					<div className="space-y-2">
+						<Label className="text-sm font-medium">Шрифт для ценников</Label>
+						<Select value={currentFont} onValueChange={onFontChange}>
+							<SelectTrigger className="w-full">
+								<SelectValue placeholder="Выберите шрифт" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="inter">Inter</SelectItem>
+								<SelectItem value="montserrat">Montserrat</SelectItem>
+								<SelectItem value="nunito">Nunito</SelectItem>
+								<SelectItem value="mont">Mont</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
+
+					{/* Show Theme Labels - Only for non-table modes */}
+					{designType !== "table" && (
+						<div className="flex items-center justify-between p-3 rounded-lg bg-card/50">
+							<Label
+								htmlFor="theme-labels-switch"
+								className="text-sm font-medium"
+							>
+								Показывать названия цветов
+							</Label>
+							<Switch
+								id="theme-labels-switch"
+								checked={showThemeLabels}
+								onCheckedChange={onShowThemeLabelsChange}
+							/>
+						</div>
+					)}
+				</div>
 			</div>
 
-			{/* Font and Display Settings */}
-			<div className="border p-4 rounded-lg space-y-4">
-				<Label className="text-sm font-medium">Настройки отображения</Label>
-
-				{/* Font Selection */}
-				<div className="space-y-2">
-					<Label>Шрифт</Label>
-					<Select value={currentFont} onValueChange={onFontChange}>
-						<SelectTrigger>
-							<SelectValue>
-								<span
-									className="text-lg"
-									style={{ fontFamily: currentFontData.id }}
-								>
-									{currentFontData.name}
-								</span>
-							</SelectValue>
-						</SelectTrigger>
-						<SelectContent>
-							{fonts.map((font) => (
-								<SelectItem key={font.id} value={font.id}>
-									<span className="text-lg" style={{ fontFamily: font.id }}>
-										{font.name}
-									</span>
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-
-				{/* Theme Labels Toggle */}
-				<div className="space-y-2">
-					<div className="flex items-center justify-between">
-						<Label htmlFor="theme-labels-switch">
-							Показывать надписи NEW/SALE
-						</Label>
-						<Switch
-							id="theme-labels-switch"
-							checked={showThemeLabels}
-							onCheckedChange={onShowThemeLabelsChange || (() => {})}
-						/>
-					</div>
-					<p className="text-xs text-muted-foreground">
-						Показывать или скрывать надписи "NEW" и "SALE" на соответствующих
-						темах
-					</p>
-				</div>
-
-				{/* Reset Settings */}
-				<div className="pt-2 border-t">
-					<Button
-						type="button"
-						variant="outline"
-						onClick={handleClearSettings}
-						className="w-full"
-					>
-						Сбросить все настройки
-					</Button>
-				</div>
+			{/* Developer Actions */}
+			<div className="border border-border/50 p-4 rounded-xl bg-destructive/5 space-y-4">
+				<Label className="text-sm font-semibold text-foreground">
+					Сброс настроек
+				</Label>
+				<Button
+					onClick={handleClearSettings}
+					variant="destructive"
+					size="sm"
+					className="w-full"
+				>
+					🗑️ Очистить все настройки
+				</Button>
 			</div>
 		</div>
 	);

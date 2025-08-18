@@ -110,7 +110,7 @@ function ColorPicker({
 			const timeoutId = setTimeout(() => {
 				addToRecentColors(color);
 			}, 500); // Wait 500ms after user stops adjusting
-			
+
 			// Return cleanup function
 			return () => clearTimeout(timeoutId);
 		},

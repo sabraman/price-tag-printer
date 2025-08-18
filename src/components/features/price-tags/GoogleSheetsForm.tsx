@@ -1,3 +1,4 @@
+import { ExternalLink, FileSpreadsheet } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import AccordionInfo from "@/components/layout/AccordionInfo";
@@ -51,30 +52,67 @@ const GoogleSheetsForm: React.FC<GoogleSheetsFormProps> = ({
 	};
 
 	return (
-		<div className="mb-4">
-			<form onSubmit={handleSubmit} className="space-y-4">
-				<div className="space-y-2">
-					<p className="text-base font-medium">
-						Или вставь ссылку на Гугл таблицы:{" "}
-					</p>
+		<div className="space-y-4">
+			{/* Header Section */}
+			<div className="border border-border/50 rounded-xl p-4 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm">
+				<div className="flex items-center gap-3 mb-3">
+					<div className="p-2 rounded-lg bg-primary/10">
+						<FileSpreadsheet className="w-5 h-5 text-primary" />
+					</div>
+					<div>
+						<h3 className="text-base font-semibold text-foreground">
+							Импорт из Google Таблиц
+						</h3>
+						<p className="text-sm text-muted-foreground">
+							Загрузите данные прямо из вашей таблицы
+						</p>
+					</div>
+				</div>
+
+				{/* Example Link */}
+				<div className="flex items-center justify-between p-3 rounded-lg bg-card/60 border border-border/30">
+					<div className="flex items-center gap-2">
+						<span className="text-2xl">📊</span>
+						<div>
+							<p className="text-sm font-medium text-foreground">
+								Нужен пример?
+							</p>
+							<p className="text-xs text-muted-foreground">
+								Посмотрите структуру таблицы
+							</p>
+						</div>
+					</div>
 					<a
 						href="https://docs.google.com/spreadsheets/d/1hib1AcPemuxn3_8JIn9lcMTsXBGSpC7b-vEBbHgvQw8/edit?gid=585882185#gid=585882185/"
 						target="_blank"
 						rel="noopener noreferrer"
-						className="text-primary hover:text-primary/80 underline inline-block"
+						className="group inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200 hover:scale-105"
 					>
-						📊 Пример таблицы
+						<span className="text-sm font-medium">Открыть пример</span>
+						<ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
 					</a>
 				</div>
-				<div className="flex flex-col space-y-4">
+			</div>
+
+			{/* Form Section */}
+			<form onSubmit={handleSubmit} className="space-y-4">
+				<div className="space-y-3">
 					<InputWithClearButton
 						value={url}
 						onChange={handleUrlChange}
-						placeholder="Вставьте ссылку на Google Таблицы"
+						placeholder="Вставьте ссылку на Google Таблицы..."
 						className="w-full"
 					/>
+
+					{/* Help Accordion */}
 					<AccordionInfo />
-					<Button type="submit" className="w-full">
+
+					<Button
+						type="submit"
+						variant="default"
+						className="w-full h-11 text-base font-semibold"
+					>
+						<FileSpreadsheet className="w-5 h-5 mr-2" />
 						Загрузить данные
 					</Button>
 				</div>
