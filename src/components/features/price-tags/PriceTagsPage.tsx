@@ -20,6 +20,7 @@ import { fetchGoogleSheetsData } from "@/lib/googleSheets";
 
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
+import Link from "next/link";
 
 interface GoogleSheetsResponse {
 	[columnKey: string]: {
@@ -670,32 +671,46 @@ export const PriceTagsPage: React.FC = () => {
 						{/* Import Section */}
 						<div className="space-y-4">
 							{/* Bot Info */}
-							<div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 border border-blue-400/30 backdrop-blur-sm">
-								<div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5"></div>
-								<div className="relative p-4 text-center">
-									<div className="flex items-center justify-center gap-2 mb-2">
-										<div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-											<svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-												<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+							<Link
+								href="https://t.me/PriceTagPrinterBot"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="block border border-border/50 rounded-xl p-4 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/40"
+								style={{ textDecoration: "none" }}
+							>
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-3">
+										<div className="p-2 rounded-full bg-primary/10">
+											<svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 512 512" aria-label="Telegram Logo" role="img">
+												<title>Telegram Logo</title>
+												<path d="M248,8C111.033,8,0,119.033,0,256S111.033,504,248,504,496,392.967,496,256,384.967,8,248,8ZM362.952,176.66c-3.732,39.215-19.881,134.378-28.1,178.3-3.476,18.584-10.322,24.816-16.948,25.425-14.4,1.326-25.338-9.517-39.287-18.661-21.827-14.308-34.158-23.215-55.346-37.177-24.485-16.135-8.612-25,5.342-39.5,3.652-3.793,67.107-61.51,68.335-66.746.153-.655.3-3.1-1.154-4.384s-3.59-.849-5.135-.5q-3.283.746-104.608,69.142-14.845,10.194-26.894,9.934c-8.855-.191-25.888-5.006-38.551-9.123-15.531-5.048-27.875-7.717-26.8-16.291q.84-6.7,18.45-13.7,108.446-47.248,144.628-62.3c68.872-28.647,83.183-33.623,92.511-33.789,2.052-.034,6.639.474,9.61,2.885a10.452,10.452,0,0,1,3.53,6.716A43.765,43.765,0,0,1,362.952,176.66Z"/>
 											</svg>
 										</div>
-										<span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-											У нас есть Telegram бот!
-										</span>
+										<div>
+											<h3 className="text-base font-semibold text-foreground">
+												У нас появился бот
+											</h3>
+											<p className="text-sm text-muted-foreground">
+												Создавайте ценники прямо в Телеге
+											</p>
+										</div>
 									</div>
-									<p className="text-xs text-blue-600/80 dark:text-blue-400/80 leading-relaxed">
-										Создавайте ценники прямо в Telegram{" "}
-										<a 
-											href="https://t.me/PriceTagPrinterBot" 
-											target="_blank" 
-											rel="noopener noreferrer"
-											className="font-semibold text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+									<span className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors">
+										Перейти
+										<svg
+											className="w-3 h-3"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+											aria-label="Переход по ссылке"
+											role="img"
 										>
-											@PriceTagPrinterBot
-										</a>
-									</p>
+											<title>Переход по ссылке</title>
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+										</svg>
+									</span>
 								</div>
-							</div>
+							</Link>
 							
 							<ExcelUploader onUpload={handleExcelUpload} />
 							<div className="relative">
@@ -897,79 +912,7 @@ export const PriceTagsPage: React.FC = () => {
 					</div>
 				</div>
 
-				{/* Telegram Bot Section */}
-				<div className="mt-16 border-t border-border pt-12">
-					<div className="max-w-4xl mx-auto text-center">
-						<div className="flex justify-center mb-6">
-							<div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center">
-								<svg 
-									className="w-8 h-8 text-blue-500" 
-									fill="currentColor" 
-									viewBox="0 0 24 24"
-								>
-									<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-								</svg>
-							</div>
-						</div>
-						
-						<h2 className="text-3xl font-bold text-foreground mb-4">
-							🤖 Telegram Бот для Ценников
-						</h2>
-						
-						<p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-							Создавайте ценники прямо в Telegram! Наш бот поможет вам управлять товарами, 
-							настраивать дизайн и генерировать PDF файлы для печати.
-						</p>
 
-						<div className="grid md:grid-cols-2 gap-6 mb-8 max-w-3xl mx-auto">
-							<div className="text-left p-6 rounded-lg border border-border bg-card">
-								<h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-									📱 Удобство
-								</h3>
-								<ul className="space-y-2 text-muted-foreground">
-									<li>• Создание ценников в чате</li>
-									<li>• Быстрое добавление товаров</li>
-									<li>• Настройка тем и дизайна</li>
-									<li>• Генерация PDF для печати</li>
-								</ul>
-							</div>
-							
-							<div className="text-left p-6 rounded-lg border border-border bg-card">
-								<h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-									🚀 Возможности
-								</h3>
-								<ul className="space-y-2 text-muted-foreground">
-									<li>• Загрузка Excel файлов</li>
-									<li>• Интеграция с Google Sheets</li>
-									<li>• 17 готовых тем дизайна</li>
-									<li>• Система скидок и акций</li>
-								</ul>
-							</div>
-						</div>
-
-						<div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-							<a
-								href="https://t.me/PriceTagPrinterBot"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="inline-flex items-center px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors duration-200"
-							>
-								<svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-									<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-								</svg>
-								Открыть в Telegram
-							</a>
-							
-							<Button variant="outline" size="lg" className="px-6">
-								📋 Инструкция по использованию
-							</Button>
-						</div>
-
-						<p className="text-sm text-muted-foreground mt-6">
-							Бот работает 24/7 и доступен бесплатно для всех пользователей
-						</p>
-					</div>
-				</div>
 			</div>
 		</div>
 	);
