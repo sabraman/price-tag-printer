@@ -6,6 +6,7 @@ import {
 	createMainMenuKeyboard,
 	createSettingsMenuKeyboard,
 } from "../keyboards";
+import { escapeMarkdown } from "../utils/markdown";
 
 // Back to main menu handler
 bot.callbackQuery("back_to_main", async (ctx) => {
@@ -22,7 +23,7 @@ ${bold}🏠 Главное меню${bold}
 Выберите действие:
 	`;
 
-	await ctx.editMessageText(mainMessage.toString(), {
+	await ctx.editMessageText(escapeMarkdown(mainMessage.toString()), {
 		reply_markup: createMainMenuKeyboard(),
 		parse_mode: "MarkdownV2",
 	});
@@ -47,7 +48,7 @@ ${
 }
 	`;
 
-	await ctx.editMessageText(itemsMessage.toString(), {
+	await ctx.editMessageText(escapeMarkdown(itemsMessage.toString()), {
 		reply_markup: createItemsMenuKeyboard(itemsCount),
 		parse_mode: "MarkdownV2",
 	});
@@ -72,7 +73,7 @@ ${bold}🎨 Настройка дизайна${bold}
 Настройте внешний вид ваших ценников:
 	`;
 
-	await ctx.editMessageText(designMessage.toString(), {
+	await ctx.editMessageText(escapeMarkdown(designMessage.toString()), {
 		reply_markup: createDesignMenuKeyboard(),
 		parse_mode: "MarkdownV2",
 	});
@@ -95,7 +96,7 @@ ${bold}⚙️ Настройки${bold}
 • Цвет линий отреза: ${ctx.session.cuttingLineColor}
 	`;
 
-	await ctx.editMessageText(settingsMessage.toString(), {
+	await ctx.editMessageText(escapeMarkdown(settingsMessage.toString()), {
 		reply_markup: createSettingsMenuKeyboard(),
 		parse_mode: "MarkdownV2",
 	});
@@ -126,13 +127,13 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 		await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		await ctx.editMessageText(
-			fmt`
+			escapeMarkdown(fmt`
 ${bold}✅ PDF создан успешно!${bold}
 
 Файл содержит ${ctx.session.items.length} ценников.
 
 💡 В будущих версиях файл будет отправлен автоматически.
-			`.toString(),
+			`.toString()),
 			{
 				reply_markup: createMainMenuKeyboard(),
 				parse_mode: "MarkdownV2",

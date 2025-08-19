@@ -1,6 +1,7 @@
 import { bold, fmt, italic } from "@grammyjs/parse-mode";
 import { bot } from "../bot";
 import { createMainMenuKeyboard } from "../keyboards";
+import { escapeMarkdown } from "../utils/markdown";
 
 // Start command - показывает главное меню
 bot.command("start", async (ctx) => {
@@ -19,7 +20,7 @@ ${italic}Возможности:${italic}
 Выберите действие:
 	`;
 
-	await ctx.reply(welcomeMessage.toString(), {
+	await ctx.reply(escapeMarkdown(welcomeMessage.toString()), {
 		reply_markup: createMainMenuKeyboard(),
 		parse_mode: "MarkdownV2",
 	});
@@ -54,7 +55,7 @@ ${bold}💡 Советы:${bold}
 • Проверяйте предпросмотр перед генерацией PDF
 	`;
 
-	await ctx.reply(helpMessage.toString(), {
+	await ctx.reply(escapeMarkdown(helpMessage.toString()), {
 		reply_markup: createMainMenuKeyboard(),
 		parse_mode: "MarkdownV2",
 	});
