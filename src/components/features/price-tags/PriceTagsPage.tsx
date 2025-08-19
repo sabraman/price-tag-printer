@@ -670,19 +670,31 @@ export const PriceTagsPage: React.FC = () => {
 						{/* Import Section */}
 						<div className="space-y-4">
 							{/* Bot Info */}
-							<div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-								<p className="text-sm text-blue-600 dark:text-blue-400">
-									💡 Кстати, у нас есть{" "}
-									<a 
-										href="https://t.me/PriceTagPrinterBot" 
-										target="_blank" 
-										rel="noopener noreferrer"
-										className="font-medium underline hover:text-blue-700 dark:hover:text-blue-300"
-									>
-										Telegram бот
-									</a>{" "}
-									для создания ценников прямо в чате!
-								</p>
+							<div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 border border-blue-400/30 backdrop-blur-sm">
+								<div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5"></div>
+								<div className="relative p-4 text-center">
+									<div className="flex items-center justify-center gap-2 mb-2">
+										<div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+											<svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+												<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+											</svg>
+										</div>
+										<span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+											У нас есть Telegram бот!
+										</span>
+									</div>
+									<p className="text-xs text-blue-600/80 dark:text-blue-400/80 leading-relaxed">
+										Создавайте ценники прямо в Telegram{" "}
+										<a 
+											href="https://t.me/PriceTagPrinterBot" 
+											target="_blank" 
+											rel="noopener noreferrer"
+											className="font-semibold text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+										>
+											@PriceTagPrinterBot
+										</a>
+									</p>
+								</div>
 							</div>
 							
 							<ExcelUploader onUpload={handleExcelUpload} />
