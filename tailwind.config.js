@@ -5,10 +5,10 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				'inter': ['var(--font-inter)', 'Inter', 'sans-serif'],
-				'montserrat': ['var(--font-montserrat)', 'Montserrat', 'sans-serif'],
-				'nunito': ['var(--font-nunito)', 'Nunito', 'sans-serif'],
-				'mont': ['Mont', 'Montserrat', 'sans-serif'],
+				inter: ["var(--font-inter)", "Inter", "sans-serif"],
+				montserrat: ["var(--font-montserrat)", "Montserrat", "sans-serif"],
+				nunito: ["var(--font-nunito)", "Nunito", "sans-serif"],
+				mont: ["Mont", "Montserrat", "sans-serif"],
 			},
 			colors: {
 				border: "hsl(var(--border))",

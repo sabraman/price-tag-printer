@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNewItemDraft } from "@/hooks/useNewItemDraft";
 import { fetchGoogleSheetsData } from "@/lib/googleSheets";
-import { cn } from "@/lib/utils";
+
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 
@@ -850,7 +850,8 @@ export const PriceTagsPage: React.FC = () => {
 									Здесь будут ваши ценники
 								</h2>
 								<p className="text-muted-foreground mb-6 max-w-md mx-auto text-lg">
-									Загрузите файл Excel, подключите Google Sheets или создайте ценники вручную, чтобы начать работу
+									Загрузите файл Excel, подключите Google Sheets или создайте
+									ценники вручную, чтобы начать работу
 								</p>
 								<div className="flex flex-col sm:flex-row gap-3 justify-center">
 									<Button
