@@ -1,10 +1,26 @@
-import { createCanvas } from "canvas";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
 	console.log("Canvas preview API called");
 
 	try {
+		// Dynamic import to avoid build-time issues
+		// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
+		let createCanvas: any;
+		try {
+			const canvasModule = await import("canvas");
+			createCanvas = canvasModule.createCanvas;
+		} catch (error) {
+			console.error("Canvas module not available:", error);
+			return new Response(
+				JSON.stringify({ error: "Canvas not available in this environment" }),
+				{ 
+					status: 503,
+					headers: { "Content-Type": "application/json" }
+				}
+			);
+		}
+
 		const { searchParams } = new URL(request.url);
 
 		const designType = searchParams.get("designType") || "default";
