@@ -3,7 +3,7 @@ import * as XLSX from "xlsx";
 
 export async function POST(request: NextRequest) {
 	try {
-		const { fileData, fileName } = await request.json();
+		const { fileData, fileName: _fileName } = await request.json();
 
 		if (!fileData || !Array.isArray(fileData)) {
 			return NextResponse.json(

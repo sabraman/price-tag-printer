@@ -188,7 +188,10 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 			) {
 				await ctx.api.deleteMessage(ctx.chat.id, progressMsg.message_id);
 			}
-		} catch {}
+		} catch (deleteError) {
+			// Ignore delete errors - message might already be deleted
+			console.warn("Failed to delete progress message:", deleteError);
+		}
 
 		await ctx.reply(
 			`❌ Ошибка при создании PDF:\n\n${error instanceof Error ? error.message : "Неизвестная ошибка"}\n\nПопробуйте еще раз или обратитесь к администратору.`,

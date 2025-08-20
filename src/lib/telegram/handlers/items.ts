@@ -460,7 +460,12 @@ bot.on("message:document", async (ctx) => {
 			ctx.session.awaitingInput = false;
 
 			// Delete processing message
-			await ctx.api.deleteMessage(ctx.chat.id, processingMsg.message_id);
+			try {
+				await ctx.api.deleteMessage(ctx.chat.id, processingMsg.message_id);
+			} catch (deleteError) {
+				// Ignore delete errors - message might already be deleted
+				console.warn("Failed to delete processing message:", deleteError);
+			}
 
 			// Show success message
 			await ctx.reply(
@@ -474,7 +479,10 @@ bot.on("message:document", async (ctx) => {
 			// Delete processing message
 			try {
 				await ctx.api.deleteMessage(ctx.chat.id, processingMsg.message_id);
-			} catch {}
+			} catch (deleteError) {
+				// Ignore delete errors - message might already be deleted
+				console.warn("Failed to delete processing message:", deleteError);
+			}
 
 			console.error("Excel processing error:", error);
 			await ctx.reply(
