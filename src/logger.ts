@@ -10,6 +10,16 @@ export interface LogContext {
 	action?: string;
 }
 
+// Type for extra logging data - can be any serializable value
+type LogExtra =
+	| string
+	| number
+	| boolean
+	| null
+	| undefined
+	| Record<string, unknown>
+	| unknown[];
+
 class BotLogger {
 	private formatTime(): string {
 		return new Date().toISOString().replace("T", " ").replace("Z", "");
@@ -29,7 +39,7 @@ class BotLogger {
 		return parts.join(" ");
 	}
 
-	info(message: string, ctx?: Context, extra?: any) {
+	info(message: string, ctx?: Context, extra?: LogExtra) {
 		const timestamp = this.formatTime();
 		const user = ctx ? this.formatUser(ctx) : "";
 		const extraStr = extra ? ` | ${JSON.stringify(extra)}` : "";
@@ -39,7 +49,7 @@ class BotLogger {
 		);
 	}
 
-	success(message: string, ctx?: Context, extra?: any) {
+	success(message: string, ctx?: Context, extra?: LogExtra) {
 		const timestamp = this.formatTime();
 		const user = ctx ? this.formatUser(ctx) : "";
 		const extraStr = extra ? ` | ${JSON.stringify(extra)}` : "";
@@ -49,7 +59,7 @@ class BotLogger {
 		);
 	}
 
-	warn(message: string, ctx?: Context, extra?: any) {
+	warn(message: string, ctx?: Context, extra?: LogExtra) {
 		const timestamp = this.formatTime();
 		const user = ctx ? this.formatUser(ctx) : "";
 		const extraStr = extra ? ` | ${JSON.stringify(extra)}` : "";
@@ -59,22 +69,24 @@ class BotLogger {
 		);
 	}
 
-	error(message: string, error?: any, ctx?: Context, extra?: any) {
+	error(message: string, error?: unknown, ctx?: Context, extra?: LogExtra) {
 		const timestamp = this.formatTime();
 		const user = ctx ? this.formatUser(ctx) : "";
-		const errorStr = error ? ` | Error: ${error.message || error}` : "";
+		const errorStr = error
+			? ` | Error: ${error instanceof Error ? error.message : String(error)}`
+			: "";
 		const extraStr = extra ? ` | ${JSON.stringify(extra)}` : "";
 
 		console.error(
 			`[${timestamp}] ❌ ERROR: ${message}${user ? ` | User: ${user}` : ""}${errorStr}${extraStr}`,
 		);
 
-		if (error?.stack) {
+		if (error instanceof Error && error.stack) {
 			console.error(`[${timestamp}] 📍 Stack trace:`, error.stack);
 		}
 	}
 
-	debug(message: string, ctx?: Context, extra?: any) {
+	debug(message: string, ctx?: Context, extra?: LogExtra) {
 		if (process.env.NODE_ENV === "development") {
 			const timestamp = this.formatTime();
 			const user = ctx ? this.formatUser(ctx) : "";
@@ -86,7 +98,7 @@ class BotLogger {
 		}
 	}
 
-	session(action: string, ctx?: Context, sessionData?: any) {
+	session(action: string, ctx?: Context, sessionData?: LogExtra) {
 		const timestamp = this.formatTime();
 		const user = ctx ? this.formatUser(ctx) : "";
 		const dataStr = sessionData

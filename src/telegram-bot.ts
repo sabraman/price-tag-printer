@@ -27,6 +27,17 @@ import {
 import { logger } from "./logger";
 import { usePriceTagsStore } from "./store/priceTagsStore";
 
+// Types for Grammy operations
+type EditMessageOptions = {
+	reply_markup?: InlineKeyboard;
+	parse_mode?: "HTML" | "Markdown" | "MarkdownV2";
+	disable_web_page_preview?: boolean;
+};
+type Conversation = {
+	wait: () => Promise<MyContext>;
+	external: <T>(fn: (ctx: MyContext) => T) => Promise<T>;
+};
+
 // Session data interface
 interface SessionData {
 	mode:
@@ -78,6 +89,9 @@ interface SessionData {
 	editingItemId?: number;
 	awaitingInput?: boolean;
 }
+
+// Item type
+type Item = SessionData["items"][number];
 
 // Custom context type
 type MyContext = Context &
@@ -145,11 +159,11 @@ bot.use(conversations());
 async function safeEditMessage(
 	ctx: MyContext,
 	text: string,
-	options: any = {},
+	options: EditMessageOptions = {},
 ) {
 	try {
 		await ctx.editMessageText(text, options);
-	} catch (error: any) {
+	} catch (error: unknown) {
 		// Ignore "message not modified" errors - they're harmless
 		if (
 			error &&
@@ -974,7 +988,7 @@ bot.callbackQuery(/font_select_(.+)/, async (ctx: MyContext) => {
 });
 
 // Add item conversation with proper session handling for Grammy v2
-async function addItemConversation(conversation: any, ctx: MyContext) {
+async function addItemConversation(conversation: Conversation, ctx: MyContext) {
 	try {
 		logger.conversation("Starting add item conversation", ctx, "name_input");
 		await ctx.reply("📝 Введите название товара:");
@@ -1111,7 +1125,10 @@ https://docs.google.com/spreadsheets/d/1hib1AcPemuxn3_8JIn9lcMTsXBGSpC7b-vEBbHgv
 });
 
 // Edit item name conversation
-async function editItemNameConversation(conversation: any, ctx: MyContext) {
+async function editItemNameConversation(
+	conversation: Conversation,
+	ctx: MyContext,
+) {
 	try {
 		const itemId = ctx.session.editingItemId;
 		if (!itemId) {
@@ -1181,7 +1198,10 @@ async function editItemNameConversation(conversation: any, ctx: MyContext) {
 }
 
 // Edit item price conversation
-async function editItemPriceConversation(conversation: any, ctx: MyContext) {
+async function editItemPriceConversation(
+	conversation: Conversation,
+	ctx: MyContext,
+) {
 	try {
 		const itemId = ctx.session.editingItemId;
 		if (!itemId) {
@@ -1311,7 +1331,7 @@ bot.callbackQuery("items_edit_mode", async (ctx: MyContext) => {
 });
 
 function createItemEditSelectionKeyboard(
-	items: any[],
+	items: Item[],
 	page = 0,
 	perPage = 6,
 ): InlineKeyboard {
@@ -1589,8 +1609,14 @@ bot.callbackQuery("items_list", async (ctx: MyContext) => {
 			await ctx.editMessageText("📦 Список товаров пуст", {
 				reply_markup: createItemsMenuKeyboard(0),
 			});
-		} catch (error: any) {
-			if (!error.description?.includes("message is not modified")) {
+		} catch (error: unknown) {
+			if (
+				error &&
+				typeof error === "object" &&
+				"description" in error &&
+				typeof error.description === "string" &&
+				!error.description.includes("message is not modified")
+			) {
 				throw error;
 			}
 		}
@@ -1617,9 +1643,15 @@ bot.callbackQuery("items_list", async (ctx: MyContext) => {
 			reply_markup: createItemsMenuKeyboard(items.length),
 			parse_mode: "HTML",
 		});
-	} catch (error: any) {
+	} catch (error: unknown) {
 		// Ignore "message not modified" errors - they're harmless
-		if (!error.description?.includes("message is not modified")) {
+		if (
+			error &&
+			typeof error === "object" &&
+			"description" in error &&
+			typeof error.description === "string" &&
+			!error.description.includes("message is not modified")
+		) {
 			throw error;
 		}
 	}

@@ -11,6 +11,24 @@ import {
 	createNumberInputKeyboard,
 } from "../keyboards";
 
+// Type for conversation - this matches the Grammy conversations type
+type Conversation = {
+	wait: () => Promise<MyContext>;
+	external: <T>(fn: (ctx: MyContext) => T) => Promise<T>;
+};
+
+// Item type matching the SessionData interface
+type Item = {
+	id: number;
+	data: string | number;
+	price: number;
+	discountPrice: number;
+	designType?: string;
+	hasDiscount?: boolean;
+	priceFor2?: number;
+	priceFrom3?: number;
+};
+
 // Items list handler
 bot.callbackQuery("items_list", async (ctx) => {
 	await ctx.answerCallbackQuery();
@@ -27,7 +45,7 @@ bot.callbackQuery("items_list", async (ctx) => {
 	// Create items list message
 	let itemsList = fmt`${bold}📋 Список товаров${bold}\n\n`;
 
-	items.slice(0, 10).forEach((item: any, index: number) => {
+	items.slice(0, 10).forEach((item: Item, index: number) => {
 		const price =
 			item.discountPrice !== item.price
 				? `${item.price}₽ → ${item.discountPrice}₽`
@@ -77,7 +95,7 @@ ${
 });
 
 // Add item handler - starts conversation
-async function addItemConversation(conversation: any, ctx: MyContext) {
+async function addItemConversation(conversation: Conversation, ctx: MyContext) {
 	await ctx.reply("📝 Введите название товара:");
 
 	const nameCtx = await conversation.wait();
