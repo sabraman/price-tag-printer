@@ -9,10 +9,8 @@
  */
 export function escapeMarkdown(text: string): string {
 	if (!text) return text;
-	
-	return text
-		.replace(/[_*[\]()~`>#+=|{}.!-]/g, '\\$&')
-		.replace(/\\n/g, '\n');
+
+	return text.replace(/[_*[\]()~`>#+=|{}.!-]/g, "\\$&").replace(/\\n/g, "\n");
 }
 
 /**
@@ -30,7 +28,5 @@ export function safeMarkdown(text: string): string {
  * @returns Formatted bullet list
  */
 export function formatBulletList(items: string[]): string {
-	return items
-		.map(item => `• ${escapeMarkdown(item)}`)
-		.join('\n');
-} 
+	return items.map((item) => `• ${escapeMarkdown(item)}`).join("\n");
+}

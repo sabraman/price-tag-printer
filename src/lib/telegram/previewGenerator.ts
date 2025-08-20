@@ -77,51 +77,103 @@ export async function getPreviewImage(
 		logger.debug("Fetching preview image", ctx, {
 			previewUrl: `${previewUrl.substring(0, 100)}...`,
 			overrides,
+			apiUrl: botEnv.NEXTJS_API_URL,
 		});
 
 		let response: Response;
+		const startTime = Date.now();
+
 		try {
+			logger.debug("Starting preview API request", ctx, { url: previewUrl });
+
 			response = await fetch(previewUrl, {
 				method: "GET",
 				headers: {
-					Accept: "image/svg+xml, image/png, */*",
+					Accept: "image/png, image/svg+xml, */*",
 					"User-Agent": "TelegramBot/1.0",
 				},
-				// Add timeout
-				signal: AbortSignal.timeout(10000), // 10 second timeout
+				// Keep reasonable timeout for images
+				signal: AbortSignal.timeout(15000), // 15 seconds - enough time for generation
+			});
+
+			const fetchTime = Date.now() - startTime;
+			logger.debug("Preview API response received", ctx, {
+				status: response.status,
+				fetchTime: `${fetchTime}ms`,
+				contentType: response.headers.get("content-type"),
 			});
 
 			if (!response.ok) {
 				const errorText = await response.text().catch(() => "No error details");
+				logger.error("Preview API error response", null, ctx, {
+					status: response.status,
+					statusText: response.statusText,
+					errorText: errorText.substring(0, 200),
+				});
 				throw new Error(`Preview API error: ${response.status} - ${errorText}`);
 			}
-		} catch (_fetchError) {
-			logger.warn("Preview API unavailable, using fallback", ctx);
+		} catch (fetchError) {
+			const fetchTime = Date.now() - startTime;
+			logger.warn("Preview API unavailable, using fallback", ctx, {
+				fetchTime: `${fetchTime}ms`,
+				error:
+					fetchError instanceof Error ? fetchError.message : String(fetchError),
+			});
 
-			// Generate a simple colored rectangle as fallback
+			// Generate a proper SVG fallback that should work
+			const currentTheme = (
+				sessionData.themes as Record<
+					string,
+					{ start: string; end: string; textColor: string }
+				>
+			)[overrides.designType?.toString() || sessionData.designType];
+
 			const fallbackSvg = `<svg width="400" height="275" xmlns="http://www.w3.org/2000/svg">
-        <rect width="400" height="275" fill="#3b82f6"/>
-        <text x="200" y="140" font-family="Arial" font-size="24" fill="white" text-anchor="middle">ПРЕВЬЮ НЕДОСТУПНО</text>
-      </svg>`;
+				<defs>
+					<linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+						<stop offset="0%" style="stop-color:${currentTheme?.start || "#3b82f6"};stop-opacity:1" />
+						<stop offset="100%" style="stop-color:${currentTheme?.end || "#1d4ed8"};stop-opacity:1" />
+					</linearGradient>
+				</defs>
+				<rect width="400" height="275" fill="url(#grad)"/>
+				<text x="200" y="120" font-family="Arial" font-size="20" fill="${currentTheme?.textColor || "white"}" text-anchor="middle" font-weight="bold">${sessionData.items[0]?.data || "ТОВАР ПРИМЕР"}</text>
+				<text x="200" y="150" font-family="Arial" font-size="28" fill="${currentTheme?.textColor || "white"}" text-anchor="middle" font-weight="bold">${sessionData.items[0]?.price || 1000}₽</text>
+				<text x="200" y="180" font-family="Arial" font-size="12" fill="${currentTheme?.textColor || "white"}" text-anchor="middle" opacity="0.8">Загрузка превью...</text>
+			</svg>`;
 
 			return Buffer.from(fallbackSvg);
 		}
 
 		const buffer = Buffer.from(await response.arrayBuffer());
+		const totalTime = Date.now() - startTime;
 
-		// If response is SVG, keep it as is (Telegram can handle SVG)
-		if (response.headers.get("content-type")?.includes("svg")) {
-			logger.debug("Received SVG preview", ctx, { size: buffer.length });
-		}
-
-		logger.debug("Preview image generated", ctx, {
+		logger.debug("Preview image processed successfully", ctx, {
 			imageSize: buffer.length,
+			totalTime: `${totalTime}ms`,
+			contentType: response.headers.get("content-type"),
 		});
+
+		// Validate image size (Telegram has limits)
+		if (buffer.length > 10 * 1024 * 1024) {
+			// 10MB limit
+			logger.warn("Preview image too large, using fallback", ctx, {
+				size: buffer.length,
+				limit: "10MB",
+			});
+			throw new Error("Image too large");
+		}
 
 		return buffer;
 	} catch (error) {
 		logger.error("Failed to generate preview image", error, ctx);
-		throw error;
+
+		// Simple SVG fallback
+		const simpleFallback = `<svg width="400" height="275" xmlns="http://www.w3.org/2000/svg">
+			<rect width="400" height="275" fill="#6366f1"/>
+			<text x="200" y="140" font-family="Arial" font-size="20" fill="white" text-anchor="middle">ПРЕВЬЮ НЕДОСТУПНО</text>
+		</svg>`;
+
+		return Buffer.from(simpleFallback);
 	}
 }
 
@@ -251,7 +303,7 @@ export async function sendPreviewWithKeyboard(
 	try {
 		const imageBuffer = await getPreviewImage(sessionData, ctx, overrides);
 
-		// Send photo with inline keyboard
+		// Create InputFile for Grammy with proper buffer formatting
 		await ctx.replyWithPhoto(new InputFile(imageBuffer, "preview.png"), {
 			caption,
 			parse_mode: "HTML",
@@ -277,9 +329,15 @@ export async function updatePreviewMessage(
 ): Promise<void> {
 	try {
 		const imageBuffer = await getPreviewImage(sessionData, ctx, overrides);
+
 		const media = InputMediaBuilder.photo(
 			new InputFile(imageBuffer, "preview.png"),
 		);
+
+		logger.debug("Attempting to update preview message", ctx, {
+			imageSize: imageBuffer.length,
+			hasKeyboard: !!keyboard,
+		});
 
 		if (keyboard) {
 			// Update both media and keyboard
@@ -309,6 +367,8 @@ export async function updatePreviewWithCaption(
 ): Promise<void> {
 	try {
 		const imageBuffer = await getPreviewImage(sessionData, ctx, overrides);
+
+		// Try to edit the message with the image
 		const media = InputMediaBuilder.photo(
 			new InputFile(imageBuffer, "preview.png"),
 			{
@@ -316,6 +376,11 @@ export async function updatePreviewWithCaption(
 				parse_mode: "HTML",
 			},
 		);
+
+		logger.debug("Attempting to edit message with preview image", ctx, {
+			imageSize: imageBuffer.length,
+			hasKeyboard: !!keyboard,
+		});
 
 		if (keyboard) {
 			// Update media, caption and keyboard
@@ -333,7 +398,28 @@ export async function updatePreviewWithCaption(
 		});
 	} catch (error) {
 		logger.error("Failed to update preview message with caption", error, ctx);
-		// If editing fails, send new message
-		await ctx.reply("❌ Не удалось обновить превью.");
+
+		// Check if it's an IMAGE_PROCESS_FAILED error specifically
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		if (
+			errorMessage.includes("IMAGE_PROCESS_FAILED") ||
+			errorMessage.includes("Bad Request")
+		) {
+			// Try to send a new message instead of editing
+			try {
+				logger.warn("Attempting to send new message instead of editing", ctx);
+				await ctx.reply(caption, {
+					reply_markup: keyboard,
+					parse_mode: "HTML",
+				});
+				logger.success("Sent new message as fallback", ctx);
+			} catch (fallbackError) {
+				logger.error("Fallback message also failed", fallbackError, ctx);
+				await ctx.reply("❌ Превью временно недоступно. Попробуйте позже.");
+			}
+		} else {
+			// For other errors, just send error message
+			await ctx.reply("❌ Не удалось обновить превью.");
+		}
 	}
 }

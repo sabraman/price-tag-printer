@@ -127,13 +127,15 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 		await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		await ctx.editMessageText(
-			escapeMarkdown(fmt`
+			escapeMarkdown(
+				fmt`
 ${bold}✅ PDF создан успешно!${bold}
 
 Файл содержит ${ctx.session.items.length} ценников.
 
 💡 В будущих версиях файл будет отправлен автоматически.
-			`.toString()),
+			`.toString(),
+			),
 			{
 				reply_markup: createMainMenuKeyboard(),
 				parse_mode: "MarkdownV2",

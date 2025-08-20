@@ -71,7 +71,9 @@ type MyContext = Context &
 	FileFlavor<Context>;
 
 // Create bot instance using environment variables (with fallback for build time)
-const bot = new Bot<MyContext>(env.TELEGRAM_BOT_TOKEN || "dummy_token_for_build");
+const bot = new Bot<MyContext>(
+	env.TELEGRAM_BOT_TOKEN || "dummy_token_for_build",
+);
 
 // Add file handling capabilities
 bot.api.config.use(hydrateFiles(bot.token));
