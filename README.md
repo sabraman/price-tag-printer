@@ -119,3 +119,46 @@ The application expects Excel files with the following structure:
 - `pnpm build` - Build for production
 - `pnpm preview` - Preview production build
 - `pnpm lint` - Run ESLint
+
+## Bot Deployment
+
+### Development
+```bash
+pnpm bot:dev  # Runs src/telegram-bot.ts with full features
+```
+
+### Production
+**IMPORTANT**: Always use the main bot file for production:
+
+```bash
+# Recommended: Use the npm script
+pnpm bot:prod
+
+# Or manually
+tsx src/telegram-bot.ts
+
+# For compiled version
+node dist/telegram-bot.js
+```
+
+**⚠️ CRITICAL: DO NOT use `simple-bot.mjs` in production** - it lacks Google Sheets functionality.
+
+### Bot Features Comparison
+- **`src/telegram-bot.ts`** ✅ Full bot with Excel + Google Sheets + all features
+- **`simple-bot.mjs`** ❌ Basic bot with Excel only (for testing)
+- **`bot-dev.mjs`** ❌ Minimal test bot (just /start command)
+
+### Environment Variables
+
+**Development:**
+- `TELEGRAM_BOT_TOKEN=your_bot_token_here`
+- API URL automatically uses `http://localhost:3000`
+
+**Production:**
+- `TELEGRAM_BOT_TOKEN=your_bot_token_here`
+- `NEXTJS_API_URL=https://your-production-domain.com`
+- `NODE_ENV=production`
+
+The bot automatically detects the environment:
+- **Development**: Always uses `localhost:3000` for API calls
+- **Production**: Uses `NEXTJS_API_URL` environment variable
