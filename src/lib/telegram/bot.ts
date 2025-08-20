@@ -10,7 +10,13 @@ import type { Item } from "@/store/priceTagsStore";
 // Session data structure
 interface SessionData {
 	// Current mode
-	mode: "main" | "edit_items" | "edit_themes" | "edit_settings";
+	mode:
+		| "main"
+		| "edit_items"
+		| "edit_themes"
+		| "edit_settings"
+		| "awaiting_excel"
+		| "awaiting_google_sheets";
 
 	// User's items
 	items: Item[];

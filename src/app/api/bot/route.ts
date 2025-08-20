@@ -7,6 +7,8 @@ import { bot } from "@/lib/telegram/bot";
 import "@/lib/telegram/commands/start";
 import "@/lib/telegram/handlers/main-menu";
 import "@/lib/telegram/handlers/items";
+import "@/lib/telegram/handlers/design";
+import "@/lib/telegram/handlers/settings";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";

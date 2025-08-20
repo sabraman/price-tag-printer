@@ -117,24 +117,59 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 	}
 
 	// Show progress message
-	await ctx.editMessageText(
+	const progressMsg = await ctx.editMessageText(
 		"⏳ Генерирую PDF файл...\n\nПожалуйста, подождите.",
 	);
 
 	try {
-		// Here we'll call the PDF generation API
-		// For now, just simulate the process
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		// Generate PDF using web app API
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL || "http://localhost:3000"}/api/generate-pdf`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					items: ctx.session.items,
+					settings: {
+						design: ctx.session.design,
+						designType: ctx.session.designType,
+						discountAmount: ctx.session.discountAmount,
+						maxDiscountPercent: ctx.session.maxDiscountPercent,
+						themes: ctx.session.themes,
+						currentFont: ctx.session.currentFont,
+						discountText: ctx.session.discountText,
+						showThemeLabels: ctx.session.showThemeLabels,
+						cuttingLineColor: ctx.session.cuttingLineColor,
+					},
+				}),
+			},
+		);
 
+		if (!response.ok) {
+			throw new Error("Ошибка генерации PDF на сервере");
+		}
+
+		const result = await response.json();
+
+		if (!result.success) {
+			throw new Error(result.error || "Не удалось создать PDF файл");
+		}
+
+		// For now, send a success message since we don't have actual PDF file yet
 		await ctx.editMessageText(
 			escapeMarkdown(
 				fmt`
-${bold}✅ PDF создан успешно!${bold}
+✅ ${bold}PDF функция активирована!${bold}
 
-Файл содержит ${ctx.session.items.length} ценников.
+📄 Обработано товаров: ${result.itemCount || ctx.session.items.length}
+🎨 Тема: ${ctx.session.designType}
+💰 Скидки: ${ctx.session.design ? "включены" : "выключены"}
 
-💡 В будущих версиях файл будет отправлен автоматически.
-			`.toString(),
+💡 PDF генерация находится в разработке
+Скоро будет доступна отправка готовых PDF файлов
+				`.toString(),
 			),
 			{
 				reply_markup: createMainMenuKeyboard(),
@@ -143,8 +178,20 @@ ${bold}✅ PDF создан успешно!${bold}
 		);
 	} catch (error) {
 		console.error("PDF generation error:", error);
-		await ctx.editMessageText(
-			"❌ Ошибка при создании PDF.\n\nПопробуйте еще раз или обратитесь к администратору.",
+
+		// Delete progress message
+		try {
+			if (
+				ctx.chat?.id &&
+				typeof progressMsg !== "boolean" &&
+				progressMsg.message_id
+			) {
+				await ctx.api.deleteMessage(ctx.chat.id, progressMsg.message_id);
+			}
+		} catch {}
+
+		await ctx.reply(
+			`❌ Ошибка при создании PDF:\n\n${error instanceof Error ? error.message : "Неизвестная ошибка"}\n\nПопробуйте еще раз или обратитесь к администратору.`,
 			{
 				reply_markup: createMainMenuKeyboard(),
 			},

@@ -1,16 +1,22 @@
 /**
- * Utility functions for Telegram MarkdownV2 formatting
- */
-
-/**
- * Escapes special characters for MarkdownV2 format
+ * Escapes special MarkdownV2 characters for Telegram
  * @param text - Text to escape
  * @returns Escaped text safe for MarkdownV2
  */
 export function escapeMarkdown(text: string): string {
-	if (!text) return text;
+	// Characters that need to be escaped in MarkdownV2:
+	// _ * [ ] ( ) ~ ` > # + - = | { } . !
+	return text.replace(/[_*[\]()~`>#+=|{}.!-]/g, "\\$&");
+}
 
-	return text.replace(/[_*[\]()~`>#+=|{}.!-]/g, "\\$&").replace(/\\n/g, "\n");
+/**
+ * Escapes text but preserves already formatted markdown
+ * @param text - Text with markdown formatting
+ * @returns Text with only special characters escaped
+ */
+export function escapeMarkdownPreserveFormatting(text: string): string {
+	// Only escape characters that would break parsing, but preserve intentional formatting
+	return text.replace(/[\\`>#+=|{}.!-]/g, "\\$&");
 }
 
 /**
