@@ -1,8 +1,43 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { NextRequest } from "next/server";
-import { generateScreenshot } from "../../../lib/screenshot";
+import { generateScreenshot } from "@/lib/screenshot";
+
+// Function to load local fonts as base64 for embedding
+async function getFontsBase64(): Promise<{ [key: string]: string }> {
+	const fonts: { [key: string]: string } = {};
+
+	const fontFiles = {
+		Mont: "mont_heavydemo.ttf",
+		Inter: "Inter-VariableFont_opsz,wght.ttf",
+		Nunito: "Nunito-VariableFont_wght.ttf",
+		Montserrat: "Montserrat-VariableFont_wght.ttf",
+	};
+
+	for (const [fontName, fileName] of Object.entries(fontFiles)) {
+		try {
+			const fontPath = path.join(process.cwd(), "public", "fonts", fileName);
+			const fontBuffer = fs.readFileSync(fontPath);
+			const base64Font = fontBuffer.toString("base64");
+			fonts[fontName] = base64Font;
+			console.log(`🔤 ${fontName} font loaded successfully`, {
+				size: fontBuffer.length,
+			});
+		} catch (error) {
+			console.warn(`⚠️ Failed to load ${fontName} font:`, error);
+			fonts[fontName] = "";
+		}
+	}
+
+	return fonts;
+}
 
 export async function GET(request: NextRequest) {
-	console.log("Puppeteer preview API called");
+	const startTime = Date.now();
+	console.log("🎨 Puppeteer preview API called", {
+		timestamp: new Date().toISOString(),
+		url: `${request.url.substring(0, 200)}...`,
+	});
 
 	try {
 		const { searchParams } = new URL(request.url);
@@ -14,10 +49,20 @@ export async function GET(request: NextRequest) {
 		const discountPrice = parseInt(searchParams.get("discountPrice") || "800");
 		const hasDiscount = searchParams.get("hasDiscount") === "true";
 
+		console.log("📋 Preview parameters", {
+			designType,
+			font,
+			productName: productName.substring(0, 20),
+			price,
+			hasDiscount,
+		});
+
 		// Theme colors
 		const themeStart = searchParams.get("themeStart") || "#3b82f6";
 		const themeEnd = searchParams.get("themeEnd") || "#1d4ed8";
 		const themeTextColor = searchParams.get("themeTextColor") || "#ffffff";
+
+		console.log("🎨 Theme colors", { themeStart, themeEnd, themeTextColor });
 
 		// Format price function
 		const formatNumber = (num: number) => {
@@ -64,24 +109,32 @@ export async function GET(request: NextRequest) {
 			"цена при подписке\nна телеграм канал";
 		const discountLines = discountText.split("\n").slice(0, 2);
 
-		// Font family mapping (matching PriceTagSVG.tsx)
+		// Font family mapping (matching PriceTagSVG.tsx) - только локальные шрифты
 		const getFontFamily = (fontName: string): string => {
 			const normalizedFont = fontName.toLowerCase();
 			switch (normalizedFont) {
 				case "montserrat":
-					return "'Montserrat', sans-serif";
+					return "'Montserrat'";
 				case "nunito":
-					return "'Nunito', sans-serif";
+					return "'Nunito'";
 				case "inter":
-					return "'Inter', sans-serif";
+					return "'Inter'";
 				case "mont":
-					return "'Mont', 'Montserrat', sans-serif";
+					return "'Mont'"; // Используем локальный шрифт Mont
 				default:
-					return "'Montserrat', sans-serif";
+					return "'Montserrat'"; // Fallback to Montserrat
 			}
 		};
 
 		const fontFamily = getFontFamily(font);
+
+		console.log("🔤 Font mapping", {
+			originalFont: font,
+			mappedFont: fontFamily,
+		});
+
+		// Load local fonts for embedding
+		const fontsBase64 = await getFontsBase64();
 
 		// Создаем HTML ТОЧНО как PriceTagSVG.tsx (160x110 размер, масштабируем до 400x275)
 		const html = `
@@ -89,15 +142,51 @@ export async function GET(request: NextRequest) {
     <html>
     <head>
         <meta charset="UTF-8">
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+        <!-- Remove Google Fonts - use only local fonts -->
         <style>
+            /* Local fonts - ALL from /public/fonts */
+            @font-face {
+                font-family: "Mont";
+                src: ${fontsBase64.Mont ? `url("data:font/truetype;base64,${fontsBase64.Mont}") format("truetype"),` : ""} url("/fonts/mont_heavydemo.ttf") format("truetype");
+                font-weight: 900;
+                font-style: normal;
+            }
+            
+            @font-face {
+                font-family: "Inter";
+                src: ${fontsBase64.Inter ? `url("data:font/truetype;base64,${fontsBase64.Inter}") format("truetype"),` : ""} url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+                font-weight: 100 900;
+                font-style: normal;
+            }
+            
+            @font-face {
+                font-family: "Nunito";
+                src: ${fontsBase64.Nunito ? `url("data:font/truetype;base64,${fontsBase64.Nunito}") format("truetype"),` : ""} url("/fonts/Nunito-VariableFont_wght.ttf") format("truetype");
+                font-weight: 200 1000;
+                font-style: normal;
+            }
+            
+            @font-face {
+                font-family: "Montserrat";
+                src: ${fontsBase64.Montserrat ? `url("data:font/truetype;base64,${fontsBase64.Montserrat}") format("truetype"),` : ""} url("/fonts/Montserrat-VariableFont_wght.ttf") format("truetype");
+                font-weight: 100 900;
+                font-style: normal;
+            }
+            
+            * {
+                font-family: ${fontFamily}, 'Montserrat', Arial, sans-serif !important;
+            }
+            
             body { 
                 margin: 0; 
                 padding: 0;
                 background: white;
-                font-family: ${fontFamily};
+                font-family: ${fontFamily}, 'Montserrat', Arial, sans-serif !important;
+            }
+            
+            /* Force font application on all text elements */
+            .product-name, .single-price, .discount-price, .theme-label-new, .theme-label-sale, .discount-text, .multi-tier {
+                font-family: ${fontFamily}, 'Montserrat', Arial, sans-serif !important;
             }
             
             /* ТОЧНО как PriceTagSVG.tsx - масштабируем 160x110 до 400x275 (x2.5) */
@@ -137,7 +226,6 @@ export async function GET(request: NextRequest) {
                 white-space: nowrap;
                 display: flex;
                 align-items: center;
-                font-family: ${fontFamily};
             }
             
             /* Single price layout - ТОЧНО как PriceTagSVG.tsx */
@@ -149,7 +237,6 @@ export async function GET(request: NextRequest) {
                 font-size: 130px; /* 52 * 2.5 */
                 text-align: center;
                 line-height: ${hasDiscount ? "150px" : "187.5px"}; /* 60px / 75px * 2.5 */
-                font-family: ${fontFamily};
             }
             
             .discount-price {
@@ -162,14 +249,13 @@ export async function GET(request: NextRequest) {
                 font-size: 45px; /* 18 * 2.5 */
                 text-align: left;
                 opacity: 0.8;
-                font-family: ${fontFamily};
             }
             
             /* Theme labels - ТОЧНО как PriceTagSVG.tsx */
             .theme-label-new {
                 position: absolute;
                 right: -130px; /* -52 * 2.5 */
-                bottom: -5px; /* -14 * 2.5 */
+                bottom: -35px; /* -14 * 2.5 */
                 transform: rotate(-90deg);
                 font-size: 130px; /* 52 * 2.5 */
                 font-weight: 900;
@@ -177,13 +263,12 @@ export async function GET(request: NextRequest) {
                 overflow: hidden;
                 width: 295px; /* 118 * 2.5 */
                 color: #10b981; /* themes.new.start equivalent */
-                font-family: ${fontFamily};
             }
             
             .theme-label-sale {
                 position: absolute;
                 right: -120px; /* -48 * 2.5 */
-                bottom: -5px; /* -14 * 2.5 */
+                bottom: -35px; /* -14 * 2.5 */
                 transform: rotate(-90deg);
                 font-size: 120px; /* 48 * 2.5 */
                 font-weight: 900;
@@ -191,7 +276,6 @@ export async function GET(request: NextRequest) {
                 overflow: hidden;
                 width: 310px; /* 124 * 2.5 */
                 color: #ef4444; /* themes.sale.start equivalent */
-                font-family: ${fontFamily};
             }
             
             /* Discount text - ТОЧНО как PriceTagSVG.tsx */
@@ -206,7 +290,6 @@ export async function GET(request: NextRequest) {
                 display: flex;
                 flex-direction: column;
                 opacity: 0.8;
-                font-family: ${fontFamily};
             }
             
             /* Multi-tier pricing - ТОЧНО как PriceTagSVG.tsx */
@@ -219,7 +302,6 @@ export async function GET(request: NextRequest) {
                 padding-top: 25px; /* 10 * 2.5 */
                 display: flex;
                 flex-direction: column;
-                font-family: ${fontFamily};
             }
             
             .multi-tier .label {
@@ -227,7 +309,6 @@ export async function GET(request: NextRequest) {
                 text-align: left;
                 width: 100%;
                 margin-bottom: 5px;
-                font-family: ${fontFamily};
             }
             
             .multi-tier .tier {
@@ -240,7 +321,6 @@ export async function GET(request: NextRequest) {
             .multi-tier .tier-label {
                 font-size: 25px; /* 10 * 2.5 */
                 width: 50%;
-                font-family: ${fontFamily};
             }
             
             .multi-tier .tier-price-large {
@@ -248,7 +328,6 @@ export async function GET(request: NextRequest) {
                 font-weight: bold;
                 text-align: right;
                 width: 50%;
-                font-family: ${fontFamily};
             }
             
             .multi-tier .tier-price-medium {
@@ -256,7 +335,6 @@ export async function GET(request: NextRequest) {
                 font-weight: bold;
                 text-align: right;
                 width: 50%;
-                font-family: ${fontFamily};
             }
             
             .multi-tier .tier-price-small {
@@ -264,11 +342,13 @@ export async function GET(request: NextRequest) {
                 font-weight: bold;
                 text-align: right;
                 width: 50%;
-                font-family: ${fontFamily};
             }
         </style>
     </head>
     <body>
+        <!-- Hidden font test element -->
+        <div id="font-test" style="position: absolute; top: -9999px; font-family: ${fontFamily}; font-size: 50px;">TEST FONT LOADING</div>
+        
         <div class="price-tag">
             <!-- Background SVG - ТОЧНО как PriceTagSVG.tsx -->
             <svg class="background-svg" width="400" height="275" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
@@ -355,28 +435,74 @@ export async function GET(request: NextRequest) {
     </html>
     `;
 
+		console.log(
+			"📝 HTML generated (restored exact PriceTagSVG.tsx structure)",
+			{
+				length: html.length,
+				productName,
+				price: formattedPrice,
+				fontFamily,
+				originalFont: font,
+				fontsLoaded: Object.keys(fontsBase64).filter((key) => fontsBase64[key])
+					.length,
+				totalFonts: Object.keys(fontsBase64).length,
+				loadedFonts: Object.keys(fontsBase64).filter((key) => fontsBase64[key]),
+			},
+		);
+
 		// Generate PNG using puppeteer screenshot
+		console.log("⚡ Starting screenshot generation", {
+			htmlLength: html.length,
+			width: 400,
+			height: 275,
+		});
+
+		const screenshotStartTime = Date.now();
 		const pngBuffer = await generateScreenshot({
 			html,
 			width: 400,
 			height: 275,
 		});
+		const screenshotTime = Date.now() - screenshotStartTime;
 
-		console.log("Puppeteer PNG generated successfully");
+		const totalTime = Date.now() - startTime;
+		console.log("✅ Puppeteer PNG generated successfully", {
+			screenshotTime: `${screenshotTime}ms`,
+			totalTime: `${totalTime}ms`,
+			bufferSize: pngBuffer.length,
+		});
 
 		return new Response(pngBuffer, {
 			status: 200,
 			headers: {
 				"Content-Type": "image/png",
-				"Cache-Control": "no-cache, no-store, must-revalidate",
+				"Cache-Control": "public, max-age=300", // Cache for 5 minutes
+				"Content-Length": pngBuffer.length.toString(),
 			},
 		});
 	} catch (error) {
-		console.error("Puppeteer preview error:", error);
+		const totalTime = Date.now() - startTime;
+		console.error("❌ Puppeteer preview error", {
+			error: error instanceof Error ? error.message : String(error),
+			totalTime: `${totalTime}ms`,
+			stack:
+				error instanceof Error ? error.stack?.substring(0, 500) : undefined,
+		});
 
-		return new Response("Error generating preview", {
-			status: 500,
-			headers: { "Content-Type": "text/plain" },
+		// Return a simple error image instead of text error
+		const errorSvg = `<svg width="400" height="275" xmlns="http://www.w3.org/2000/svg">
+			<rect width="400" height="275" fill="#ef4444"/>
+			<text x="200" y="120" font-family="Arial" font-size="16" fill="white" text-anchor="middle">ОШИБКА ГЕНЕРАЦИИ</text>
+			<text x="200" y="140" font-family="Arial" font-size="12" fill="white" text-anchor="middle">Попробуйте позже</text>
+			<text x="200" y="160" font-family="Arial" font-size="10" fill="white" text-anchor="middle" opacity="0.8">${totalTime}ms</text>
+		</svg>`;
+
+		return new Response(errorSvg, {
+			status: 200, // Return 200 so Telegram doesn't reject it
+			headers: {
+				"Content-Type": "image/svg+xml",
+				"Cache-Control": "no-cache",
+			},
 		});
 	}
 }

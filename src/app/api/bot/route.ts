@@ -1,7 +1,7 @@
 import { webhookCallback } from "grammy";
-import { bot } from "@/lib/telegram/bot";
-import { env } from "@/env";
 import { NextResponse } from "next/server";
+import { env } from "@/env";
+import { bot } from "@/lib/telegram/bot";
 
 // Import all handlers
 import "@/lib/telegram/commands/start";
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 	try {
 		// Validate environment before processing webhook
 		validateEnvironment();
-		
+
 		// Use the webhook callback
 		const webhookHandler = webhookCallback(bot, "std/http");
 		return await webhookHandler(request);
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 		console.error("Bot webhook error:", error);
 		return NextResponse.json(
 			{ error: "Bot configuration error" },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

@@ -14,10 +14,10 @@ export async function GET(request: NextRequest) {
 			console.error("Canvas module not available:", error);
 			return new Response(
 				JSON.stringify({ error: "Canvas not available in this environment" }),
-				{ 
+				{
 					status: 503,
-					headers: { "Content-Type": "application/json" }
-				}
+					headers: { "Content-Type": "application/json" },
+				},
 			);
 		}
 

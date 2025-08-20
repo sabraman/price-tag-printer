@@ -8,8 +8,12 @@ export async function GET() {
 		version: "0.0.1",
 		environment: process.env.NODE_ENV || "development",
 		services: {
-			telegram_bot: process.env.TELEGRAM_BOT_TOKEN ? "configured" : "not_configured",
-			google_sheets: process.env.GOOGLE_SHEETS_API_KEY ? "configured" : "not_configured",
+			telegram_bot: process.env.TELEGRAM_BOT_TOKEN
+				? "configured"
+				: "not_configured",
+			google_sheets: process.env.GOOGLE_SHEETS_API_KEY
+				? "configured"
+				: "not_configured",
 		},
 	};
 
@@ -19,4 +23,4 @@ export async function GET() {
 			"Cache-Control": "no-cache, no-store, must-revalidate",
 		},
 	});
-} 
+}
