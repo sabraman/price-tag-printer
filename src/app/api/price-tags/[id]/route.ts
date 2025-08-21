@@ -83,19 +83,14 @@ function validateUpdateData(data: UpdatePriceTagRequest): string | null {
 	return null;
 }
 
-interface RouteParams {
-	params: {
-		id: string;
-	};
-}
-
 // GET /api/price-tags/[id] - Get specific price tag
 export async function GET(
 	_request: NextRequest,
-	{ params }: RouteParams,
+	{ params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<ApiResponse<Item>>> {
+	const { id: idParam } = await params;
 	try {
-		const id = parseInt(params.id);
+		const id = parseInt(idParam);
 
 		if (Number.isNaN(id)) {
 			return NextResponse.json(
@@ -138,10 +133,11 @@ export async function GET(
 // PUT /api/price-tags/[id] - Update specific price tag
 export async function PUT(
 	request: NextRequest,
-	{ params }: RouteParams,
+	{ params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<ApiResponse<Item>>> {
+	const { id: idParam } = await params;
 	try {
-		const id = parseInt(params.id);
+		const id = parseInt(idParam);
 
 		if (Number.isNaN(id)) {
 			return NextResponse.json(
@@ -211,7 +207,7 @@ export async function PUT(
 // PATCH /api/price-tags/[id] - Partially update specific price tag
 export async function PATCH(
 	request: NextRequest,
-	{ params }: RouteParams,
+	{ params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<ApiResponse<Item>>> {
 	// Same logic as PUT for partial updates
 	return PUT(request, { params });
@@ -220,10 +216,11 @@ export async function PATCH(
 // DELETE /api/price-tags/[id] - Delete specific price tag
 export async function DELETE(
 	_request: NextRequest,
-	{ params }: RouteParams,
+	{ params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<ApiResponse<{ id: number }>>> {
+	const { id: idParam } = await params;
 	try {
-		const id = parseInt(params.id);
+		const id = parseInt(idParam);
 
 		if (Number.isNaN(id)) {
 			return NextResponse.json(
