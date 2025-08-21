@@ -2351,52 +2351,55 @@ bot.on("callback_query", async (ctx: MyContext) => {
 
 export { bot };
 
-// Always run when this file is executed
-logger.info("🤖 Starting TypeScript bot...");
-logger.info("Press Ctrl+C to stop");
+// Do NOT start polling automatically in production/serverless.
+// Polling is started only in dev via scripts/poll-bot.mjs by setting BOT_POLLING=true.
+if (process.env.BOT_POLLING === "true" && !process.env.VERCEL) {
+	logger.info("🤖 Starting TypeScript bot in polling mode...");
+	logger.info("Press Ctrl+C to stop");
 
-// Graceful shutdown
-process.once("SIGINT", () => {
-	logger.info("🛑 Shutting down bot...");
-	bot.stop();
-	process.exit(0);
-});
+	// Graceful shutdown
+	process.once("SIGINT", () => {
+		logger.info("🛑 Shutting down bot...");
+		bot.stop();
+		process.exit(0);
+	});
 
-process.once("SIGTERM", () => {
-	logger.info("🛑 Shutting down bot...");
-	bot.stop();
-	process.exit(1);
-});
-
-bot
-	.start({
-		onStart: (botInfo) => {
-			logger.success(`Bot @${botInfo.username} started successfully!`);
-			logger.info(`Bot ID: ${botInfo.id}`);
-			logger.info("💬 Send /start to the bot to test");
-
-			console.log("\n🎯 Available functionality:");
-			console.log("- ✅ Main menu and navigation");
-			console.log("- ✅ Item management (add/edit/delete)");
-			console.log("- ✅ Item list display");
-			console.log("- ✅ Design themes selection with previews");
-			console.log("- ✅ Font selection with previews");
-			console.log("- ✅ Discount configuration with previews");
-			console.log("- ✅ Excel upload (.xlsx, .xls, .csv)");
-			console.log("- ✅ Google Sheets import");
-			console.log("- ✅ PDF generation with renderPriceTags");
-			console.log("- ✅ Comprehensive logging");
-			console.log("- ✅ Full TypeScript typing");
-			console.log("- ✅ Error handling");
-			console.log();
-		},
-	})
-	.catch((error) => {
-		logger.error("Failed to start bot", error);
-
-		if (error.message?.includes("401")) {
-			logger.error("Check TELEGRAM_BOT_TOKEN in .env.local file");
-		}
-
+	process.once("SIGTERM", () => {
+		logger.info("🛑 Shutting down bot...");
+		bot.stop();
 		process.exit(1);
 	});
+
+	bot
+		.start({
+			onStart: (botInfo) => {
+				logger.success(`Bot @${botInfo.username} started successfully!`);
+				logger.info(`Bot ID: ${botInfo.id}`);
+				logger.info("💬 Send /start to the bot to test");
+
+				console.log("\n🎯 Available functionality:");
+				console.log("- ✅ Main menu and navigation");
+				console.log("- ✅ Item management (add/edit/delete)");
+				console.log("- ✅ Item list display");
+				console.log("- ✅ Design themes selection with previews");
+				console.log("- ✅ Font selection with previews");
+				console.log("- ✅ Discount configuration with previews");
+				console.log("- ✅ Excel upload (.xlsx, .xls, .csv)");
+				console.log("- ✅ Google Sheets import");
+				console.log("- ✅ PDF generation with renderPriceTags");
+				console.log("- ✅ Comprehensive logging");
+				console.log("- ✅ Full TypeScript typing");
+				console.log("- ✅ Error handling");
+				console.log();
+			},
+		})
+		.catch((error) => {
+			logger.error("Failed to start bot", error);
+
+			if (error.message?.includes("401")) {
+				logger.error("Check TELEGRAM_BOT_TOKEN in .env.local file");
+			}
+
+			process.exit(1);
+		});
+}
