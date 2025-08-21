@@ -57,14 +57,13 @@ export function generatePreviewUrl(
 		params.set("priceFrom3", item.priceFrom3.toString());
 	}
 
-	// On Vercel, use relative URL to avoid protection redirects
+	// Always use full URL for fetch() calls
 	const isVercel = !!process.env.VERCEL;
-	if (isVercel) {
-		return `/api/preview-puppeteer?${params.toString()}`;
-	}
-
-	// Otherwise use configured base URL (local/dev or external)
-	let url = `${baseUrl}/api/preview-puppeteer?${params.toString()}`;
+	const fullBaseUrl = isVercel 
+		? `https://${process.env.VERCEL_URL}` 
+		: (baseUrl || 'http://localhost:3000');
+	
+	let url = `${fullBaseUrl}/api/preview-puppeteer?${params.toString()}`;
 
 	// Append cookie instruction if targeting vercel.app (not required when relative)
 	const token =

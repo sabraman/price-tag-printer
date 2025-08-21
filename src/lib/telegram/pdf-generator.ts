@@ -153,32 +153,74 @@ export async function generatePDF(
 	});
 
 	try {
-		const html = generatePriceTagsHTML(sessionData);
-
-		logger.debug("HTML generated, calling API", ctx, {
-			htmlLength: html.length,
-		});
-
-		// Call the existing PDF generation API
+		// Try new API first, fallback to old API
 		const { botEnv } = await import("@/bot-env");
 		const isVercel = !!process.env.VERCEL;
-		const url = isVercel
-			? "/api/generate-pdf"
-			: `${botEnv.NEXTJS_API_URL}/api/generate-pdf`;
+		
+		// Always use full URL for fetch() calls
+		const baseUrl = isVercel 
+			? `https://${process.env.VERCEL_URL}` 
+			: (botEnv.NEXTJS_API_URL || 'http://localhost:3000');
 
 		const headers: Record<string, string> = {
 			"Content-Type": "application/json",
 		};
 		if (
-			!url.startsWith("/") &&
 			botEnv.VERCEL_PROTECTION_BYPASS &&
-			url.includes("vercel.app")
+			baseUrl.includes("vercel.app")
 		) {
 			headers["x-vercel-protection-bypass"] = botEnv.VERCEL_PROTECTION_BYPASS;
 			headers["x-vercel-set-bypass-cookie"] = "true";
 		}
 
-		const response = await fetch(url, {
+		// Try new structured API first
+		try {
+			const newApiUrl = `${baseUrl}/api/generate-pdf-v2`;
+			logger.debug("Trying new API format", ctx, { url: newApiUrl });
+			
+			const response = await fetch(newApiUrl, {
+				method: "POST",
+				headers,
+				body: JSON.stringify({
+					items: sessionData.items,
+					settings: {
+						design: sessionData.design,
+						designType: sessionData.designType,
+						currentFont: sessionData.currentFont,
+						discountText: sessionData.discountText,
+						showThemeLabels: sessionData.showThemeLabels,
+						cuttingLineColor: sessionData.cuttingLineColor,
+					},
+					format: "A4",
+				}),
+			});
+
+			if (response.ok) {
+				const pdfBuffer = Buffer.from(await response.arrayBuffer());
+				logger.success("PDF generated with new API", ctx, {
+					pdfSize: pdfBuffer.length,
+					itemCount: sessionData.items.length,
+				});
+				return pdfBuffer;
+			}
+			
+			logger.debug("New API failed, trying fallback", ctx, { status: response.status });
+		} catch (newApiError) {
+			logger.debug("New API unavailable, using fallback", ctx, {
+				error: newApiError instanceof Error ? newApiError.message : String(newApiError)
+			});
+		}
+
+		// Fallback to old HTML-based API
+		const html = generatePriceTagsHTML(sessionData);
+		const oldApiUrl = `${baseUrl}/api/generate-pdf`;
+		
+		logger.debug("Using fallback HTML API", ctx, {
+			htmlLength: html.length,
+			url: oldApiUrl
+		});
+
+		const response = await fetch(oldApiUrl, {
 			method: "POST",
 			headers,
 			body: JSON.stringify({ html }),
@@ -191,7 +233,7 @@ export async function generatePDF(
 
 		const pdfBuffer = Buffer.from(await response.arrayBuffer());
 
-		logger.success("PDF generated successfully", ctx, {
+		logger.success("PDF generated with fallback API", ctx, {
 			pdfSize: pdfBuffer.length,
 			itemCount: sessionData.items.length,
 		});
