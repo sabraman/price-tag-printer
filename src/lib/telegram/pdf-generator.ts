@@ -162,16 +162,14 @@ export async function generatePDF(
 		// Call the existing PDF generation API
 		const { botEnv } = await import("@/bot-env");
 		let url = `${botEnv.NEXTJS_API_URL}/api/generate-pdf`;
+		const headers: Record<string, string> = { "Content-Type": "application/json" };
 		if (botEnv.VERCEL_PROTECTION_BYPASS && url.includes("vercel.app")) {
-			url = `${url}?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(
-				botEnv.VERCEL_PROTECTION_BYPASS,
-			)}`;
+			headers["x-vercel-protection-bypass"] = botEnv.VERCEL_PROTECTION_BYPASS;
+			headers["x-vercel-set-bypass-cookie"] = "true";
 		}
 		const response = await fetch(url, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
+			headers,
 			body: JSON.stringify({ html }),
 		});
 

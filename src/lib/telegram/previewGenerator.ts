@@ -60,12 +60,10 @@ export function generatePreviewUrl(
 	let url = `${baseUrl}/api/preview-puppeteer?${params.toString()}`;
 
 	// Append Vercel protection bypass if available
-	const token = process.env.VERCEL_PROTECTION_BYPASS || process.env.VERCEL_BYPASS_TOKEN;
+	const token = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || process.env.VERCEL_PROTECTION_BYPASS || process.env.VERCEL_BYPASS_TOKEN;
 	if (token && baseUrl.includes("vercel.app")) {
 		const join = url.includes("?") ? "&" : "?";
-		url = `${url}${join}x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(
-			token,
-		)}`;
+		url = `${url}${join}x-vercel-set-bypass-cookie=true`;
 	}
 
 	return url;
@@ -97,12 +95,18 @@ export async function getPreviewImage(
 		try {
 			logger.debug("Starting preview API request", ctx, { url: previewUrl });
 
+			const headers: Record<string, string> = {
+				Accept: "image/png, image/svg+xml, */*",
+				"User-Agent": "TelegramBot/1.0",
+			};
+			if (botEnv.VERCEL_PROTECTION_BYPASS && botEnv.NEXTJS_API_URL.includes("vercel.app")) {
+				headers["x-vercel-protection-bypass"] = botEnv.VERCEL_PROTECTION_BYPASS;
+				headers["x-vercel-set-bypass-cookie"] = "true";
+			}
+
 			response = await fetch(previewUrl, {
 				method: "GET",
-				headers: {
-					Accept: "image/png, image/svg+xml, */*",
-					"User-Agent": "TelegramBot/1.0",
-				},
+				headers,
 				// Keep reasonable timeout for images
 				signal: AbortSignal.timeout(15000), // 15 seconds - enough time for generation
 			});

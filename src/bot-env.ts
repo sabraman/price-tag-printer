@@ -38,7 +38,10 @@ const getApiUrl = (): string => {
 const NEXTJS_API_URL = getApiUrl();
 
 const VERCEL_PROTECTION_BYPASS =
-	process.env.VERCEL_PROTECTION_BYPASS || process.env.VERCEL_BYPASS_TOKEN || "";
+	process.env.VERCEL_AUTOMATION_BYPASS_SECRET ||
+	process.env.VERCEL_PROTECTION_BYPASS ||
+	process.env.VERCEL_BYPASS_TOKEN ||
+	"";
 
 // Validation function that can be called at runtime
 export function validateBotEnv() {

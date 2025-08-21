@@ -122,20 +122,18 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 	);
 
 	try {
-		const { botEnv } = await import("../../../bot-env");
+		const { botEnv } = await import("@/bot-env");
 		let pdfUrl = `${botEnv.NEXTJS_API_URL}/api/generate-pdf`;
+		const headers: Record<string, string> = { "Content-Type": "application/json" };
 		if (botEnv.VERCEL_PROTECTION_BYPASS && pdfUrl.includes("vercel.app")) {
-			pdfUrl = `${pdfUrl}?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(
-				botEnv.VERCEL_PROTECTION_BYPASS,
-			)}`;
+			headers["x-vercel-protection-bypass"] = botEnv.VERCEL_PROTECTION_BYPASS;
+			headers["x-vercel-set-bypass-cookie"] = "true";
 		}
 
 		// Generate PDF using web app API
 		const response = await fetch(pdfUrl, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
+			headers,
 			body: JSON.stringify({
 				items: ctx.session.items,
 				settings: {
