@@ -78,7 +78,7 @@ export async function getPreviewImage(
 	overrides: { [key: string]: string | boolean | number } = {},
 ): Promise<Buffer> {
 	try {
-		const { botEnv } = await import("../../bot-env");
+		const { botEnv } = await import("../../../bot-env");
 		const previewUrl = generatePreviewUrl(
 			sessionData,
 			botEnv.NEXTJS_API_URL,

@@ -122,7 +122,7 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 	);
 
 	try {
-		const { botEnv } = await import("../../bot-env");
+		const { botEnv } = await import("../../../bot-env");
 		let pdfUrl = `${botEnv.NEXTJS_API_URL}/api/generate-pdf`;
 		if (botEnv.VERCEL_PROTECTION_BYPASS && pdfUrl.includes("vercel.app")) {
 			pdfUrl = `${pdfUrl}?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(
