@@ -57,10 +57,20 @@ export function generatePreviewUrl(
 		params.set("priceFrom3", item.priceFrom3.toString());
 	}
 
+	// On Vercel, use relative URL to avoid protection redirects
+	const isVercel = !!process.env.VERCEL;
+	if (isVercel) {
+		return `/api/preview-puppeteer?${params.toString()}`;
+	}
+
+	// Otherwise use configured base URL (local/dev or external)
 	let url = `${baseUrl}/api/preview-puppeteer?${params.toString()}`;
 
-	// Append Vercel protection bypass if available
-	const token = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || process.env.VERCEL_PROTECTION_BYPASS || process.env.VERCEL_BYPASS_TOKEN;
+	// Append cookie instruction if targeting vercel.app (not required when relative)
+	const token =
+		process.env.VERCEL_AUTOMATION_BYPASS_SECRET ||
+		process.env.VERCEL_PROTECTION_BYPASS ||
+		process.env.VERCEL_BYPASS_TOKEN;
 	if (token && baseUrl.includes("vercel.app")) {
 		const join = url.includes("?") ? "&" : "?";
 		url = `${url}${join}x-vercel-set-bypass-cookie=true`;
@@ -99,7 +109,11 @@ export async function getPreviewImage(
 				Accept: "image/png, image/svg+xml, */*",
 				"User-Agent": "TelegramBot/1.0",
 			};
-			if (botEnv.VERCEL_PROTECTION_BYPASS && botEnv.NEXTJS_API_URL.includes("vercel.app")) {
+			if (
+				!previewUrl.startsWith("/") &&
+				botEnv.VERCEL_PROTECTION_BYPASS &&
+				botEnv.NEXTJS_API_URL.includes("vercel.app")
+			) {
 				headers["x-vercel-protection-bypass"] = botEnv.VERCEL_PROTECTION_BYPASS;
 				headers["x-vercel-set-bypass-cookie"] = "true";
 			}

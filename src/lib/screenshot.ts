@@ -90,21 +90,25 @@ export async function generateScreenshot(
 		]);
 
 		// Block unnecessary requests to speed up loading
-		page.on('request', (request: any) => {
+		page.on("request", (request: any) => {
 			const resourceType = request.resourceType();
 			const url = request.url();
-			
+
 			// Allow essential resources for font rendering
-			if (resourceType === 'document' || 
-				resourceType === 'stylesheet' || 
-				resourceType === 'font' ||
-				url.includes('font') ||
-				url.includes('.woff') ||
-				url.includes('.ttf') ||
-				url.includes('fonts.googleapis.com') ||
-				url.includes('fonts.gstatic.com')) {
+			if (
+				resourceType === "document" ||
+				resourceType === "stylesheet" ||
+				resourceType === "font" ||
+				url.includes("font") ||
+				url.includes(".woff") ||
+				url.includes(".ttf") ||
+				url.includes("fonts.googleapis.com") ||
+				url.includes("fonts.gstatic.com")
+			) {
 				request.continue();
-			} else if (['image', 'media', 'script', 'xhr', 'fetch'].includes(resourceType)) {
+			} else if (
+				["image", "media", "script", "xhr", "fetch"].includes(resourceType)
+			) {
 				// Block unnecessary resources
 				request.abort();
 			} else {
@@ -132,19 +136,21 @@ export async function generateScreenshot(
 						}
 
 						// Wait for fonts to be ready
-						return document.fonts.ready.then(() => {
-							console.log("All fonts loaded via document.fonts.ready");
-							return true;
-						}).catch(() => {
-							console.log("Font loading promise rejected, proceeding");
-							return true;
-						});
+						return document.fonts.ready
+							.then(() => {
+								console.log("All fonts loaded via document.fonts.ready");
+								return true;
+							})
+							.catch(() => {
+								console.log("Font loading promise rejected, proceeding");
+								return true;
+							});
 					},
-					{ timeout: 5000 } // 5 second timeout
+					{ timeout: 5000 }, // 5 second timeout
 				),
-				
+
 				// Fallback timeout using Promise
-				new Promise<void>(resolve => setTimeout(resolve, 4000)) // 4 second fallback
+				new Promise<void>((resolve) => setTimeout(resolve, 4000)), // 4 second fallback
 			]);
 
 			// Check font test element in parallel with font loading
@@ -162,9 +168,11 @@ export async function generateScreenshot(
 
 			const fontInfo = await fontCheckPromise;
 			console.log("🔤 Font loading optimized check completed", fontInfo);
-
 		} catch (error) {
-			console.warn("Font loading optimization failed, proceeding anyway", error);
+			console.warn(
+				"Font loading optimization failed, proceeding anyway",
+				error,
+			);
 		}
 
 		// Take screenshot with optimized settings

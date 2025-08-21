@@ -1,6 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import {
+	Bot,
+	Copy,
+	Download,
+	ExternalLink,
+	Globe,
+	Play,
+	Shield,
+	Zap,
+} from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -9,10 +21,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -21,16 +30,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import {
-	Copy,
-	ExternalLink,
-	Play,
-	Download,
-	Zap,
-	Shield,
-	Globe,
-	Bot,
-} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ApiEndpoint {
 	method: string;
@@ -164,9 +165,9 @@ const ApiTestingPlayground: React.FC = () => {
 				},
 			} as const;
 
-			const requestInit: any = { ...options };
+			const requestInit: RequestInit = { ...options };
 			if (selectedEndpoint.method !== "GET" && requestBody) {
-				(requestInit as any).body = requestBody;
+				requestInit.body = requestBody;
 			}
 
 			const res = await fetch(url, requestInit);
@@ -281,12 +282,12 @@ const ApiTestingPlayground: React.FC = () => {
 									AI Assistant Integration
 								</CardTitle>
 								<CardDescription className="text-lg">
-									This API is designed to work seamlessly with AI assistants like Claude, ChatGPT, and other LLMs. 
-									Get started in seconds with these optimized resources.
+									This API is designed to work seamlessly with AI assistants
+									like Claude, ChatGPT, and other LLMs. Get started in seconds
+									with these optimized resources.
 								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-8">
-								
 								{/* Direct Integration Resources */}
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
@@ -297,13 +298,17 @@ const ApiTestingPlayground: React.FC = () => {
 														<Bot className="h-6 w-6 text-blue-600" />
 													</div>
 													<div>
-														<h3 className="font-semibold text-blue-900 dark:text-blue-100">LLM Integration Guide</h3>
-														<p className="text-sm text-blue-700 dark:text-blue-300">Structured documentation optimized for AI</p>
+														<h3 className="font-semibold text-blue-900 dark:text-blue-100">
+															LLM Integration Guide
+														</h3>
+														<p className="text-sm text-blue-700 dark:text-blue-300">
+															Structured documentation optimized for AI
+														</p>
 													</div>
 												</div>
-												<Button 
+												<Button
 													className="w-full bg-blue-600 hover:bg-blue-700"
-													onClick={() => window.open('/api/llms', '_blank')}
+													onClick={() => window.open("/api/llms", "_blank")}
 												>
 													<Download className="h-4 w-4 mr-2" />
 													Get /llms.txt
@@ -320,14 +325,18 @@ const ApiTestingPlayground: React.FC = () => {
 														<Globe className="h-6 w-6 text-green-600" />
 													</div>
 													<div>
-														<h3 className="font-semibold text-green-900 dark:text-green-100">OpenAPI Specification</h3>
-														<p className="text-sm text-green-700 dark:text-green-300">Complete function definitions for AI tools</p>
+														<h3 className="font-semibold text-green-900 dark:text-green-100">
+															OpenAPI Specification
+														</h3>
+														<p className="text-sm text-green-700 dark:text-green-300">
+															Complete function definitions for AI tools
+														</p>
 													</div>
 												</div>
-												<Button 
+												<Button
 													variant="outline"
 													className="w-full border-green-200 hover:bg-green-50"
-													onClick={() => window.open('/openapi.json', '_blank')}
+													onClick={() => window.open("/openapi.json", "_blank")}
 												>
 													<ExternalLink className="h-4 w-4 mr-2" />
 													View OpenAPI JSON
@@ -348,16 +357,36 @@ const ApiTestingPlayground: React.FC = () => {
 									<CardContent>
 										<div className="space-y-4">
 											<p className="text-muted-foreground">
-												Tell your AI assistant: <strong>"I want to integrate the Price Tag API to create professional price tags and PDFs for my store"</strong>
+												Tell your AI assistant:{" "}
+												<strong>
+													"I want to integrate the Price Tag API to create
+													professional price tags and PDFs for my store"
+												</strong>
 											</p>
 											<div className="bg-muted/50 p-4 rounded-lg">
-												<p className="text-sm font-medium mb-2">The AI will automatically:</p>
+												<p className="text-sm font-medium mb-2">
+													The AI will automatically:
+												</p>
 												<ul className="text-sm space-y-1 ml-4">
-													<li>• Read the structured API documentation from /api/llms</li>
-													<li>• Understand all available functions and their parameters</li>
-													<li>• Help you implement the integration with proper error handling</li>
-													<li>• Generate example code for your specific use case</li>
-													<li>• Suggest best practices for PDF generation and bulk operations</li>
+													<li>
+														• Read the structured API documentation from
+														/api/llms
+													</li>
+													<li>
+														• Understand all available functions and their
+														parameters
+													</li>
+													<li>
+														• Help you implement the integration with proper
+														error handling
+													</li>
+													<li>
+														• Generate example code for your specific use case
+													</li>
+													<li>
+														• Suggest best practices for PDF generation and bulk
+														operations
+													</li>
 												</ul>
 											</div>
 										</div>
@@ -368,12 +397,14 @@ const ApiTestingPlayground: React.FC = () => {
 								<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 									<Card>
 										<CardHeader>
-											<CardTitle className="text-lg">Claude Integration</CardTitle>
+											<CardTitle className="text-lg">
+												Claude Integration
+											</CardTitle>
 										</CardHeader>
 										<CardContent>
 											<div className="bg-muted/50 p-4 rounded-lg">
 												<pre className="text-xs overflow-x-auto whitespace-pre-wrap">
-{`I want to integrate the Price Tag API. 
+													{`I want to integrate the Price Tag API. 
 Can you help me create price tags for 
 my coffee shop with these products:
 
@@ -390,12 +421,14 @@ and generate a PDF for printing.`}
 
 									<Card>
 										<CardHeader>
-											<CardTitle className="text-lg">ChatGPT Integration</CardTitle>
+											<CardTitle className="text-lg">
+												ChatGPT Integration
+											</CardTitle>
 										</CardHeader>
 										<CardContent>
 											<div className="bg-muted/50 p-4 rounded-lg">
 												<pre className="text-xs overflow-x-auto whitespace-pre-wrap">
-{`Use the Price Tag API to create 
+													{`Use the Price Tag API to create 
 bulk price tags for my inventory:
 
 1. Set up the API connection
@@ -413,27 +446,37 @@ Here's my product list: [...]`}
 								{/* Benefits */}
 								<Card className="bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm">
 									<CardContent className="pt-6">
-										<h3 className="text-lg font-semibold mb-4">Why This API Works Great with AI Assistants</h3>
+										<h3 className="text-lg font-semibold mb-4">
+											Why This API Works Great with AI Assistants
+										</h3>
 										<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 											<div className="text-center">
 												<Shield className="h-8 w-8 mx-auto text-green-500 mb-2" />
 												<h4 className="font-medium">Structured Outputs</h4>
-												<p className="text-sm text-muted-foreground">Consistent JSON responses</p>
+												<p className="text-sm text-muted-foreground">
+													Consistent JSON responses
+												</p>
 											</div>
 											<div className="text-center">
 												<Bot className="h-8 w-8 mx-auto text-blue-500 mb-2" />
 												<h4 className="font-medium">Function Ready</h4>
-												<p className="text-sm text-muted-foreground">OpenAPI 3.0 compliant</p>
+												<p className="text-sm text-muted-foreground">
+													OpenAPI 3.0 compliant
+												</p>
 											</div>
 											<div className="text-center">
 												<Zap className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
 												<h4 className="font-medium">Batch Operations</h4>
-												<p className="text-sm text-muted-foreground">Up to 1000 items at once</p>
+												<p className="text-sm text-muted-foreground">
+													Up to 1000 items at once
+												</p>
 											</div>
 											<div className="text-center">
 												<Globe className="h-8 w-8 mx-auto text-purple-500 mb-2" />
 												<h4 className="font-medium">Clear Errors</h4>
-												<p className="text-sm text-muted-foreground">Descriptive error messages</p>
+												<p className="text-sm text-muted-foreground">
+													Descriptive error messages
+												</p>
 											</div>
 										</div>
 									</CardContent>
@@ -1114,16 +1157,18 @@ result = response.json()`}
 									Advanced LLM Integration
 								</CardTitle>
 								<CardDescription>
-									Advanced patterns and best practices for AI assistant integration with the Price Tag API
+									Advanced patterns and best practices for AI assistant
+									integration with the Price Tag API
 								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-6">
-								
 								{/* Function Calling Patterns */}
 								<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 									<Card>
 										<CardHeader>
-											<CardTitle className="text-lg">OpenAI Function Schema</CardTitle>
+											<CardTitle className="text-lg">
+												OpenAI Function Schema
+											</CardTitle>
 										</CardHeader>
 										<CardContent>
 											<div className="bg-muted/50 p-4 rounded-lg">
@@ -1160,7 +1205,9 @@ result = response.json()`}
 
 									<Card>
 										<CardHeader>
-											<CardTitle className="text-lg">Claude Function Usage</CardTitle>
+											<CardTitle className="text-lg">
+												Claude Function Usage
+											</CardTitle>
 										</CardHeader>
 										<CardContent>
 											<div className="bg-muted/50 p-4 rounded-lg">
@@ -1195,7 +1242,9 @@ result = response.json()`}
 									<CardContent>
 										<div className="space-y-4">
 											<div className="bg-muted/50 p-4 rounded-lg">
-												<h4 className="font-medium mb-2">Common Error Responses</h4>
+												<h4 className="font-medium mb-2">
+													Common Error Responses
+												</h4>
 												<pre className="text-xs">
 													{`// Validation Error
 {
@@ -1217,13 +1266,28 @@ result = response.json()`}
 												</pre>
 											</div>
 											<div className="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">
-												<h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Best Practices</h4>
+												<h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+													Best Practices
+												</h4>
 												<ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-													<li>• Always validate price values (must be integers in cents)</li>
-													<li>• Check bulk operation limits (max 1000 items)</li>
-													<li>• Use descriptive product names for better PDF output</li>
-													<li>• Handle network timeouts gracefully for large PDF generation</li>
-													<li>• Implement retry logic for temporary failures</li>
+													<li>
+														• Always validate price values (must be integers in
+														cents)
+													</li>
+													<li>
+														• Check bulk operation limits (max 1000 items)
+													</li>
+													<li>
+														• Use descriptive product names for better PDF
+														output
+													</li>
+													<li>
+														• Handle network timeouts gracefully for large PDF
+														generation
+													</li>
+													<li>
+														• Implement retry logic for temporary failures
+													</li>
 												</ul>
 											</div>
 										</div>
@@ -1255,12 +1319,19 @@ for (item of items) {
 												</div>
 											</div>
 											<div>
-												<h4 className="font-medium mb-3">PDF Generation Tips</h4>
+												<h4 className="font-medium mb-3">
+													PDF Generation Tips
+												</h4>
 												<div className="bg-muted/50 p-3 rounded-lg">
 													<ul className="text-xs space-y-1">
 														<li>• Use A4 format for standard printers</li>
-														<li>• Limit to 100-200 tags per PDF for best performance</li>
-														<li>• Choose consistent design themes for batches</li>
+														<li>
+															• Limit to 100-200 tags per PDF for best
+															performance
+														</li>
+														<li>
+															• Choose consistent design themes for batches
+														</li>
 														<li>• Set appropriate margins for your printer</li>
 													</ul>
 												</div>
@@ -1277,7 +1348,9 @@ for (item of items) {
 									<CardContent>
 										<div className="space-y-4">
 											<div>
-												<h4 className="font-medium mb-2">E-commerce Integration Pattern</h4>
+												<h4 className="font-medium mb-2">
+													E-commerce Integration Pattern
+												</h4>
 												<div className="bg-muted/50 p-4 rounded-lg">
 													<pre className="text-xs">
 														{`// 1. Sync products from your store
@@ -1307,9 +1380,11 @@ await generatePDF({
 													</pre>
 												</div>
 											</div>
-											
+
 											<div>
-												<h4 className="font-medium mb-2">Inventory Management Pattern</h4>
+												<h4 className="font-medium mb-2">
+													Inventory Management Pattern
+												</h4>
 												<div className="bg-muted/50 p-4 rounded-lg">
 													<pre className="text-xs">
 														{`// Real-time price updates
@@ -1341,7 +1416,9 @@ async function updateInventoryPricing(updates) {
 									<CardContent>
 										<div className="space-y-4">
 											<div className="bg-green-50 dark:bg-green-950/30 p-4 rounded-lg">
-												<h4 className="font-medium text-green-900 dark:text-green-100 mb-2">Health Monitoring</h4>
+												<h4 className="font-medium text-green-900 dark:text-green-100 mb-2">
+													Health Monitoring
+												</h4>
 												<p className="text-sm text-green-800 dark:text-green-200 mb-3">
 													Use the /api/health endpoint to monitor system status:
 												</p>
@@ -1359,9 +1436,14 @@ if (status.data.status !== 'healthy') {
 											</div>
 
 											<div className="bg-yellow-50 dark:bg-yellow-950/30 p-4 rounded-lg">
-												<h4 className="font-medium text-yellow-900 dark:text-yellow-100 mb-2">Usage Analytics</h4>
+												<h4 className="font-medium text-yellow-900 dark:text-yellow-100 mb-2">
+													Usage Analytics
+												</h4>
 												<ul className="text-sm text-yellow-800 dark:text-yellow-200 space-y-1">
-													<li>• Track API response times for performance monitoring</li>
+													<li>
+														• Track API response times for performance
+														monitoring
+													</li>
 													<li>• Monitor PDF generation success rates</li>
 													<li>• Log design theme usage for insights</li>
 													<li>• Measure bulk operation efficiency</li>
@@ -1389,7 +1471,9 @@ if (status.data.status !== 'healthy') {
 							>
 								<div className="text-center">
 									<Bot className="h-6 w-6 mx-auto mb-2 text-violet-600" />
-									<div className="font-medium text-violet-900">LLM Integration Guide</div>
+									<div className="font-medium text-violet-900">
+										LLM Integration Guide
+									</div>
 									<div className="text-sm text-violet-700">
 										Optimized for AI assistants
 									</div>

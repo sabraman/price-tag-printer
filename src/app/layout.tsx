@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "../App.css"; // Import Mont font
 import { Toaster } from "sonner";
-import FontLoader from "@/components/layout/FontLoader";
 import { DomainSettingsInitializer } from "@/components/DomainSettingsInitializer";
+import FontLoader from "@/components/layout/FontLoader";
+import Footer from "@/components/layout/Footer";
 import { inter, montserrat, nunito } from "@/config/fonts";
 import { metadata as siteMetadata } from "@/config/metadata";
 
@@ -32,7 +33,10 @@ export default function RootLayout({
 			>
 				<DomainSettingsInitializer />
 				<FontLoader />
-				{children}
+				<div className="min-h-screen flex flex-col">
+					<main className="flex-1">{children}</main>
+					<Footer />
+				</div>
 				<Toaster
 					position="top-right"
 					theme="dark"

@@ -42,10 +42,10 @@ ${bold}📦 Управление товарами${bold}
 ${itemsCount > 0 ? `Товаров в списке: ${itemsCount}` : "Список товаров пуст"}
 
 ${
-		itemsCount > 0
-			? "Вы можете просмотреть список, войти в режим редактирования или очистить все товары."
-			: "Добавьте первый товар или загрузите Excel файл с товарами."
-	}
+	itemsCount > 0
+		? "Вы можете просмотреть список, войти в режим редактирования или очистить все товары."
+		: "Добавьте первый товар или загрузите Excel файл с товарами."
+}
 	`;
 
 	await ctx.editMessageText(escapeMarkdown(itemsMessage.toString()), {
@@ -123,9 +123,18 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 
 	try {
 		const { botEnv } = await import("@/bot-env");
-		let pdfUrl = `${botEnv.NEXTJS_API_URL}/api/generate-pdf`;
-		const headers: Record<string, string> = { "Content-Type": "application/json" };
-		if (botEnv.VERCEL_PROTECTION_BYPASS && pdfUrl.includes("vercel.app")) {
+		const isVercel = !!process.env.VERCEL;
+		const pdfUrl = isVercel
+			? "/api/generate-pdf"
+			: `${botEnv.NEXTJS_API_URL}/api/generate-pdf`;
+		const headers: Record<string, string> = {
+			"Content-Type": "application/json",
+		};
+		if (
+			!pdfUrl.startsWith("/") &&
+			botEnv.VERCEL_PROTECTION_BYPASS &&
+			pdfUrl.includes("vercel.app")
+		) {
 			headers["x-vercel-protection-bypass"] = botEnv.VERCEL_PROTECTION_BYPASS;
 			headers["x-vercel-set-bypass-cookie"] = "true";
 		}
@@ -152,7 +161,9 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 
 		if (!response.ok) {
 			const text = await response.text().catch(() => "");
-			throw new Error(`Ошибка генерации PDF на сервере: ${response.status} ${text.substring(0, 120)}`);
+			throw new Error(
+				`Ошибка генерации PDF на сервере: ${response.status} ${text.substring(0, 120)}`,
+			);
 		}
 
 		const result = await response.json();
