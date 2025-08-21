@@ -1,0 +1,516 @@
+---
+title: 'Quickstart'
+description: 'Get started with the Price Tag API in under 5 minutes'
+---
+
+## Welcome to Price Tag API
+
+This quickstart guide will help you make your first API call and generate your first price tag PDF.
+
+## Base URL
+
+All API requests should be made to:
+
+```
+https://your-domain.com/api
+```
+
+<Note>
+  Replace `your-domain.com` with your actual domain. The API is currently available without authentication.
+</Note>
+
+## Step 1: Verify API Status
+
+First, let's check that the API is running:
+
+<CodeGroup>
+
+```bash cURL
+curl https://your-domain.com/api/health
+```
+
+```javascript JavaScript
+const response = await fetch('https://your-domain.com/api/health');
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+response = requests.get('https://your-domain.com/api/health')
+data = response.json()
+print(data)
+```
+
+</CodeGroup>
+
+You should receive a response like this:
+
+```json
+{
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "version": "1.0.0",
+    "service": "Price Tag API",
+    "endpoints": {
+      "priceTagsCRUD": "/api/price-tags",
+      "pdfGeneration": "/api/generate-pdf-v2",
+      "htmlGeneration": "/api/generate-html"
+    }
+  },
+  "message": "Price Tag API is running successfully"
+}
+```
+
+## Step 2: Create Your First Price Tag
+
+Now let's create a simple price tag:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://your-domain.com/api/price-tags \
+  -H "Content-Type: application/json" \
+  -d '{
+    "data": "Premium Coffee",
+    "price": 1200,
+    "designType": "new",
+    "hasDiscount": true
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://your-domain.com/api/price-tags', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    data: 'Premium Coffee',
+    price: 1200,
+    designType: 'new',
+    hasDiscount: true
+  })
+});
+
+const result = await response.json();
+console.log(result);
+```
+
+```python Python
+import requests
+
+data = {
+    "data": "Premium Coffee",
+    "price": 1200,
+    "designType": "new",
+    "hasDiscount": True
+}
+
+response = requests.post(
+    'https://your-domain.com/api/price-tags',
+    json=data
+)
+
+result = response.json()
+print(result)
+```
+
+</CodeGroup>
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "data": "Premium Coffee",
+    "price": 1200,
+    "discountPrice": 700,
+    "designType": "new",
+    "hasDiscount": true
+  },
+  "message": "Price tag created successfully"
+}
+```
+
+## Step 3: Create Multiple Price Tags (Bulk)
+
+You can create multiple price tags at once:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://your-domain.com/api/price-tags \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items": [
+      {
+        "data": "Premium Coffee",
+        "price": 1200,
+        "designType": "new"
+      },
+      {
+        "data": "Organic Tea",
+        "price": 800,
+        "designType": "sale"
+      },
+      {
+        "data": "Chocolate Cake",
+        "price": 2500,
+        "designType": "default",
+        "priceFor2": 4500,
+        "priceFrom3": 6000
+      }
+    ]
+  }'
+```
+
+```javascript JavaScript
+const bulkData = {
+  items: [
+    {
+      data: 'Premium Coffee',
+      price: 1200,
+      designType: 'new'
+    },
+    {
+      data: 'Organic Tea', 
+      price: 800,
+      designType: 'sale'
+    },
+    {
+      data: 'Chocolate Cake',
+      price: 2500,
+      designType: 'default',
+      priceFor2: 4500,
+      priceFrom3: 6000
+    }
+  ]
+};
+
+const response = await fetch('https://your-domain.com/api/price-tags', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(bulkData)
+});
+
+const result = await response.json();
+console.log(result);
+```
+
+```python Python
+import requests
+
+bulk_data = {
+    "items": [
+        {
+            "data": "Premium Coffee",
+            "price": 1200,
+            "designType": "new"
+        },
+        {
+            "data": "Organic Tea",
+            "price": 800,
+            "designType": "sale"
+        },
+        {
+            "data": "Chocolate Cake",
+            "price": 2500,
+            "designType": "default",
+            "priceFor2": 4500,
+            "priceFrom3": 6000
+        }
+    ]
+}
+
+response = requests.post(
+    'https://your-domain.com/api/price-tags',
+    json=bulk_data
+)
+
+result = response.json()
+print(result)
+```
+
+</CodeGroup>
+
+## Step 4: Generate PDF
+
+Now let's generate a PDF from your price tags:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://your-domain.com/api/generate-pdf-v2 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items": [
+      {
+        "id": 1,
+        "data": "Premium Coffee",
+        "price": 1200,
+        "discountPrice": 700,
+        "designType": "new"
+      },
+      {
+        "id": 2,
+        "data": "Organic Tea",
+        "price": 800,
+        "discountPrice": 300,
+        "designType": "sale"
+      }
+    ],
+    "settings": {
+      "design": true,
+      "designType": "new",
+      "currentFont": "montserrat",
+      "showThemeLabels": true
+    },
+    "format": "A4"
+  }' \
+  --output price-tags.pdf
+```
+
+```javascript JavaScript
+const pdfData = {
+  items: [
+    {
+      id: 1,
+      data: 'Premium Coffee',
+      price: 1200,
+      discountPrice: 700,
+      designType: 'new'
+    },
+    {
+      id: 2,
+      data: 'Organic Tea',
+      price: 800,
+      discountPrice: 300,
+      designType: 'sale'
+    }
+  ],
+  settings: {
+    design: true,
+    designType: 'new',
+    currentFont: 'montserrat',
+    showThemeLabels: true
+  },
+  format: 'A4'
+};
+
+const response = await fetch('https://your-domain.com/api/generate-pdf-v2', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(pdfData)
+});
+
+// The response is a PDF file (binary data)
+const pdfBlob = await response.blob();
+const url = window.URL.createObjectURL(pdfBlob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'price-tags.pdf';
+a.click();
+```
+
+```python Python
+import requests
+
+pdf_data = {
+    "items": [
+        {
+            "id": 1,
+            "data": "Premium Coffee",
+            "price": 1200,
+            "discountPrice": 700,
+            "designType": "new"
+        },
+        {
+            "id": 2,
+            "data": "Organic Tea",
+            "price": 800,
+            "discountPrice": 300,
+            "designType": "sale"
+        }
+    ],
+    "settings": {
+        "design": True,
+        "designType": "new",
+        "currentFont": "montserrat",
+        "showThemeLabels": True
+    },
+    "format": "A4"
+}
+
+response = requests.post(
+    'https://your-domain.com/api/generate-pdf-v2',
+    json=pdf_data
+)
+
+# Save the PDF file
+with open('price-tags.pdf', 'wb') as f:
+    f.write(response.content)
+
+print("PDF saved as price-tags.pdf")
+```
+
+</CodeGroup>
+
+## Step 5: Get All Price Tags
+
+Retrieve all your created price tags with pagination:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://your-domain.com/api/price-tags?limit=10&page=1&sortBy=price&sortOrder=desc"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  limit: '10',
+  page: '1',
+  sortBy: 'price',
+  sortOrder: 'desc'
+});
+
+const response = await fetch(`https://your-domain.com/api/price-tags?${params}`);
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+params = {
+    'limit': 10,
+    'page': 1,
+    'sortBy': 'price',
+    'sortOrder': 'desc'
+}
+
+response = requests.get(
+    'https://your-domain.com/api/price-tags',
+    params=params
+)
+
+data = response.json()
+print(data)
+```
+
+</CodeGroup>
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": 3,
+        "data": "Chocolate Cake",
+        "price": 2500,
+        "discountPrice": 2000,
+        "designType": "default",
+        "priceFor2": 4500,
+        "priceFrom3": 6000
+      },
+      {
+        "id": 1,
+        "data": "Premium Coffee",
+        "price": 1200,
+        "discountPrice": 700,
+        "designType": "new",
+        "hasDiscount": true
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 3,
+      "totalPages": 1,
+      "hasNext": false,
+      "hasPrev": false
+    }
+  }
+}
+```
+
+## What's Next?
+
+<CardGroup cols={2}>
+  <Card
+    title="Explore All Endpoints"
+    icon="list"
+    href="/api-reference/introduction"
+  >
+    See the complete API reference with all available endpoints
+  </Card>
+  <Card
+    title="Learn About Themes"
+    icon="palette"
+    href="/concepts/themes"
+  >
+    Discover 17 different design themes for your price tags
+  </Card>
+  <Card
+    title="View Examples"
+    icon="code"
+    href="/examples/basic-usage"
+  >
+    See more complex examples and use cases
+  </Card>
+  <Card
+    title="Try the Playground"
+    icon="play"
+    href="/api-docs"
+  >
+    Test the API directly in your browser
+  </Card>
+</CardGroup>
+
+## Common Patterns
+
+### Error Handling
+
+All endpoints return consistent error responses:
+
+```json
+{
+  "success": false,
+  "error": "Price is required and must be a positive number"
+}
+```
+
+### Filtering and Search
+
+You can filter price tags by various criteria:
+
+```bash
+# Search by product name
+curl "https://your-domain.com/api/price-tags?search=coffee"
+
+# Filter by design type
+curl "https://your-domain.com/api/price-tags?designType=sale"
+
+# Filter by price range
+curl "https://your-domain.com/api/price-tags?minPrice=500&maxPrice=1500"
+
+# Combine filters
+curl "https://your-domain.com/api/price-tags?search=tea&designType=new&sortBy=price"
+```
+
+### Rate Limits
+
+Currently, there are no rate limits, but in production, consider:
+- Maximum 1000 items per PDF generation request
+- Reasonable request frequency for bulk operations
+
+You're now ready to integrate the Price Tag API into your application! 🎉

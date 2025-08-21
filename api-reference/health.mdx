@@ -1,0 +1,207 @@
+---
+title: 'Health Check'
+api: 'GET https://your-domain.com/api/health'
+description: 'Check API health status and get service information'
+---
+
+## Overview
+
+The health endpoint provides real-time status information about the API service, including uptime, memory usage, and available endpoints.
+
+<RequestExample>
+```bash cURL
+curl https://your-domain.com/api/health
+```
+
+```javascript JavaScript
+const response = await fetch('https://your-domain.com/api/health');
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+response = requests.get('https://your-domain.com/api/health')
+data = response.json()
+print(data)
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "timestamp": "2025-01-21T10:30:00Z",
+    "uptime": "3600s",
+    "version": "1.0.0",
+    "service": "Price Tag API",
+    "environment": "production",
+    "memory": {
+      "used": "128MB",
+      "total": "512MB"
+    },
+    "responseTime": "2ms",
+    "endpoints": {
+      "priceTagsCRUD": "/api/price-tags",
+      "pdfGeneration": "/api/generate-pdf-v2",
+      "htmlGeneration": "/api/generate-html",
+      "excelProcessing": "/api/process-excel",
+      "health": "/api/health"
+    },
+    "services": {
+      "telegram_bot": "configured",
+      "google_sheets": "not_configured"
+    }
+  },
+  "message": "Price Tag API is running successfully"
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+<ResponseField name="success" type="boolean" required>
+  Always `true` for successful health checks
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+  <Expandable title="properties">
+    <ResponseField name="status" type="string" required>
+      Service status - typically "healthy"
+    </ResponseField>
+    
+    <ResponseField name="timestamp" type="string" required>
+      Current server timestamp in ISO format
+    </ResponseField>
+    
+    <ResponseField name="uptime" type="string" required>
+      How long the service has been running
+    </ResponseField>
+    
+    <ResponseField name="version" type="string" required>
+      Current API version
+    </ResponseField>
+    
+    <ResponseField name="service" type="string" required>
+      Service name
+    </ResponseField>
+    
+    <ResponseField name="environment" type="string" required>
+      Current environment (development, production, etc.)
+    </ResponseField>
+    
+    <ResponseField name="memory" type="object">
+      <Expandable title="properties">
+        <ResponseField name="used" type="string">
+          Current memory usage
+        </ResponseField>
+        
+        <ResponseField name="total" type="string">
+          Total available memory
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="responseTime" type="string" required>
+      Response time for this health check
+    </ResponseField>
+    
+    <ResponseField name="endpoints" type="object" required>
+      Map of available API endpoints
+    </ResponseField>
+    
+    <ResponseField name="services" type="object" required>
+      Status of external service integrations
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Human-readable status message
+</ResponseField>
+
+## Use Cases
+
+### System Monitoring
+
+Use this endpoint for:
+- **Load balancer health checks** - Configure your load balancer to check this endpoint
+- **Uptime monitoring** - Set up monitoring tools to regularly check service availability
+- **CI/CD pipelines** - Verify deployment success by checking health status
+- **Service discovery** - Get a list of available endpoints for dynamic client configuration
+
+### Integration Verification
+
+The health endpoint shows the status of external integrations:
+- **Telegram Bot** - Whether the bot token is configured
+- **Google Sheets** - Whether the Google Sheets API is set up
+
+### Performance Monitoring
+
+Monitor key metrics:
+- **Response time** - Track API performance over time
+- **Memory usage** - Monitor resource consumption
+- **Uptime** - Track service availability
+
+## Error Handling
+
+The health endpoint should always return a 200 status code when the service is running. If you receive any other status code, the service may be experiencing issues.
+
+Possible error scenarios:
+- **503 Service Unavailable** - Service is temporarily down
+- **Connection timeout** - Network issues or service overload
+- **DNS resolution failure** - Domain configuration issues
+
+## Monitoring Integration
+
+### Pingdom Example
+
+```bash
+# Set up Pingdom to check this URL every minute
+GET https://your-domain.com/api/health
+Expected response: 200 OK
+Expected content: "healthy"
+```
+
+### Datadog Example
+
+```yaml
+# Datadog HTTP check configuration
+init_config:
+
+instances:
+  - name: price-tag-api-health
+    url: https://your-domain.com/api/health
+    timeout: 5
+    method: GET
+    expected_code: 200
+    expected_string: "healthy"
+```
+
+### Custom Health Monitoring
+
+```javascript
+async function checkAPIHealth() {
+  try {
+    const response = await fetch('https://your-domain.com/api/health');
+    const data = await response.json();
+    
+    if (data.success && data.data.status === 'healthy') {
+      console.log('✅ API is healthy');
+      return true;
+    } else {
+      console.log('❌ API health check failed:', data);
+      return false;
+    }
+  } catch (error) {
+    console.log('❌ API is unreachable:', error.message);
+    return false;
+  }
+}
+
+// Check health every 30 seconds
+setInterval(checkAPIHealth, 30000);
+```

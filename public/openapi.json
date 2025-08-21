@@ -1,0 +1,858 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Price Tag API",
+    "description": "LLM-friendly REST API for creating, managing, and generating professional price tags with PDF export. This API is optimized for function calling by AI assistants and LLMs.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Price Tag API Support",
+      "url": "https://t.me/PriceTagPrinterBot"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://your-domain.com/api",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "checkHealth",
+        "summary": "Check API health status",
+        "description": "Returns comprehensive health status including uptime, memory usage, and service availability. Use this to verify API is operational before making other requests.",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "API is healthy and operational",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/price-tags": {
+      "get": {
+        "operationId": "listPriceTags",
+        "summary": "List all price tags with filtering and pagination",
+        "description": "Retrieve price tags with optional filtering by search terms, design type, price range, and discount status. Supports pagination and sorting.",
+        "tags": ["Price Tags"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term to filter by product name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "designType",
+            "in": "query",
+            "description": "Filter by design theme type",
+            "schema": {
+              "type": "string",
+              "enum": ["default", "new", "sale", "white", "black", "sunset", "ocean", "forest", "royal", "vintage", "neon", "monochrome", "silver", "charcoal", "paper", "ink", "snow"]
+            }
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "description": "Minimum price filter (in smallest currency unit)",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "description": "Maximum price filter (in smallest currency unit)",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "type": "string",
+              "enum": ["data", "price", "id"]
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of price tags with pagination info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedPriceTagsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createPriceTags",
+        "summary": "Create one or multiple price tags",
+        "description": "Create a single price tag or multiple price tags in bulk. Supports various pricing models including single price, bulk pricing (2+ items), and discount settings.",
+        "tags": ["Price Tags"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreatePriceTagRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/BulkCreatePriceTagsRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Price tag(s) created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SinglePriceTagResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BulkPriceTagsResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/price-tags/{id}": {
+      "get": {
+        "operationId": "getPriceTag",
+        "summary": "Get a specific price tag by ID",
+        "description": "Retrieve detailed information about a single price tag including all pricing tiers and design settings.",
+        "tags": ["Price Tags"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Price tag ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Price tag details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SinglePriceTagResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "put": {
+        "operationId": "updatePriceTag",
+        "summary": "Update a specific price tag",
+        "description": "Update any field of an existing price tag. Discount prices are automatically recalculated when price is updated.",
+        "tags": ["Price Tags"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Price tag ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePriceTagRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Price tag updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SinglePriceTagResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deletePriceTag",
+        "summary": "Delete a specific price tag",
+        "description": "Permanently delete a price tag. This action cannot be undone.",
+        "tags": ["Price Tags"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Price tag ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Price tag deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/generate-pdf-v2": {
+      "get": {
+        "operationId": "getPdfGenerationInfo",
+        "summary": "Get PDF generation capabilities",
+        "description": "Returns supported formats, fonts, design types, and limits for PDF generation. Use this to understand available options before generating PDFs.",
+        "tags": ["Generation"],
+        "responses": {
+          "200": {
+            "description": "PDF generation information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PdfGenerationInfoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "generatePdf",
+        "summary": "Generate PDF from price tags",
+        "description": "Create a high-quality PDF document containing formatted price tags with customizable themes, fonts, and layouts. Perfect for printing professional price tags.",
+        "tags": ["Generation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneratePdfRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "PDF file generated successfully",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            },
+            "headers": {
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "attachment; filename=price-tags-1642781234567.pdf"
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/generate-html": {
+      "post": {
+        "operationId": "generateHtml",
+        "summary": "Generate HTML preview of price tags",
+        "description": "Create an HTML preview of price tags with full styling and print-ready CSS. Use this to preview how price tags will look before generating PDF.",
+        "tags": ["Generation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateHtmlRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "HTML generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HtmlGenerationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PriceTag": {
+        "type": "object",
+        "required": ["id", "data", "price", "discountPrice"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the price tag"
+          },
+          "data": {
+            "oneOf": [
+              {"type": "string"},
+              {"type": "number"}
+            ],
+            "description": "Product name or identifier"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Main price in smallest currency unit (e.g., cents)"
+          },
+          "discountPrice": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Calculated discount price in smallest currency unit"
+          },
+          "designType": {
+            "type": "string",
+            "enum": ["default", "new", "sale", "white", "black", "sunset", "ocean", "forest", "royal", "vintage", "neon", "monochrome", "silver", "charcoal", "paper", "ink", "snow"],
+            "description": "Theme type for visual design"
+          },
+          "hasDiscount": {
+            "type": "boolean",
+            "description": "Whether discount pricing should be displayed"
+          },
+          "priceFor2": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Special price when buying 2 items"
+          },
+          "priceFrom3": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Special price when buying 3 or more items"
+          }
+        }
+      },
+      "CreatePriceTagRequest": {
+        "type": "object",
+        "required": ["data", "price"],
+        "properties": {
+          "data": {
+            "oneOf": [
+              {"type": "string", "minLength": 1},
+              {"type": "number"}
+            ],
+            "description": "Product name or identifier"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Main price in smallest currency unit"
+          },
+          "designType": {
+            "type": "string",
+            "enum": ["default", "new", "sale", "white", "black", "sunset", "ocean", "forest", "royal", "vintage", "neon", "monochrome", "silver", "charcoal", "paper", "ink", "snow"],
+            "description": "Theme type for visual design"
+          },
+          "hasDiscount": {
+            "type": "boolean",
+            "description": "Whether discount pricing should be displayed"
+          },
+          "priceFor2": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Special price when buying 2 items"
+          },
+          "priceFrom3": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Special price when buying 3 or more items"
+          }
+        }
+      },
+      "BulkCreatePriceTagsRequest": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreatePriceTagRequest"
+            },
+            "minItems": 1,
+            "maxItems": 1000,
+            "description": "Array of price tags to create"
+          }
+        }
+      },
+      "UpdatePriceTagRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "oneOf": [
+              {"type": "string", "minLength": 1},
+              {"type": "number"}
+            ],
+            "description": "Product name or identifier"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Main price in smallest currency unit"
+          },
+          "designType": {
+            "type": "string",
+            "enum": ["default", "new", "sale", "white", "black", "sunset", "ocean", "forest", "royal", "vintage", "neon", "monochrome", "silver", "charcoal", "paper", "ink", "snow"],
+            "description": "Theme type for visual design"
+          },
+          "hasDiscount": {
+            "type": "boolean",
+            "description": "Whether discount pricing should be displayed"
+          },
+          "priceFor2": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Special price when buying 2 items"
+          },
+          "priceFrom3": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Special price when buying 3 or more items"
+          }
+        }
+      },
+      "GeneratePdfRequest": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceTag"
+            },
+            "minItems": 1,
+            "maxItems": 1000,
+            "description": "Price tags to include in PDF"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/PriceTagSettings"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["A4", "A3", "Letter"],
+            "default": "A4",
+            "description": "PDF page format"
+          },
+          "margin": {
+            "$ref": "#/components/schemas/PdfMargin"
+          }
+        }
+      },
+      "GenerateHtmlRequest": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceTag"
+            },
+            "minItems": 1,
+            "maxItems": 1000,
+            "description": "Price tags to include in HTML"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/PriceTagSettings"
+          }
+        }
+      },
+      "PriceTagSettings": {
+        "type": "object",
+        "properties": {
+          "design": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable discount display globally"
+          },
+          "designType": {
+            "type": "string",
+            "enum": ["default", "new", "sale", "white", "black", "sunset", "ocean", "forest", "royal", "vintage", "neon", "monochrome", "silver", "charcoal", "paper", "ink", "snow"],
+            "default": "default",
+            "description": "Global design theme type"
+          },
+          "currentFont": {
+            "type": "string",
+            "enum": ["montserrat", "nunito", "inter", "mont"],
+            "default": "montserrat",
+            "description": "Font family for price tags"
+          },
+          "discountAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 500,
+            "description": "Fixed discount amount in smallest currency unit"
+          },
+          "maxDiscountPercent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "default": 5,
+            "description": "Maximum discount percentage allowed"
+          },
+          "showThemeLabels": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show NEW/SALE labels on themed price tags"
+          },
+          "discountText": {
+            "type": "string",
+            "default": "Special Offer",
+            "description": "Text to display for discount information"
+          },
+          "cuttingLineColor": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "default": "#cccccc",
+            "description": "Color for cutting guidelines (hex format)"
+          }
+        }
+      },
+      "PdfMargin": {
+        "type": "object",
+        "properties": {
+          "top": {
+            "type": "string",
+            "default": "0",
+            "description": "Top margin (e.g., '10mm', '0.5in')"
+          },
+          "right": {
+            "type": "string",
+            "default": "0",
+            "description": "Right margin"
+          },
+          "bottom": {
+            "type": "string",
+            "default": "0",
+            "description": "Bottom margin"
+          },
+          "left": {
+            "type": "string",
+            "default": "0",
+            "description": "Left margin"
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation was successful"
+          },
+          "data": {
+            "description": "Response data (present when success is true)"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message (present when success is false)"
+          },
+          "message": {
+            "type": "string",
+            "description": "Optional additional information"
+          }
+        }
+      },
+      "HealthResponse": {
+        "allOf": [
+          {"$ref": "#/components/schemas/ApiResponse"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "status": {"type": "string"},
+                  "timestamp": {"type": "string"},
+                  "uptime": {"type": "string"},
+                  "version": {"type": "string"},
+                  "service": {"type": "string"},
+                  "environment": {"type": "string"},
+                  "memory": {
+                    "type": "object",
+                    "properties": {
+                      "used": {"type": "string"},
+                      "total": {"type": "string"}
+                    }
+                  },
+                  "responseTime": {"type": "string"},
+                  "endpoints": {"type": "object"},
+                  "services": {"type": "object"}
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SinglePriceTagResponse": {
+        "allOf": [
+          {"$ref": "#/components/schemas/ApiResponse"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {"$ref": "#/components/schemas/PriceTag"}
+            }
+          }
+        ]
+      },
+      "BulkPriceTagsResponse": {
+        "allOf": [
+          {"$ref": "#/components/schemas/ApiResponse"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/PriceTag"}
+              }
+            }
+          }
+        ]
+      },
+      "PaginatedPriceTagsResponse": {
+        "allOf": [
+          {"$ref": "#/components/schemas/ApiResponse"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {"$ref": "#/components/schemas/PriceTag"}
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "page": {"type": "integer"},
+                      "limit": {"type": "integer"},
+                      "total": {"type": "integer"},
+                      "totalPages": {"type": "integer"},
+                      "hasNext": {"type": "boolean"},
+                      "hasPrev": {"type": "boolean"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "HtmlGenerationResponse": {
+        "allOf": [
+          {"$ref": "#/components/schemas/ApiResponse"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "html": {"type": "string"},
+                  "itemCount": {"type": "integer"}
+                }
+              }
+            }
+          }
+        ]
+      },
+      "PdfGenerationInfoResponse": {
+        "allOf": [
+          {"$ref": "#/components/schemas/ApiResponse"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "supportedFormats": {"type": "array", "items": {"type": "string"}},
+                  "supportedFonts": {"type": "array", "items": {"type": "string"}},
+                  "supportedDesignTypes": {"type": "array", "items": {"type": "string"}},
+                  "maxItemsPerRequest": {"type": "integer"},
+                  "version": {"type": "string"}
+                }
+              }
+            }
+          }
+        ]
+      },
+      "DeleteResponse": {
+        "allOf": [
+          {"$ref": "#/components/schemas/ApiResponse"},
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "id": {"type": "integer"}
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "responses": {
+      "ValidationError": {
+        "description": "Validation error occurred",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiResponse"
+            },
+            "example": {
+              "success": false,
+              "error": "Price is required and must be a positive number"
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiResponse"
+            },
+            "example": {
+              "success": false,
+              "error": "Price tag not found"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "System",
+      "description": "System health and status endpoints"
+    },
+    {
+      "name": "Price Tags", 
+      "description": "Core price tag CRUD operations"
+    },
+    {
+      "name": "Generation",
+      "description": "PDF and HTML generation endpoints"
+    }
+  ]
+}

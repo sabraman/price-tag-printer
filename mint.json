@@ -1,0 +1,131 @@
+{
+  "name": "Price Tag API",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#dd4c9b",
+    "light": "#9cdd4c",
+    "dark": "#dd4c54",
+    "anchors": {
+      "from": "#dd4c9b",
+      "to": "#9cdd4c"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "https://t.me/PriceTagPrinterBot"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "API Playground",
+    "url": "/api-docs"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    },
+    {
+      "name": "Examples",
+      "url": "examples"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Documentation",
+      "icon": "book-open-cover",
+      "url": "https://docs.price-tag-generator.com"
+    },
+    {
+      "name": "Telegram Bot",
+      "icon": "telegram",
+      "url": "https://t.me/PriceTagPrinterBot"
+    },
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/your-repo/price-tag-printer"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "authentication"
+      ]
+    },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "concepts/price-tags",
+        "concepts/themes",
+        "concepts/pdf-generation",
+        "concepts/bulk-operations"
+      ]
+    },
+    {
+      "group": "API Documentation",
+      "pages": [
+        "api-reference/introduction",
+        "api-reference/health",
+        {
+          "group": "Price Tags",
+          "pages": [
+            "api-reference/price-tags/list",
+            "api-reference/price-tags/create",
+            "api-reference/price-tags/get",
+            "api-reference/price-tags/update",
+            "api-reference/price-tags/delete"
+          ]
+        },
+        {
+          "group": "Generation",
+          "pages": [
+            "api-reference/generate/pdf",
+            "api-reference/generate/html"
+          ]
+        },
+        {
+          "group": "Utilities",
+          "pages": [
+            "api-reference/utilities/excel",
+            "api-reference/utilities/google-sheets"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Examples",
+      "pages": [
+        "examples/basic-usage",
+        "examples/bulk-operations",
+        "examples/pdf-generation",
+        "examples/themes-customization",
+        "examples/integrations"
+      ]
+    },
+    {
+      "group": "SDKs & Libraries",
+      "pages": [
+        "sdks/javascript",
+        "sdks/python",
+        "sdks/curl"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/your-repo/price-tag-printer",
+    "telegram": "https://t.me/PriceTagPrinterBot"
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": "G-XXXXXXXXXX"
+    }
+  }
+}

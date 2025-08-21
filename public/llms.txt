@@ -1,0 +1,168 @@
+# Price Tag API - LLM Documentation
+
+## OVERVIEW
+The Price Tag API is a comprehensive REST API for creating, managing, and generating professional price tags with PDF export capabilities. Designed specifically for AI assistant integration with OpenAPI 3.0 support and function calling capabilities.
+
+## BASE_URL
+https://your-domain.com/api
+
+## AUTHENTICATION
+None required (currently open for testing)
+
+## CONTENT_TYPE
+application/json
+
+## CORE_FUNCTIONS
+
+### create_price_tag
+Creates a single professional price tag
+ENDPOINT: POST /api/price-tags
+REQUIRED: data (string), price (integer in cents)
+OPTIONAL: designType, hasDiscount, priceFor2, priceFrom3
+EXAMPLE: {"data": "Coffee", "price": 1200, "designType": "new"}
+
+### create_bulk_price_tags  
+Creates multiple price tags in one request
+ENDPOINT: POST /api/price-tags
+REQUIRED: items (array of price tag objects, max 1000)
+EXAMPLE: {"items": [{"data": "Item A", "price": 1000}, {"data": "Item B", "price": 1500}]}
+
+### generate_pdf
+Generates printable PDF from price tags
+ENDPOINT: POST /api/generate-pdf-v2
+REQUIRED: items (array of price tag data)
+OPTIONAL: format (A4/A3/Letter), settings (design options)
+RETURNS: PDF binary file for download
+
+### list_price_tags
+Retrieves price tags with filtering and pagination
+ENDPOINT: GET /api/price-tags
+OPTIONAL: page, limit, search, designType, minPrice, maxPrice, sortBy, sortOrder
+RETURNS: Paginated list with navigation info
+
+### get_price_tag
+Gets specific price tag by ID
+ENDPOINT: GET /api/price-tags/{id}
+REQUIRED: id (integer)
+RETURNS: Single price tag object
+
+### update_price_tag
+Updates existing price tag
+ENDPOINT: PUT /api/price-tags/{id} 
+REQUIRED: id (integer)
+OPTIONAL: data, price, designType, hasDiscount, priceFor2, priceFrom3
+
+### delete_price_tag
+Removes price tag permanently
+ENDPOINT: DELETE /api/price-tags/{id}
+REQUIRED: id (integer)
+
+### generate_html_preview
+Creates HTML preview of price tags
+ENDPOINT: POST /api/generate-html
+REQUIRED: items (array of price tag data)
+OPTIONAL: settings (design options)
+RETURNS: HTML content for preview
+
+### check_health
+Returns API status and capabilities
+ENDPOINT: GET /api/health
+RETURNS: System health, endpoints, LLM integration info
+
+## DESIGN_TYPES
+Available themes: default, new, sale, white, black, sunset, ocean, forest, royal, vintage, neon, monochrome, silver, charcoal, paper, ink, snow
+
+Theme usage:
+- new: Shows "NEW" label for new products
+- sale: Shows "SALE" label for discounted items
+- default: Standard professional appearance
+- Color themes provide branded appearance
+- Minimal themes for clean design
+
+## PRICING_STRUCTURE
+All prices in smallest currency unit (cents for USD)
+- price: Main product price
+- discountPrice: Auto-calculated from discount settings
+- priceFor2: Bulk price for 2 items
+- priceFrom3: Bulk price for 3+ items
+
+## RESPONSE_FORMAT
+SUCCESS: {"success": true, "data": {...}, "message": "..."}
+ERROR: {"success": false, "error": "error message"}
+PAGINATED: {"success": true, "data": {"items": [...], "pagination": {...}}}
+
+## COMMON_PATTERNS
+
+Single price tag creation:
+```
+POST /api/price-tags
+{"data": "Product Name", "price": 1200, "designType": "new"}
+```
+
+Bulk creation:
+```
+POST /api/price-tags  
+{"items": [{"data": "A", "price": 1000}, {"data": "B", "price": 1500}]}
+```
+
+PDF generation:
+```
+POST /api/generate-pdf-v2
+{"items": [...], "format": "A4", "settings": {"design": true}}
+```
+
+Search and filter:
+```
+GET /api/price-tags?search=coffee&designType=sale&page=1&limit=20
+```
+
+## ERROR_HANDLING
+- 400: Validation errors (missing required fields, invalid values)
+- 404: Resource not found (invalid price tag ID)
+- 500: Server errors (system issues)
+
+All errors include descriptive messages for debugging
+
+## CAPABILITIES
+- Create up to 1000 price tags per request
+- Support 17 professional design themes
+- Generate PDFs in A4, A3, Letter formats
+- Multi-tier pricing with bulk discounts
+- Full CRUD operations with filtering
+- Real-time health monitoring
+- HTML preview before PDF generation
+
+## INTEGRATION_EXAMPLES
+
+E-commerce integration:
+Create price tags from product catalog, generate PDF for store printing
+
+Inventory management:
+Bulk create tags with multi-tier pricing for wholesale
+
+Retail displays:
+Generate themed price tags for sales and new products
+
+Event management:
+Create name tags or product displays
+
+Restaurant menus:
+Generate price displays for menu items
+
+## MONITORING
+Health endpoint provides:
+- System status and uptime
+- Memory usage statistics  
+- Available endpoints list
+- Service configuration status
+- LLM integration capabilities
+
+## OPENAPI_SPEC
+Complete OpenAPI 3.0 specification available at /api/openapi
+Includes all schemas, examples, and function definitions for AI integration
+
+## TESTING
+Interactive API playground at /api-docs
+Real-time health dashboard at /api-health
+
+This API is optimized for AI assistant integration with consistent response formats, comprehensive error handling, and structured documentation.

@@ -1,0 +1,238 @@
+---
+title: 'API Reference'
+description: 'Complete reference for the Price Tag API endpoints'
+---
+
+## Base URL
+
+All API endpoints are available at:
+
+```
+https://your-domain.com/api
+```
+
+## Response Format
+
+All API responses follow a consistent format:
+
+```json
+{
+  "success": boolean,
+  "data": any,           // Present when success: true
+  "error": string,       // Present when success: false  
+  "message": string      // Optional additional information
+}
+```
+
+### Success Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "data": "Premium Coffee",
+    "price": 1200,
+    "discountPrice": 700
+  },
+  "message": "Price tag created successfully"
+}
+```
+
+### Error Response Example
+
+```json
+{
+  "success": false,
+  "error": "Price is required and must be a positive number"
+}
+```
+
+## HTTP Status Codes
+
+| Status Code | Description |
+|-------------|-------------|
+| `200` | Success |
+| `201` | Created |
+| `400` | Bad Request - Invalid input |
+| `404` | Not Found |
+| `500` | Internal Server Error |
+
+## Data Models
+
+### Item
+
+```json
+{
+  "id": 1,                           // Unique identifier
+  "data": "Product Name",            // Product name or identifier
+  "price": 1000,                     // Main price (in smallest currency unit)
+  "discountPrice": 500,              // Calculated discount price
+  "designType": "new",               // Theme type (optional)
+  "hasDiscount": true,               // Whether discount applies (optional)
+  "priceFor2": 1800,                // Price for 2 items (optional)
+  "priceFrom3": 2500                 // Price for 3+ items (optional)
+}
+```
+
+### Theme
+
+```json
+{
+  "start": "#222222",                // Gradient start color (hex)
+  "end": "#dd4c9b",                  // Gradient end color (hex)
+  "textColor": "#ffffff"             // Text color (hex)
+}
+```
+
+### PriceTagSettings
+
+```json
+{
+  "design": true,                    // Enable discount display
+  "designType": "new",               // Global design type
+  "discountAmount": 500,             // Fixed discount amount
+  "maxDiscountPercent": 5,           // Maximum discount percentage
+  "themes": {                        // Theme configurations
+    "default": {
+      "start": "#222222",
+      "end": "#dd4c9b", 
+      "textColor": "#ffffff"
+    }
+  },
+  "currentFont": "montserrat",       // Font family
+  "discountText": "Special Offer",  // Discount description text
+  "hasTableDesigns": false,          // Use per-item designs
+  "hasTableDiscounts": false,        // Use per-item discounts
+  "showThemeLabels": true,           // Show NEW/SALE labels
+  "cuttingLineColor": "#cccccc"      // Cutting line color
+}
+```
+
+## Design Types
+
+The API supports 17 different design themes:
+
+| Design Type | Description |
+|-------------|-------------|
+| `default` | Standard gradient theme |
+| `new` | Green theme for new products |
+| `sale` | Red theme for sale items |
+| `white` | White background theme |
+| `black` | Black background theme |
+| `sunset` | Orange gradient theme |
+| `ocean` | Blue gradient theme |
+| `forest` | Green gradient theme |
+| `royal` | Purple gradient theme |
+| `vintage` | Brown gradient theme |
+| `neon` | Bright neon theme |
+| `monochrome` | Gray theme |
+| `silver` | Silver theme |
+| `charcoal` | Dark theme |
+| `paper` | Light paper theme |
+| `ink` | Dark ink theme |
+| `snow` | White/light theme |
+
+## Font Options
+
+Supported fonts:
+- `montserrat` (default)
+- `nunito`
+- `inter`
+- `mont`
+
+## PDF Generation Formats
+
+Supported PDF formats:
+- `A4` (default)
+- `A3`
+- `Letter`
+
+## Pagination
+
+List endpoints support pagination with the following parameters:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `page` | number | 1 | Page number |
+| `limit` | number | 10 | Items per page |
+| `sortBy` | string | - | Sort field |
+| `sortOrder` | string | 'asc' | Sort direction ('asc' or 'desc') |
+
+### Pagination Response
+
+```json
+{
+  "items": [...],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 25,
+    "totalPages": 3,
+    "hasNext": true,
+    "hasPrev": false
+  }
+}
+```
+
+## Filtering
+
+The price tags list endpoint supports various filters:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `search` | string | Search in product names |
+| `designType` | string | Filter by design type |
+| `hasDiscount` | boolean | Filter by discount status |
+| `minPrice` | number | Minimum price filter |
+| `maxPrice` | number | Maximum price filter |
+
+## Rate Limits
+
+- Maximum 1000 items per PDF generation request
+- No authentication required currently
+- No rate limiting implemented (consider for production)
+
+## SDK Support
+
+We provide examples for:
+- **JavaScript/TypeScript** - Native fetch API and frameworks
+- **Python** - Requests library
+- **cURL** - Command line examples
+
+## Error Handling Best Practices
+
+1. **Always check the `success` field** in responses
+2. **Handle HTTP status codes** appropriately
+3. **Parse error messages** from the `error` field
+4. **Implement retry logic** for 5xx errors
+5. **Validate input** before sending requests
+
+Example error handling:
+
+```javascript
+try {
+  const response = await fetch('/api/price-tags', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+  
+  return result.data;
+} catch (error) {
+  console.error('API Error:', error.message);
+  throw error;
+}
+```
+
+## Need Help?
+
+- 📚 Check our [examples](/examples/basic-usage) for common use cases
+- 🤖 Try our [Telegram Bot](https://t.me/PriceTagPrinterBot) for quick testing
+- 🛠️ Use the [API Playground](/api-docs) for interactive testing

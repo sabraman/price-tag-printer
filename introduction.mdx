@@ -1,0 +1,144 @@
+---
+title: 'Introduction'
+description: 'Welcome to the Price Tag API - A comprehensive solution for creating and managing professional price tags'
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/hero-light.png"
+  alt="Hero Light"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/hero-dark.png"
+  alt="Hero Dark"
+/>
+
+## What is Price Tag API?
+
+The Price Tag API is a powerful REST API that provides everything you need to create, manage, and generate professional price tags with PDF export capabilities. Built for developers, retailers, and businesses who need automated price tag generation.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card
+    title="CRUD Operations"
+    icon="pen-to-square"
+    href="/api-reference/price-tags/list"
+  >
+    Complete price tag management with filtering, pagination, and bulk operations
+  </Card>
+  <Card
+    title="PDF Generation"
+    icon="file-pdf"
+    href="/api-reference/generate/pdf"
+  >
+    High-quality PDF export with customizable themes and layouts
+  </Card>
+  <Card
+    title="17 Design Themes"
+    icon="palette"
+    href="/concepts/themes"
+  >
+    Professional designs including gradient themes, minimalist styles, and sale tags
+  </Card>
+  <Card
+    title="Bulk Operations"
+    icon="layer-group"
+    href="/concepts/bulk-operations"
+  >
+    Process hundreds of price tags efficiently with bulk create and update operations
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+Get started with the Price Tag API in just a few steps:
+
+<Steps>
+  <Step title="Health Check">
+    Verify the API is running with a simple health check
+    ```bash
+    curl https://your-domain.com/api/health
+    ```
+  </Step>
+  <Step title="Create Your First Price Tag">
+    Create a price tag with a simple POST request
+    ```bash
+    curl -X POST https://your-domain.com/api/price-tags \
+      -H "Content-Type: application/json" \
+      -d '{"data": "Premium Coffee", "price": 1200}'
+    ```
+  </Step>
+  <Step title="Generate PDF">
+    Generate a professional PDF from your price tags
+    ```bash
+    curl -X POST https://your-domain.com/api/generate-pdf-v2 \
+      -H "Content-Type: application/json" \
+      -d '{"items": [{"id": 1, "data": "Premium Coffee", "price": 1200}]}'
+    ```
+  </Step>
+</Steps>
+
+## API Endpoints Overview
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/health` | API health status |
+| `GET` | `/api/price-tags` | List all price tags |
+| `POST` | `/api/price-tags` | Create price tag(s) |
+| `GET` | `/api/price-tags/{id}` | Get specific price tag |
+| `PUT` | `/api/price-tags/{id}` | Update price tag |
+| `DELETE` | `/api/price-tags/{id}` | Delete price tag |
+| `POST` | `/api/generate-pdf-v2` | Generate PDF |
+| `POST` | `/api/generate-html` | Generate HTML preview |
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Retail Stores">
+    Perfect for retail stores that need to generate price tags for products with different designs, discounts, and bulk pricing tiers.
+  </Accordion>
+  <Accordion title="E-commerce Platforms">
+    Integrate with your e-commerce platform to automatically generate price tags for printed catalogs or in-store displays.
+  </Accordion>
+  <Accordion title="Event Management">
+    Create price tags for merchandise, food items, or services at events with custom branding and themes.
+  </Accordion>
+  <Accordion title="Inventory Management">
+    Generate price tags as part of your inventory management workflow with barcode integration and bulk operations.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Quick Start Guide"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Get up and running in 5 minutes
+  </Card>
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api-reference/introduction"
+  >
+    Explore all available endpoints
+  </Card>
+  <Card
+    title="Examples"
+    icon="lightbulb"
+    href="/examples/basic-usage"
+  >
+    See practical implementation examples
+  </Card>
+  <Card
+    title="Telegram Bot"
+    icon="telegram"
+    href="https://t.me/PriceTagPrinterBot"
+  >
+    Try our Telegram bot interface
+  </Card>
+</CardGroup>
