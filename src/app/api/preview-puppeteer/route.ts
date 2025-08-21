@@ -255,7 +255,7 @@ export async function GET(request: NextRequest) {
             .theme-label-new {
                 position: absolute;
                 right: -130px; /* -52 * 2.5 */
-                bottom: -35px; /* -14 * 2.5 */
+                bottom: 0; /* -14 * 2.5 */
                 transform: rotate(-90deg);
                 font-size: 130px; /* 52 * 2.5 */
                 font-weight: 900;
@@ -268,7 +268,7 @@ export async function GET(request: NextRequest) {
             .theme-label-sale {
                 position: absolute;
                 right: -120px; /* -48 * 2.5 */
-                bottom: -35px; /* -14 * 2.5 */
+                bottom: 0; /* -14 * 2.5 */
                 transform: rotate(-90deg);
                 font-size: 120px; /* 48 * 2.5 */
                 font-weight: 900;

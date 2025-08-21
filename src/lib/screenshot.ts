@@ -76,11 +76,40 @@ export async function generateScreenshot(
 
 		const page = await browser.newPage();
 
-		// Optimize page settings
-		await page.setViewport({
-			width,
-			height,
-			deviceScaleFactor: 1, // Reduced from 2 for speed
+		// Optimize page settings for faster rendering
+		await Promise.all([
+			page.setViewport({
+				width,
+				height,
+				deviceScaleFactor: 1, // Reduced from 2 for speed
+			}),
+			// Disable JavaScript for screenshots if not needed (faster rendering)
+			// page.setJavaScriptEnabled(false), // Uncomment if JS not needed
+			// Block unnecessary resources for faster loading
+			page.setRequestInterception(true),
+		]);
+
+		// Block unnecessary requests to speed up loading
+		page.on('request', (request: any) => {
+			const resourceType = request.resourceType();
+			const url = request.url();
+			
+			// Allow essential resources for font rendering
+			if (resourceType === 'document' || 
+				resourceType === 'stylesheet' || 
+				resourceType === 'font' ||
+				url.includes('font') ||
+				url.includes('.woff') ||
+				url.includes('.ttf') ||
+				url.includes('fonts.googleapis.com') ||
+				url.includes('fonts.gstatic.com')) {
+				request.continue();
+			} else if (['image', 'media', 'script', 'xhr', 'fetch'].includes(resourceType)) {
+				// Block unnecessary resources
+				request.abort();
+			} else {
+				request.continue();
+			}
 		});
 
 		// Set content with faster options
@@ -89,52 +118,53 @@ export async function generateScreenshot(
 			timeout: 10000, // Reasonable timeout
 		});
 
-		// Wait for fonts to load - give more time for font loading
+		// Optimized font loading with proper Promise-based waiting
 		try {
-			// First, wait for DOM to be ready
-			await page.waitForLoadState("domcontentloaded");
+			// Use Promise.race to ensure we don't wait forever
+			await Promise.race([
+				// Primary strategy: Wait for fonts to be ready
+				page.waitForFunction(
+					() => {
+						// Check if document.fonts API is available
+						if (!document.fonts) {
+							console.log("document.fonts API not available, proceeding");
+							return true;
+						}
 
-			// Then wait for fonts to load with longer timeout
-			await page.evaluate(() => {
-				return new Promise<void>((resolve) => {
-					if (document.fonts?.ready) {
-						document.fonts.ready.then(() => {
-							console.log("All fonts loaded successfully");
-							resolve();
+						// Wait for fonts to be ready
+						return document.fonts.ready.then(() => {
+							console.log("All fonts loaded via document.fonts.ready");
+							return true;
+						}).catch(() => {
+							console.log("Font loading promise rejected, proceeding");
+							return true;
 						});
-					} else {
-						// Fallback if document.fonts is not supported
-						setTimeout(() => {
-							console.log("Font loading fallback timeout");
-							resolve();
-						}, 3000);
-					}
-				});
-			});
+					},
+					{ timeout: 5000 } // 5 second timeout
+				),
+				
+				// Fallback timeout using Promise
+				new Promise<void>(resolve => setTimeout(resolve, 4000)) // 4 second fallback
+			]);
 
-			// Check font test element and log computed styles
-			const fontInfo = await page.evaluate(() => {
+			// Check font test element in parallel with font loading
+			const fontCheckPromise = page.evaluate(() => {
 				const testElement = document.getElementById("font-test");
 				if (testElement) {
 					const computedStyle = window.getComputedStyle(testElement);
 					const fontFamily = computedStyle.fontFamily;
 					const fontSize = computedStyle.fontSize;
-
 					console.log("🔤 Font test element:", { fontFamily, fontSize });
 					return { fontFamily, fontSize, elementExists: true };
 				}
 				return { elementExists: false };
 			});
 
-			console.log("🔤 Font loading check completed", fontInfo);
+			const fontInfo = await fontCheckPromise;
+			console.log("🔤 Font loading optimized check completed", fontInfo);
 
-			// Additional wait for fonts to fully render
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-			console.log("Font loading completed with extended wait");
 		} catch (error) {
-			// Ignore font loading errors but still wait a bit
-			console.warn("Font loading timeout, proceeding anyway", error);
-			await new Promise((resolve) => setTimeout(resolve, 2000));
+			console.warn("Font loading optimization failed, proceeding anyway", error);
 		}
 
 		// Take screenshot with optimized settings

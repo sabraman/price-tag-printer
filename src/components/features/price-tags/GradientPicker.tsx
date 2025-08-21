@@ -198,10 +198,10 @@ export function GradientPicker({
 			<Tabs defaultValue={defaultTab} className="w-full">
 				<TabsList className="grid w-full grid-cols-2 h-9 mb-3">
 					<TabsTrigger value="presets" className="text-xs">
-						🎨 Готовые
+						Готовые
 					</TabsTrigger>
 					<TabsTrigger value="custom" className="text-xs">
-						⚙️ Настроить
+						Настроить
 					</TabsTrigger>
 				</TabsList>
 

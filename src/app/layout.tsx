@@ -3,6 +3,7 @@ import "./globals.css";
 import "../App.css"; // Import Mont font
 import { Toaster } from "sonner";
 import FontLoader from "@/components/layout/FontLoader";
+import { DomainSettingsInitializer } from "@/components/DomainSettingsInitializer";
 import { inter, montserrat, nunito } from "@/config/fonts";
 import { metadata as siteMetadata } from "@/config/metadata";
 
@@ -29,6 +30,7 @@ export default function RootLayout({
 			<body
 				className={`dark bg-background text-foreground ${montserrat.variable} ${inter.variable} ${nunito.variable} font-montserrat antialiased`}
 			>
+				<DomainSettingsInitializer />
 				<FontLoader />
 				{children}
 				<Toaster

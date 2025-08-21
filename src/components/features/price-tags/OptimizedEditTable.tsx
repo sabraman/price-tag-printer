@@ -385,7 +385,7 @@ const TableRowItem = React.memo<{
 						variant="ghost"
 						size="icon"
 						onClick={() => onDelete(item.id)}
-						className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
+						className="h-8 w-8 text-red-800 hover:text-red-700 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
 					>
 						<Trash2 className="h-3 w-3" />
 					</Button>

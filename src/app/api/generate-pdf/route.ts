@@ -3,7 +3,30 @@ import { renderPriceTagsHTML } from "@/lib/renderPriceTags";
 
 export async function POST(request: NextRequest) {
 	try {
-		const { items, settings } = await request.json();
+		const requestData = await request.json();
+
+		// Handle two API modes: legacy (items + settings) and new (html directly)
+		if (requestData.html) {
+			// New mode: HTML already generated, just convert to PDF
+			const { generatePDF, createPrintableHTML } = await import("@/lib/puppeteer");
+			
+			const printableHTML = createPrintableHTML(requestData.html);
+			const pdfBuffer = await generatePDF({
+				html: printableHTML,
+				format: "A4",
+				margin: { top: "0", right: "0", bottom: "0", left: "0" },
+			});
+
+			return new Response(pdfBuffer, {
+				headers: {
+					"Content-Type": "application/pdf",
+					"Content-Disposition": "attachment; filename=price-tags.pdf",
+				},
+			});
+		}
+
+		// Legacy mode: Generate HTML from items and settings
+		const { items, settings } = requestData;
 
 		if (!items || !Array.isArray(items) || items.length === 0) {
 			return NextResponse.json(
@@ -60,17 +83,24 @@ export async function POST(request: NextRequest) {
 			throw new Error("Failed to generate HTML");
 		}
 
-		// For now, return success with a note that PDF generation needs to be implemented
-		// In a real implementation, you would convert the HTML to PDF here
-		return NextResponse.json({
-			success: true,
-			message: "PDF generation initiated",
-			itemCount: validItems.length,
-			// For now, we'll just indicate success
-			// In a real implementation, you would return the PDF URL or buffer
+		// Convert HTML to PDF using our optimized Puppeteer function
+		const { generatePDF, createPrintableHTML } = await import("@/lib/puppeteer");
+		
+		const printableHTML = createPrintableHTML(html);
+		const pdfBuffer = await generatePDF({
+			html: printableHTML,
+			format: "A4",
+			margin: { top: "0", right: "0", bottom: "0", left: "0" },
 		});
-	} catch (error) {
-		console.error("PDF generation error:", error);
+
+		return new Response(pdfBuffer, {
+			headers: {
+				"Content-Type": "application/pdf",
+				"Content-Disposition": "attachment; filename=price-tags.pdf",
+			},
+		});
+		} catch (error) {
+			console.error("PDF generation error:", error);
 		return NextResponse.json(
 			{
 				success: false,

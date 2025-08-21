@@ -1,14 +1,7 @@
 import { webhookCallback } from "grammy";
 import { NextResponse } from "next/server";
 import { env } from "@/env";
-import { bot } from "@/lib/telegram/bot";
-
-// Import all handlers
-import "@/lib/telegram/commands/start";
-import "@/lib/telegram/handlers/main-menu";
-import "@/lib/telegram/handlers/items";
-import "@/lib/telegram/handlers/design";
-import "@/lib/telegram/handlers/settings";
+import { bot } from "@/telegram-bot";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
