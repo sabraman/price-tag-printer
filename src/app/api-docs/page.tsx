@@ -38,7 +38,7 @@ interface ApiEndpoint {
 	path: string;
 	description: string;
 	parameters?: string[];
-	requestBody?: any;
+	requestBody?: Record<string, unknown>;
 	responses: { [key: string]: string };
 }
 
@@ -165,7 +165,7 @@ const ApiTestingPlayground: React.FC = () => {
 				},
 			} as const;
 
-			const requestInit: RequestInit = { ...options };
+			const requestInit: { method: string; headers: Record<string, string>; body?: string } = { ...options };
 			if (selectedEndpoint.method !== "GET" && requestBody) {
 				requestInit.body = requestBody;
 			}
@@ -834,8 +834,8 @@ Here's my product list: [...]`}
 
 					<TabsContent value="endpoints" className="space-y-4">
 						<div className="grid gap-4">
-							{apiEndpoints.map((endpoint, index) => (
-								<Card key={index}>
+							{apiEndpoints.map((endpoint) => (
+								<Card key={`${endpoint.method}-${endpoint.path}`}>
 									<CardHeader>
 										<div className="flex items-center justify-between">
 											<div className="flex items-center gap-2">
@@ -953,9 +953,9 @@ Here's my product list: [...]`}
 													<SelectValue />
 												</SelectTrigger>
 												<SelectContent>
-													{apiEndpoints.map((endpoint, index) => (
+													{apiEndpoints.map((endpoint) => (
 														<SelectItem
-															key={index}
+															key={`${endpoint.method}-${endpoint.path}`}
 															value={`${endpoint.method} ${endpoint.path}`}
 														>
 															<div className="flex items-center gap-2">

@@ -1,3 +1,5 @@
+import type { HTTPRequest } from "puppeteer-core";
+
 export interface PDFGenerationOptions {
 	html: string;
 	filename?: string;
@@ -72,7 +74,7 @@ export async function generatePDF(
 		]);
 
 		// Block unnecessary requests for PDF generation
-		page.on("request", (request: any) => {
+		page.on("request", (request: HTTPRequest) => {
 			const resourceType = request.resourceType();
 			const url = request.url();
 

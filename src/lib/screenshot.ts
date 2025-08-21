@@ -1,3 +1,5 @@
+import type { HTTPRequest } from "puppeteer-core";
+
 export interface ScreenshotOptions {
 	html: string;
 	width?: number;
@@ -90,7 +92,7 @@ export async function generateScreenshot(
 		]);
 
 		// Block unnecessary requests to speed up loading
-		page.on("request", (request: any) => {
+		page.on("request", (request: HTTPRequest) => {
 			const resourceType = request.resourceType();
 			const url = request.url();
 
