@@ -16,8 +16,23 @@ const getApiUrl = (): string => {
 		return "http://localhost:3000";
 	}
 
-	// In production, use the environment variable or a default
-	return process.env.NEXTJS_API_URL || "https://your-domain.vercel.app";
+	// In production/serverless, prefer VERCEL_URL if available
+	if (process.env.VERCEL_URL) {
+		return `https://${process.env.VERCEL_URL}`;
+	}
+
+	// Or NEXT_PUBLIC_APP_URL if provided
+	if (process.env.NEXT_PUBLIC_APP_URL) {
+		return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+	}
+
+	// Or NEXTJS_API_URL (legacy)
+	if (process.env.NEXTJS_API_URL) {
+		return process.env.NEXTJS_API_URL.replace(/\/$/, "");
+	}
+
+	// Fallback (must be replaced in env)
+	return "https://your-domain.vercel.app";
 };
 
 const NEXTJS_API_URL = getApiUrl();

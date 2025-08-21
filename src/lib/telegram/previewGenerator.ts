@@ -120,28 +120,10 @@ export async function getPreviewImage(
 					fetchError instanceof Error ? fetchError.message : String(fetchError),
 			});
 
-			// Generate a proper SVG fallback that should work
-			const currentTheme = (
-				sessionData.themes as Record<
-					string,
-					{ start: string; end: string; textColor: string }
-				>
-			)[overrides.designType?.toString() || sessionData.designType];
-
-			const fallbackSvg = `<svg width="400" height="275" xmlns="http://www.w3.org/2000/svg">
-				<defs>
-					<linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-						<stop offset="0%" style="stop-color:${currentTheme?.start || "#3b82f6"};stop-opacity:1" />
-						<stop offset="100%" style="stop-color:${currentTheme?.end || "#1d4ed8"};stop-opacity:1" />
-					</linearGradient>
-				</defs>
-				<rect width="400" height="275" fill="url(#grad)"/>
-				<text x="200" y="120" font-family="Arial" font-size="20" fill="${currentTheme?.textColor || "white"}" text-anchor="middle" font-weight="bold">${sessionData.items[0]?.data || "ТОВАР ПРИМЕР"}</text>
-				<text x="200" y="150" font-family="Arial" font-size="28" fill="${currentTheme?.textColor || "white"}" text-anchor="middle" font-weight="bold">${sessionData.items[0]?.price || 1000}₽</text>
-				<text x="200" y="180" font-family="Arial" font-size="12" fill="${currentTheme?.textColor || "white"}" text-anchor="middle" opacity="0.8">Загрузка превью...</text>
-			</svg>`;
-
-			return Buffer.from(fallbackSvg);
+			// Use a tiny valid PNG fallback to avoid Telegram IMAGE_PROCESS_FAILED on edit
+			const tinyPngBase64 =
+				"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==";
+			return Buffer.from(tinyPngBase64, "base64");
 		}
 
 		const buffer = Buffer.from(await response.arrayBuffer());
@@ -167,13 +149,10 @@ export async function getPreviewImage(
 	} catch (error) {
 		logger.error("Failed to generate preview image", error, ctx);
 
-		// Simple SVG fallback
-		const simpleFallback = `<svg width="400" height="275" xmlns="http://www.w3.org/2000/svg">
-			<rect width="400" height="275" fill="#6366f1"/>
-			<text x="200" y="140" font-family="Arial" font-size="20" fill="white" text-anchor="middle">ПРЕВЬЮ НЕДОСТУПНО</text>
-		</svg>`;
-
-		return Buffer.from(simpleFallback);
+		// Final fallback: tiny valid PNG
+		const tinyPngBase64 =
+			"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==";
+		return Buffer.from(tinyPngBase64, "base64");
 	}
 }
 
