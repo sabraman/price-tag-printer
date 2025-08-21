@@ -165,7 +165,11 @@ const ApiTestingPlayground: React.FC = () => {
 				},
 			} as const;
 
-			const requestInit: { method: string; headers: Record<string, string>; body?: string } = { ...options };
+			const requestInit: {
+				method: string;
+				headers: Record<string, string>;
+				body?: string;
+			} = { ...options };
 			if (selectedEndpoint.method !== "GET" && requestBody) {
 				requestInit.body = requestBody;
 			}
