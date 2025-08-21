@@ -42,10 +42,10 @@ ${bold}📦 Управление товарами${bold}
 ${itemsCount > 0 ? `Товаров в списке: ${itemsCount}` : "Список товаров пуст"}
 
 ${
-	itemsCount > 0
-		? "Вы можете просмотреть список, войти в режим редактирования или очистить все товары."
-		: "Добавьте первый товар или загрузите Excel файл с товарами."
-}
+		itemsCount > 0
+			? "Вы можете просмотреть список, войти в режим редактирования или очистить все товары."
+			: "Добавьте первый товар или загрузите Excel файл с товарами."
+	}
 	`;
 
 	await ctx.editMessageText(escapeMarkdown(itemsMessage.toString()), {
@@ -122,33 +122,39 @@ bot.callbackQuery("generate_pdf", async (ctx) => {
 	);
 
 	try {
+		const { botEnv } = await import("../../bot-env");
+		let pdfUrl = `${botEnv.NEXTJS_API_URL}/api/generate-pdf`;
+		if (botEnv.VERCEL_PROTECTION_BYPASS && pdfUrl.includes("vercel.app")) {
+			pdfUrl = `${pdfUrl}?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(
+				botEnv.VERCEL_PROTECTION_BYPASS,
+			)}`;
+		}
+
 		// Generate PDF using web app API
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL || "http://localhost:3000"}/api/generate-pdf`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					items: ctx.session.items,
-					settings: {
-						design: ctx.session.design,
-						designType: ctx.session.designType,
-						discountAmount: ctx.session.discountAmount,
-						maxDiscountPercent: ctx.session.maxDiscountPercent,
-						themes: ctx.session.themes,
-						currentFont: ctx.session.currentFont,
-						discountText: ctx.session.discountText,
-						showThemeLabels: ctx.session.showThemeLabels,
-						cuttingLineColor: ctx.session.cuttingLineColor,
-					},
-				}),
+		const response = await fetch(pdfUrl, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		);
+			body: JSON.stringify({
+				items: ctx.session.items,
+				settings: {
+					design: ctx.session.design,
+					designType: ctx.session.designType,
+					discountAmount: ctx.session.discountAmount,
+					maxDiscountPercent: ctx.session.maxDiscountPercent,
+					themes: ctx.session.themes,
+					currentFont: ctx.session.currentFont,
+					discountText: ctx.session.discountText,
+					showThemeLabels: ctx.session.showThemeLabels,
+					cuttingLineColor: ctx.session.cuttingLineColor,
+				},
+			}),
+		});
 
 		if (!response.ok) {
-			throw new Error("Ошибка генерации PDF на сервере");
+			const text = await response.text().catch(() => "");
+			throw new Error(`Ошибка генерации PDF на сервере: ${response.status} ${text.substring(0, 120)}`);
 		}
 
 		const result = await response.json();

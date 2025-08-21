@@ -57,7 +57,18 @@ export function generatePreviewUrl(
 		params.set("priceFrom3", item.priceFrom3.toString());
 	}
 
-	return `${baseUrl}/api/preview-puppeteer?${params.toString()}`;
+	let url = `${baseUrl}/api/preview-puppeteer?${params.toString()}`;
+
+	// Append Vercel protection bypass if available
+	const token = process.env.VERCEL_PROTECTION_BYPASS || process.env.VERCEL_BYPASS_TOKEN;
+	if (token && baseUrl.includes("vercel.app")) {
+		const join = url.includes("?") ? "&" : "?";
+		url = `${url}${join}x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(
+			token,
+		)}`;
+	}
+
+	return url;
 }
 
 // Get preview image as buffer

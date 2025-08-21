@@ -37,6 +37,9 @@ const getApiUrl = (): string => {
 
 const NEXTJS_API_URL = getApiUrl();
 
+const VERCEL_PROTECTION_BYPASS =
+	process.env.VERCEL_PROTECTION_BYPASS || process.env.VERCEL_BYPASS_TOKEN || "";
+
 // Validation function that can be called at runtime
 export function validateBotEnv() {
 	console.log("🔍 Validating bot environment...");
@@ -51,6 +54,7 @@ export function validateBotEnv() {
 		apiUrl: NEXTJS_API_URL,
 		nodeEnv: process.env.NODE_ENV,
 		isProduction: process.env.NODE_ENV === "production",
+		hasBypassToken: !!VERCEL_PROTECTION_BYPASS,
 	});
 }
 
@@ -58,6 +62,7 @@ export const botEnv = {
 	TELEGRAM_BOT_TOKEN: TELEGRAM_BOT_TOKEN || "",
 	NODE_ENV: process.env.NODE_ENV || "development",
 	NEXTJS_API_URL: NEXTJS_API_URL,
+	VERCEL_PROTECTION_BYPASS,
 } as const;
 
 // Log environment on import
@@ -66,4 +71,5 @@ console.log("🔧 Bot environment loaded", {
 	apiUrl: botEnv.NEXTJS_API_URL,
 	nodeEnv: botEnv.NODE_ENV,
 	isProduction: botEnv.NODE_ENV === "production",
+	hasBypassToken: !!botEnv.VERCEL_PROTECTION_BYPASS,
 });
