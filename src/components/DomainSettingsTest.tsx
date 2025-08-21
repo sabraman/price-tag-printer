@@ -45,7 +45,7 @@ interface DomainTestError {
 type TestResult = DomainTestResult | DomainTestError | null;
 
 function isDomainTestError(result: TestResult): result is DomainTestError {
-	return result !== null && 'error' in result;
+	return result !== null && "error" in result;
 }
 
 export function DomainSettingsTest() {
