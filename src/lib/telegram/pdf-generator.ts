@@ -160,7 +160,7 @@ export async function generatePDF(
 		});
 
 		// Call the existing PDF generation API
-		const { botEnv } = await import("../../../bot-env");
+		const { botEnv } = await import("@/bot-env");
 		let url = `${botEnv.NEXTJS_API_URL}/api/generate-pdf`;
 		if (botEnv.VERCEL_PROTECTION_BYPASS && url.includes("vercel.app")) {
 			url = `${url}?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(
