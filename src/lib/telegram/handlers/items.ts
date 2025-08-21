@@ -440,17 +440,27 @@ bot.on("message:document", async (ctx) => {
 				);
 			}
 
-					// Add items to session
-		const newItems = result.items.map((item: { data?: string; name?: string; price?: number; designType?: string; hasDiscount?: boolean; priceFor2?: number; priceFrom3?: number }) => ({
-				id: generateUniqueId(),
-				data: String(item.data || item.name || ""),
-				price: Number(item.price || 0),
-				discountPrice: Number(item.price || 0),
-				designType: item.designType || "default",
-				hasDiscount: item.hasDiscount || false,
-				priceFor2: item.priceFor2 ? Number(item.priceFor2) : undefined,
-				priceFrom3: item.priceFrom3 ? Number(item.priceFrom3) : undefined,
-			}));
+			// Add items to session
+			const newItems = result.items.map(
+				(item: {
+					data?: string;
+					name?: string;
+					price?: number;
+					designType?: string;
+					hasDiscount?: boolean;
+					priceFor2?: number;
+					priceFrom3?: number;
+				}) => ({
+					id: generateUniqueId(),
+					data: String(item.data || item.name || ""),
+					price: Number(item.price || 0),
+					discountPrice: Number(item.price || 0),
+					designType: item.designType || "default",
+					hasDiscount: item.hasDiscount || false,
+					priceFor2: item.priceFor2 ? Number(item.priceFor2) : undefined,
+					priceFrom3: item.priceFrom3 ? Number(item.priceFrom3) : undefined,
+				}),
+			);
 
 			ctx.session.items.push(...newItems);
 			updateItemDiscountPrices(ctx);
@@ -556,16 +566,26 @@ bot.on("message:text", async (ctx) => {
 		}
 
 		// Add items to session
-		const newItems = result.items.map((item: { data?: string; name?: string; price?: number; designType?: string; hasDiscount?: boolean; priceFor2?: number; priceFrom3?: number }) => ({
-			id: generateUniqueId(),
-			data: String(item.data || item.name || ""),
-			price: Number(item.price || 0),
-			discountPrice: Number(item.price || 0),
-			designType: item.designType || "default",
-			hasDiscount: item.hasDiscount || false,
-			priceFor2: item.priceFor2 ? Number(item.priceFor2) : undefined,
-			priceFrom3: item.priceFrom3 ? Number(item.priceFrom3) : undefined,
-		}));
+		const newItems = result.items.map(
+			(item: {
+				data?: string;
+				name?: string;
+				price?: number;
+				designType?: string;
+				hasDiscount?: boolean;
+				priceFor2?: number;
+				priceFrom3?: number;
+			}) => ({
+				id: generateUniqueId(),
+				data: String(item.data || item.name || ""),
+				price: Number(item.price || 0),
+				discountPrice: Number(item.price || 0),
+				designType: item.designType || "default",
+				hasDiscount: item.hasDiscount || false,
+				priceFor2: item.priceFor2 ? Number(item.priceFor2) : undefined,
+				priceFrom3: item.priceFrom3 ? Number(item.priceFrom3) : undefined,
+			}),
+		);
 
 		ctx.session.items.push(...newItems);
 		updateItemDiscountPrices(ctx);

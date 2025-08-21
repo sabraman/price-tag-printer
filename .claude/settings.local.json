@@ -43,7 +43,9 @@
       "Bash(npx biome write:*)",
       "Bash(npx biome lint:*)",
       "Bash(npx next lint:*)",
-      "WebFetch(domain:mintlify.com)"
+      "WebFetch(domain:mintlify.com)",
+      "Bash(ls:*)",
+      "Bash(git reset:*)"
     ],
     "deny": []
   }
