@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 				continue;
 			}
 
-			const item: any = {
+			const item: { data: string; price: number; [key: string]: unknown } = {
 				data: columns[0].trim(),
 				price: Number(columns[1]) || 0,
 			};

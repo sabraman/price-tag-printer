@@ -1,7 +1,7 @@
 export interface PDFGenerationOptions {
 	html: string;
 	filename?: string;
-	format?: "A4" | "Letter";
+	format?: "A4" | "A3" | "Letter";
 	margin?: {
 		top?: string;
 		right?: string;
@@ -72,21 +72,25 @@ export async function generatePDF(
 		]);
 
 		// Block unnecessary requests for PDF generation
-		page.on('request', (request: any) => {
+		page.on("request", (request: any) => {
 			const resourceType = request.resourceType();
 			const url = request.url();
-			
+
 			// Allow essential resources for PDF rendering
-			if (resourceType === 'document' || 
-				resourceType === 'stylesheet' || 
-				resourceType === 'font' ||
-				url.includes('font') ||
-				url.includes('.woff') ||
-				url.includes('.ttf') ||
-				url.includes('fonts.googleapis.com') ||
-				url.includes('fonts.gstatic.com')) {
+			if (
+				resourceType === "document" ||
+				resourceType === "stylesheet" ||
+				resourceType === "font" ||
+				url.includes("font") ||
+				url.includes(".woff") ||
+				url.includes(".ttf") ||
+				url.includes("fonts.googleapis.com") ||
+				url.includes("fonts.gstatic.com")
+			) {
 				request.continue();
-			} else if (['image', 'media', 'script', 'xhr', 'fetch'].includes(resourceType)) {
+			} else if (
+				["image", "media", "script", "xhr", "fetch"].includes(resourceType)
+			) {
 				// Block unnecessary resources for faster PDF generation
 				request.abort();
 			} else {
@@ -108,16 +112,18 @@ export async function generatePDF(
 				page.waitForFunction(
 					() => {
 						if (!document.fonts) return true;
-						return document.fonts.ready.then(() => {
-							console.log("PDF: All fonts loaded successfully");
-							return true;
-						}).catch(() => true);
+						return document.fonts.ready
+							.then(() => {
+								console.log("PDF: All fonts loaded successfully");
+								return true;
+							})
+							.catch(() => true);
 					},
-					{ timeout: 6000 } // Longer timeout for PDF generation
+					{ timeout: 6000 }, // Longer timeout for PDF generation
 				),
-				
+
 				// Fallback timeout using Promise
-				new Promise<void>(resolve => setTimeout(resolve, 5000))
+				new Promise<void>((resolve) => setTimeout(resolve, 5000)),
 			]);
 		} catch (error) {
 			console.warn("PDF font loading timeout, proceeding", error);

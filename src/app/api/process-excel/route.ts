@@ -43,18 +43,38 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Skip header row and process data
-		const rows = jsonData.slice(1) as any[][];
-		const items = [];
+		const rows = jsonData.slice(1) as unknown[][];
+		const items: Array<{
+			data: string;
+			price: number;
+			designType?: string;
+			hasDiscount?: boolean;
+			priceFor2?: number;
+			priceFrom3?: number;
+		}> = [];
 
 		for (let i = 0; i < rows.length; i++) {
 			const row = rows[i];
 
 			// Skip empty rows
-			if (!row || row.length === 0 || !row[0] || !row[1]) {
+			if (
+				!row ||
+				!Array.isArray(row) ||
+				row.length === 0 ||
+				!row[0] ||
+				!row[1]
+			) {
 				continue;
 			}
 
-			const item: any = {
+			const item: {
+				data: string;
+				price: number;
+				designType?: string;
+				hasDiscount?: boolean;
+				priceFor2?: number;
+				priceFrom3?: number;
+			} = {
 				data: String(row[0] || "").trim(),
 				price: Number(row[1]) || 0,
 			};

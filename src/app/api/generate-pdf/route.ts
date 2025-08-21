@@ -8,8 +8,10 @@ export async function POST(request: NextRequest) {
 		// Handle two API modes: legacy (items + settings) and new (html directly)
 		if (requestData.html) {
 			// New mode: HTML already generated, just convert to PDF
-			const { generatePDF, createPrintableHTML } = await import("@/lib/puppeteer");
-			
+			const { generatePDF, createPrintableHTML } = await import(
+				"@/lib/puppeteer"
+			);
+
 			const printableHTML = createPrintableHTML(requestData.html);
 			const pdfBuffer = await generatePDF({
 				html: printableHTML,
@@ -84,8 +86,10 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Convert HTML to PDF using our optimized Puppeteer function
-		const { generatePDF, createPrintableHTML } = await import("@/lib/puppeteer");
-		
+		const { generatePDF, createPrintableHTML } = await import(
+			"@/lib/puppeteer"
+		);
+
 		const printableHTML = createPrintableHTML(html);
 		const pdfBuffer = await generatePDF({
 			html: printableHTML,
@@ -99,8 +103,8 @@ export async function POST(request: NextRequest) {
 				"Content-Disposition": "attachment; filename=price-tags.pdf",
 			},
 		});
-		} catch (error) {
-			console.error("PDF generation error:", error);
+	} catch (error) {
+		console.error("PDF generation error:", error);
 		return NextResponse.json(
 			{
 				success: false,
