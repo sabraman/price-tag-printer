@@ -20,6 +20,10 @@ import { useNewItemDraft } from "@/hooks/useNewItemDraft";
 import { fetchGoogleSheetsData } from "@/lib/googleSheets";
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
+import {
+        parseClipboardData,
+        shouldHandlePasteEvent,
+} from "@/utils/clipboardImport";
 
 interface GoogleSheetsResponse {
 	[columnKey: string]: {
@@ -105,16 +109,71 @@ export const PriceTagsPage: React.FC = () => {
 	const componentRef = useRef<HTMLDivElement | null>(null);
 
 	// Memoized filtered IDs for stable reference
-	const filteredItemIds = useMemo(
-		() => filteredItems.map((item) => item.id),
-		[filteredItems],
-	);
+        const filteredItemIds = useMemo(
+                () => filteredItems.map((item) => item.id),
+                [filteredItems],
+        );
 
-	// Handle selection changes with validation
-	const handleSelectionChange = useCallback(
-		(newSelection: number[] | ((prev: number[]) => number[])) => {
-			const processSelection = (selection: number[]) => {
-				// Always validate against filtered items
+        useEffect(() => {
+                const handlePaste = (event: ClipboardEvent) => {
+                        if (!shouldHandlePasteEvent(event)) {
+                                return;
+                        }
+
+                        const text = event.clipboardData?.getData("text/plain") ?? "";
+                        const { items: parsedItems, failedLines } = parseClipboardData(text);
+
+                        if (parsedItems.length === 0) {
+                                return;
+                        }
+
+                        event.preventDefault();
+
+                        const store = usePriceTagsStore.getState();
+                        const baseId = Date.now() * 1000;
+
+                        const newItems: Item[] = parsedItems.map((parsed, index) => ({
+                                id: baseId + index,
+                                data: parsed.name,
+                                price: parsed.price,
+                                discountPrice: parsed.price,
+                                designType: parsed.designType,
+                                hasDiscount: parsed.hasDiscount,
+                        }));
+
+                        store.setItems([...store.items, ...newItems]);
+                        store.setColumnLabels(["Название", "Цена"]);
+
+                        if (parsedItems.some((item) => item.designType)) {
+                                store.setHasTableDesigns(true);
+                        }
+
+                        if (parsedItems.some((item) => item.hasDiscount !== undefined)) {
+                                store.setHasTableDiscounts(true);
+                        }
+
+                        toast.success(`Импортировано ${parsedItems.length} товаров из буфера обмена`);
+
+                        if (failedLines.length > 0) {
+                                toast.warning(
+                                        `Не удалось обработать ${failedLines.length} строк: ${failedLines
+                                                .slice(0, 3)
+                                                .join(", ")}${
+                                                failedLines.length > 3 ? "…" : ""
+                                        }`,
+                                );
+                        }
+                };
+
+                document.addEventListener("paste", handlePaste);
+                return () => document.removeEventListener("paste", handlePaste);
+        }, []);
+
+        // Handle selection changes with validation
+        const handleSelectionChange = useCallback(
+                (newSelection: number[] | ((prev: number[]) => number[])) => {
+                        const processSelection = (selection: number[]) => {
+                                // Always validate against filtered items
 				const validSelection = selection.filter((id) =>
 					filteredItemIds.includes(id),
 				);

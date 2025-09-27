@@ -62,10 +62,12 @@ export default [
 				HTMLAnchorElement: "readonly",
 				HTMLSpanElement: "readonly",
 				HTMLHeadingElement: "readonly",
-				HTMLParagraphElement: "readonly",
-				HTMLUListElement: "readonly",
-				// File API
-				File: "readonly",
+                                HTMLParagraphElement: "readonly",
+                                HTMLUListElement: "readonly",
+                                EventTarget: "readonly",
+                                ClipboardEvent: "readonly",
+                                // File API
+                                File: "readonly",
 				FileList: "readonly",
 				FileReader: "readonly",
 				// React
