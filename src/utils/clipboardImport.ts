@@ -251,16 +251,20 @@ export const isEditableTarget = (target: EventTarget | null): boolean => {
 
         const element = target as HTMLElement;
 
-        if (
-                element instanceof HTMLInputElement ||
-                element instanceof HTMLTextAreaElement ||
-                element instanceof HTMLSelectElement
-        ) {
-                const type = (element as HTMLInputElement).type;
-                if (element instanceof HTMLInputElement && ["button", "submit", "reset"].includes(type)) {
+        if (element instanceof HTMLSelectElement) {
+                return !element.disabled;
+        }
+
+        if (element instanceof HTMLInputElement) {
+                const type = element.type;
+                if (["button", "submit", "reset"].includes(type)) {
                         return false;
                 }
 
+                return !element.readOnly && !element.disabled;
+        }
+
+        if (element instanceof HTMLTextAreaElement) {
                 return !element.readOnly && !element.disabled;
         }
 
