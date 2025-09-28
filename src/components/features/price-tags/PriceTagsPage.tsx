@@ -1,5 +1,5 @@
 // Dynamic import for Google Sheets functionality to avoid SSR issues
-import { AlertCircle, Edit2, Eye, FileSpreadsheet } from "lucide-react";
+import { AlertCircle, ClipboardList, Edit2, Eye, FileSpreadsheet, Loader2 } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -15,11 +15,34 @@ import PriceTagList from "@/components/features/price-tags/PriceTagList";
 import { SmartPrintButton } from "@/components/features/price-tags/SmartPrintButton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+        Dialog,
+        DialogContent,
+        DialogDescription,
+        DialogFooter,
+        DialogHeader,
+        DialogTitle,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import {
+        Sheet,
+        SheetContent,
+        SheetDescription,
+        SheetFooter,
+        SheetHeader,
+        SheetTitle,
+} from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useNewItemDraft } from "@/hooks/useNewItemDraft";
 import { fetchGoogleSheetsData } from "@/lib/googleSheets";
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
+import {
+        CLIPBOARD_TRIGGER_ATTRIBUTE,
+        parseClipboardData,
+        shouldHandlePasteEvent,
+} from "@/utils/clipboardImport";
 
 interface GoogleSheetsResponse {
 	[columnKey: string]: {
@@ -98,8 +121,29 @@ export const PriceTagsPage: React.FC = () => {
 	const [currentFilter, setCurrentFilter] = useState<string>("all");
 	const [currentSort, setCurrentSort] = useState<string>("nameAsc");
 	const [currentSearchQuery, setCurrentSearchQuery] = useState<string>("");
-	const [selectedItems, setSelectedItems] = useState<number[]>([]);
-	const [lastDuplicationTime, setLastDuplicationTime] = useState(0);
+        const [selectedItems, setSelectedItems] = useState<number[]>([]);
+        const [lastDuplicationTime, setLastDuplicationTime] = useState(0);
+        const isMobile = useIsMobile();
+        const [isManualPasteOpen, setIsManualPasteOpen] = useState(false);
+        const [manualPasteValue, setManualPasteValue] = useState("");
+        const [isClipboardReading, setIsClipboardReading] = useState(false);
+
+        const closeManualPaste = useCallback(() => {
+                setIsManualPasteOpen(false);
+                setManualPasteValue("");
+        }, []);
+
+        const handleManualOpenChange = useCallback(
+                (open: boolean) => {
+                        if (!open) {
+                                closeManualPaste();
+                                return;
+                        }
+
+                        setIsManualPasteOpen(true);
+                },
+                [closeManualPaste],
+        );
 
 	// Create componentRef for react-to-print
 	const componentRef = useRef<HTMLDivElement | null>(null);
@@ -299,11 +343,11 @@ export const PriceTagsPage: React.FC = () => {
 		toast.info("PDF export is now handled by the Print button");
 	};
 
-	const exportToXlsx = (items: Item[]) => {
-		const ws_data = [
-			["Название", "Цена", "Дизайн", "Скидка", "Цена за 2", "Цена от 3"],
-			...items.map((item) => [
-				String(item.data),
+        const exportToXlsx = (items: Item[]) => {
+                const ws_data = [
+                        ["Название", "Цена", "Дизайн", "Скидка", "Цена за 2", "Цена от 3"],
+                        ...items.map((item) => [
+                                String(item.data),
 				String(item.price),
 				item.designType || "",
 				String(item.hasDiscount || ""),
@@ -313,11 +357,147 @@ export const PriceTagsPage: React.FC = () => {
 		];
 		const ws = XLSX.utils.aoa_to_sheet(ws_data);
 		const wb = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(wb, ws, "Price Tags");
-		XLSX.writeFile(wb, "price_tags.xlsx");
-	};
+                XLSX.utils.book_append_sheet(wb, ws, "Price Tags");
+                XLSX.writeFile(wb, "price_tags.xlsx");
+        };
 
-	// Note: Print functionality now handled by SmartPrintButton component
+        // Note: Print functionality now handled by SmartPrintButton component
+
+        const handleParsedClipboardText = useCallback(
+                (text: string): boolean => {
+                        const normalized = text.trim();
+
+                        if (!normalized) {
+                                toast.info("Буфер обмена пуст. Вставьте данные вручную.");
+                                return false;
+                        }
+
+                        const result = parseClipboardData(normalized);
+
+                        if (result.items.length === 0) {
+                                toast.error("Не удалось распознать данные из буфера обмена");
+                                return false;
+                        }
+
+                        setItems(result.items);
+                        setColumnLabels(result.columnLabels);
+                        usePriceTagsStore
+                                .getState()
+                                .setHasTableDesigns(result.hasDesignData);
+                        usePriceTagsStore
+                                .getState()
+                                .setHasTableDiscounts(result.hasDiscountData);
+                        setError(null);
+
+                        toast.success(
+                                `Импортировано ${result.items.length} строк из буфера обмена`,
+                        );
+
+                        if (result.skippedLineCount > 0) {
+                                toast.info(`Пропущено строк: ${result.skippedLineCount}`);
+                        }
+
+                        return true;
+                },
+                [setColumnLabels, setError, setItems],
+        );
+
+        const handlePasteButtonClick = useCallback(async () => {
+                if (isClipboardReading) {
+                        return;
+                }
+
+                if (typeof navigator === "undefined" || !navigator.clipboard?.readText) {
+                        setIsManualPasteOpen(true);
+                        return;
+                }
+
+                try {
+                        setIsClipboardReading(true);
+                        const clipboardText = await navigator.clipboard.readText();
+
+                        if (!clipboardText.trim()) {
+                                toast.info("Буфер обмена пуст. Вставьте данные вручную.");
+                                setIsManualPasteOpen(true);
+                                return;
+                        }
+
+                        const success = handleParsedClipboardText(clipboardText);
+                        if (!success) {
+                                setManualPasteValue(clipboardText);
+                                setIsManualPasteOpen(true);
+                        }
+                } catch (error) {
+                        console.error("Clipboard read failed", error);
+                        toast.error("Не удалось прочитать буфер обмена. Вставьте данные вручную.");
+                        setIsManualPasteOpen(true);
+                } finally {
+                        setIsClipboardReading(false);
+                }
+        }, [handleParsedClipboardText, isClipboardReading]);
+
+        const handleDirectPaste = useCallback(
+                (event: React.ClipboardEvent<HTMLButtonElement>) => {
+                        const pastedText = event.clipboardData.getData("text");
+
+                        if (!pastedText.trim()) {
+                                return;
+                        }
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        const success = handleParsedClipboardText(pastedText);
+                        if (!success) {
+                                setManualPasteValue(pastedText);
+                                setIsManualPasteOpen(true);
+                        }
+                },
+                [handleParsedClipboardText],
+        );
+
+        const handleManualSubmit = useCallback(() => {
+                const success = handleParsedClipboardText(manualPasteValue);
+                if (success) {
+                        closeManualPaste();
+                }
+        }, [
+                closeManualPaste,
+                handleParsedClipboardText,
+                manualPasteValue,
+        ]);
+
+        useEffect(() => {
+                if (typeof window === "undefined") {
+                        return;
+                }
+
+                const handleWindowPaste = (event: ClipboardEvent) => {
+                        if (!shouldHandlePasteEvent(event)) {
+                                return;
+                        }
+
+                        const text = event.clipboardData?.getData("text") ?? "";
+
+                        if (!text.trim()) {
+                                return;
+                        }
+
+                        event.preventDefault();
+
+                        const success = handleParsedClipboardText(text);
+                        if (!success) {
+                                setManualPasteValue(text);
+                                setIsManualPasteOpen(true);
+                        }
+                };
+
+                window.addEventListener("paste", handleWindowPaste);
+
+                return () => {
+                        window.removeEventListener("paste", handleWindowPaste);
+                };
+        }, [handleParsedClipboardText]);
 
 	const extractSheetIdFromUrl = useCallback((url: string): string => {
 		const parts = url.split("/");
@@ -722,23 +902,154 @@ export const PriceTagsPage: React.FC = () => {
 								</div>
 							</Link>
 
-							<ExcelUploader onUpload={handleExcelUpload} />
-							<div className="relative">
-								<div className="absolute inset-0 flex items-center">
-									<div className="w-full border-t border-border/30" />
-								</div>
-								<div className="relative flex justify-center text-xs">
-									<span className="bg-background px-3 text-muted-foreground">
-										или
-									</span>
-								</div>
-							</div>
-							<GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
-							{!items.length && (
-								<Button
-									onClick={handleManualEntry}
-									variant="outline"
-									className="w-full"
+                                                        <ExcelUploader onUpload={handleExcelUpload} />
+                                                        <div className="relative">
+                                                                <div className="absolute inset-0 flex items-center">
+                                                                        <div className="w-full border-t border-border/30" />
+                                                                </div>
+                                                                <div className="relative flex justify-center text-xs">
+                                                                        <span className="bg-background px-3 text-muted-foreground">
+                                                                                или
+                                                                        </span>
+                                                                </div>
+                                                        </div>
+                                                        <Button
+                                                                type="button"
+                                                                variant="outline"
+                                                                className="w-full"
+                                                                disabled={isClipboardReading}
+                                                                onClick={handlePasteButtonClick}
+                                                                onPaste={handleDirectPaste}
+                                                                {...({
+                                                                        [CLIPBOARD_TRIGGER_ATTRIBUTE]: "true",
+                                                                } as Record<string, string>)}
+                                                        >
+                                                                {isClipboardReading ? (
+                                                                        <>
+                                                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                                                Чтение из буфера обмена...
+                                                                        </>
+                                                                ) : (
+                                                                        <>
+                                                                                <ClipboardList className="w-4 h-4 mr-2" />
+                                                                                Вставить прайс-лист
+                                                                        </>
+                                                                )}
+                                                        </Button>
+                                                        <div className="relative">
+                                                                <div className="absolute inset-0 flex items-center">
+                                                                        <div className="w-full border-t border-border/30" />
+                                                                </div>
+                                                                <div className="relative flex justify-center text-xs">
+                                                                        <span className="bg-background px-3 text-muted-foreground">
+                                                                                или
+                                                                        </span>
+                                                                </div>
+                                                        </div>
+                                                        <GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
+                                                        {isMobile ? (
+                                                                <Sheet
+                                                                        open={isManualPasteOpen}
+                                                                        onOpenChange={handleManualOpenChange}
+                                                                >
+                                                                        <SheetContent
+                                                                                side="bottom"
+                                                                                className="mx-auto w-full sm:max-w-lg"
+                                                                        >
+                                                                                <SheetHeader>
+                                                                                        <SheetTitle>Вставьте прайс-лист</SheetTitle>
+                                                                                        <SheetDescription>
+                                                                                                Скопируйте данные из Excel или Google Таблиц и
+                                                                                                вставьте их в поле ниже.
+                                                                                        </SheetDescription>
+                                                                                </SheetHeader>
+                                                                                <div className="py-4 space-y-3">
+                                                                                        <Textarea
+                                                                                                autoFocus
+                                                                                                rows={6}
+                                                                                                value={manualPasteValue}
+                                                                                                onChange={(event) =>
+                                                                                                        setManualPasteValue(event.target.value)
+                                                                                                }
+                                                                                                placeholder={"Название\tЦена\nТовар 1\t199"}
+                                                                                        />
+                                                                                        <p className="text-xs text-muted-foreground">
+                                                                                                Поддерживаются данные, разделённые табами, запятыми
+                                                                                                или точкой с запятой.
+                                                                                        </p>
+                                                                                </div>
+                                                                                <SheetFooter className="gap-2">
+                                                                                        <Button
+                                                                                                type="button"
+                                                                                                variant="outline"
+                                                                                                onClick={closeManualPaste}
+                                                                                        >
+                                                                                                Отмена
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                                type="button"
+                                                                                                onClick={handleManualSubmit}
+                                                                                                disabled={!manualPasteValue.trim()}
+                                                                                        >
+                                                                                                <ClipboardList className="w-4 h-4 mr-2" />
+                                                                                                Импортировать
+                                                                                        </Button>
+                                                                                </SheetFooter>
+                                                                        </SheetContent>
+                                                                </Sheet>
+                                                        ) : (
+                                                                <Dialog
+                                                                        open={isManualPasteOpen}
+                                                                        onOpenChange={handleManualOpenChange}
+                                                                >
+                                                                        <DialogContent className="sm:max-w-lg">
+                                                                                <DialogHeader>
+                                                                                        <DialogTitle>Вставьте прайс-лист</DialogTitle>
+                                                                                        <DialogDescription>
+                                                                                                Скопируйте данные из Excel или Google Таблиц и
+                                                                                                вставьте их в поле ниже.
+                                                                                        </DialogDescription>
+                                                                                </DialogHeader>
+                                                                                <div className="py-4 space-y-3">
+                                                                                        <Textarea
+                                                                                                autoFocus
+                                                                                                rows={6}
+                                                                                                value={manualPasteValue}
+                                                                                                onChange={(event) =>
+                                                                                                        setManualPasteValue(event.target.value)
+                                                                                                }
+                                                                                                placeholder={"Название\tЦена\nТовар 1\t199"}
+                                                                                        />
+                                                                                        <p className="text-xs text-muted-foreground">
+                                                                                                Поддерживаются данные, разделённые табами, запятыми
+                                                                                                или точкой с запятой.
+                                                                                        </p>
+                                                                                </div>
+                                                                                <DialogFooter className="gap-2">
+                                                                                        <Button
+                                                                                                type="button"
+                                                                                                variant="outline"
+                                                                                                onClick={closeManualPaste}
+                                                                                        >
+                                                                                                Отмена
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                                type="button"
+                                                                                                onClick={handleManualSubmit}
+                                                                                                disabled={!manualPasteValue.trim()}
+                                                                                        >
+                                                                                                <ClipboardList className="w-4 h-4 mr-2" />
+                                                                                                Импортировать
+                                                                                        </Button>
+                                                                                </DialogFooter>
+                                                                        </DialogContent>
+                                                                </Dialog>
+                                                        )}
+                                                        {!items.length && (
+                                                                <Button
+                                                                        onClick={handleManualEntry}
+                                                                        variant="outline"
+                                                                        className="w-full"
 								>
 									<FileSpreadsheet className="w-4 h-4 mr-2" />
 									Создать вручную
