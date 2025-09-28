@@ -850,7 +850,7 @@ export const PriceTagsPage: React.FC = () => {
 						{/* Import Section */}
 						<div className="space-y-4">
 							{/* Bot Info */}
-							<Link
+							{/* <Link
 								href="https://t.me/PriceTagPrinterBot"
 								target="_blank"
 								rel="noopener noreferrer"
@@ -900,7 +900,7 @@ export const PriceTagsPage: React.FC = () => {
 										</svg>
 									</span>
 								</div>
-							</Link>
+							</Link> */}
 
                                                         <ExcelUploader onUpload={handleExcelUpload} />
                                                         <div className="relative">
