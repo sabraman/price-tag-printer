@@ -217,10 +217,15 @@ NASTY x HUSKY - 650`;
                 expect(result.items).toHaveLength(expectedRowCount);
                 expect(result.skippedLineCount).toBe(0);
                 expect(result.hasDesignData).toBe(true);
+                expect(result.hasDiscountData).toBe(true);
                 expect(result.columnLabels).toEqual(["Название", "Цена", "Дизайн"]);
 
                 const aerovibe = result.items.find((item) => item.data === "AEROVIBE 20000");
-                expect(aerovibe).toMatchObject({ price: 1000, designType: "sale" });
+                expect(aerovibe).toMatchObject({
+                        price: 1000,
+                        designType: "sale",
+                        hasDiscount: false,
+                });
 
                 const wakaExtra = result.items.find(
                         (item) => item.data === "WAKA 20000 EXTRA",

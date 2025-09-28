@@ -264,6 +264,10 @@ export const parseClipboardData = (raw: string): ParsedClipboardData => {
                         item.hasDiscount = discountCandidate;
                 }
 
+                if (item.designType === "sale") {
+                        item.hasDiscount = false;
+                }
+
                 const priceFor2 = sanitizeNumericValue(priceFor2Raw);
                 if (priceFor2 !== undefined) {
                         item.priceFor2 = priceFor2;
