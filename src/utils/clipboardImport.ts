@@ -103,9 +103,60 @@ const detectDelimiter = (line: string): RegExp | string => {
         return /\s{2,}/;
 };
 
+const normalizeLine = (line: string): string => {
+        return line.replace(/[–—]/g, "-");
+};
+
 const splitLine = (line: string): string[] => {
-        const delimiter = detectDelimiter(line);
-        return line.split(delimiter).map((cell) => cell.trim());
+        const normalizedLine = normalizeLine(line);
+        const delimiter = detectDelimiter(normalizedLine);
+
+        const initialCells = normalizedLine
+                .split(delimiter)
+                .map((cell) => cell.trim());
+        const nonEmptyInitialCells = initialCells.filter((cell) => cell.length > 0);
+
+        if (initialCells.length >= 2 && nonEmptyInitialCells.length >= 2) {
+                return initialCells;
+        }
+
+        if (nonEmptyInitialCells.length >= 2) {
+                return nonEmptyInitialCells;
+        }
+
+        const hyphenMatch = normalizedLine.match(/^(.*?)\s+-\s+(.+)$/);
+        if (hyphenMatch) {
+                const [, left, right] = hyphenMatch;
+                const leftPart = left.trim();
+                const rightParts = right
+                        .trim()
+                        .split(/\s+/)
+                        .filter((part) => part.length > 0);
+
+                if (leftPart && rightParts.length > 0) {
+                        return [leftPart, ...rightParts];
+                }
+        }
+
+        const tokens = normalizedLine
+                .split(/\s+/)
+                .map((token) => token.trim())
+                .filter((token) => token.length > 0);
+
+        if (tokens.length >= 2) {
+                for (let index = tokens.length - 1; index >= 0; index -= 1) {
+                        if (sanitizeNumericValue(tokens[index]) !== undefined) {
+                                const name = tokens.slice(0, index).join(" ");
+                                const remainder = tokens.slice(index);
+
+                                if (name && remainder.length > 0) {
+                                        return [name, ...remainder];
+                                }
+                        }
+                }
+        }
+
+        return tokens;
 };
 
 const hasHeaderRow = (firstRow: string[]): boolean => {
@@ -143,7 +194,7 @@ export interface ParsedClipboardData {
 export const parseClipboardData = (raw: string): ParsedClipboardData => {
         const cleaned = raw
                 .split(/\r?\n/)
-                .map((line) => line.trim())
+                .map((line) => normalizeLine(line).trim())
                 .filter((line) => line.length > 0);
 
         if (cleaned.length === 0) {

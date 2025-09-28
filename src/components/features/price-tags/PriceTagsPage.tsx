@@ -15,6 +15,14 @@ import PriceTagList from "@/components/features/price-tags/PriceTagList";
 import { SmartPrintButton } from "@/components/features/price-tags/SmartPrintButton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+        Dialog,
+        DialogContent,
+        DialogDescription,
+        DialogFooter,
+        DialogHeader,
+        DialogTitle,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import {
         Sheet,
@@ -25,6 +33,7 @@ import {
         SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useNewItemDraft } from "@/hooks/useNewItemDraft";
 import { fetchGoogleSheetsData } from "@/lib/googleSheets";
 import type { Item } from "@/store/priceTagsStore";
@@ -114,9 +123,27 @@ export const PriceTagsPage: React.FC = () => {
 	const [currentSearchQuery, setCurrentSearchQuery] = useState<string>("");
         const [selectedItems, setSelectedItems] = useState<number[]>([]);
         const [lastDuplicationTime, setLastDuplicationTime] = useState(0);
-        const [isPasteSheetOpen, setIsPasteSheetOpen] = useState(false);
+        const isMobile = useIsMobile();
+        const [isManualPasteOpen, setIsManualPasteOpen] = useState(false);
         const [manualPasteValue, setManualPasteValue] = useState("");
         const [isClipboardReading, setIsClipboardReading] = useState(false);
+
+        const closeManualPaste = useCallback(() => {
+                setIsManualPasteOpen(false);
+                setManualPasteValue("");
+        }, []);
+
+        const handleManualOpenChange = useCallback(
+                (open: boolean) => {
+                        if (!open) {
+                                closeManualPaste();
+                                return;
+                        }
+
+                        setIsManualPasteOpen(true);
+                },
+                [closeManualPaste],
+        );
 
 	// Create componentRef for react-to-print
 	const componentRef = useRef<HTMLDivElement | null>(null);
@@ -381,7 +408,7 @@ export const PriceTagsPage: React.FC = () => {
                 }
 
                 if (typeof navigator === "undefined" || !navigator.clipboard?.readText) {
-                        setIsPasteSheetOpen(true);
+                        setIsManualPasteOpen(true);
                         return;
                 }
 
@@ -391,29 +418,23 @@ export const PriceTagsPage: React.FC = () => {
 
                         if (!clipboardText.trim()) {
                                 toast.info("Буфер обмена пуст. Вставьте данные вручную.");
-                                setIsPasteSheetOpen(true);
+                                setIsManualPasteOpen(true);
                                 return;
                         }
 
                         const success = handleParsedClipboardText(clipboardText);
                         if (!success) {
                                 setManualPasteValue(clipboardText);
-                                setIsPasteSheetOpen(true);
+                                setIsManualPasteOpen(true);
                         }
                 } catch (error) {
                         console.error("Clipboard read failed", error);
                         toast.error("Не удалось прочитать буфер обмена. Вставьте данные вручную.");
-                        setIsPasteSheetOpen(true);
+                        setIsManualPasteOpen(true);
                 } finally {
                         setIsClipboardReading(false);
                 }
-        }, [
-                handleParsedClipboardText,
-                isClipboardReading,
-                setIsClipboardReading,
-                setIsPasteSheetOpen,
-                setManualPasteValue,
-        ]);
+        }, [handleParsedClipboardText, isClipboardReading]);
 
         const handleDirectPaste = useCallback(
                 (event: React.ClipboardEvent<HTMLButtonElement>) => {
@@ -429,23 +450,21 @@ export const PriceTagsPage: React.FC = () => {
                         const success = handleParsedClipboardText(pastedText);
                         if (!success) {
                                 setManualPasteValue(pastedText);
-                                setIsPasteSheetOpen(true);
+                                setIsManualPasteOpen(true);
                         }
                 },
-                [handleParsedClipboardText, setIsPasteSheetOpen, setManualPasteValue],
+                [handleParsedClipboardText],
         );
 
         const handleManualSubmit = useCallback(() => {
                 const success = handleParsedClipboardText(manualPasteValue);
                 if (success) {
-                        setManualPasteValue("");
-                        setIsPasteSheetOpen(false);
+                        closeManualPaste();
                 }
         }, [
+                closeManualPaste,
                 handleParsedClipboardText,
                 manualPasteValue,
-                setIsPasteSheetOpen,
-                setManualPasteValue,
         ]);
 
         useEffect(() => {
@@ -469,7 +488,7 @@ export const PriceTagsPage: React.FC = () => {
                         const success = handleParsedClipboardText(text);
                         if (!success) {
                                 setManualPasteValue(text);
-                                setIsPasteSheetOpen(true);
+                                setIsManualPasteOpen(true);
                         }
                 };
 
@@ -478,7 +497,7 @@ export const PriceTagsPage: React.FC = () => {
                 return () => {
                         window.removeEventListener("paste", handleWindowPaste);
                 };
-        }, [handleParsedClipboardText, setIsPasteSheetOpen, setManualPasteValue]);
+        }, [handleParsedClipboardText]);
 
 	const extractSheetIdFromUrl = useCallback((url: string): string => {
 		const parts = url.split("/");
@@ -928,60 +947,104 @@ export const PriceTagsPage: React.FC = () => {
                                                                 </div>
                                                         </div>
                                                         <GoogleSheetsForm onSubmit={handleGoogleSheetsSubmit} />
-                                                        <Sheet
-                                                                open={isPasteSheetOpen}
-                                                                onOpenChange={(open) => {
-                                                                        setIsPasteSheetOpen(open);
-                                                                        if (!open) {
-                                                                                setManualPasteValue("");
-                                                                        }
-                                                                }}
-                                                        >
-                                                                <SheetContent side="bottom" className="mx-auto w-full sm:max-w-lg">
-                                                                        <SheetHeader>
-                                                                                <SheetTitle>Вставьте прайс-лист</SheetTitle>
-                                                                                <SheetDescription>
-                                                                                        Скопируйте данные из Excel или Google Таблиц и вставьте их
-                                                                                        в поле ниже.
-                                                                                </SheetDescription>
-                                                                        </SheetHeader>
-                                                                        <div className="py-4 space-y-3">
-                                                                                <Textarea
-                                                                                        autoFocus
-                                                                                        rows={6}
-                                                                                        value={manualPasteValue}
-                                                                                        onChange={(event) =>
-                                                                                                setManualPasteValue(event.target.value)
-                                                                                        }
-                                                                                        placeholder={"Название\tЦена\nТовар 1\t199"}
-                                                                                />
-                                                                                <p className="text-xs text-muted-foreground">
-                                                                                        Поддерживаются данные, разделённые табами, запятыми или
-                                                                                        точкой с запятой.
-                                                                                </p>
-                                                                        </div>
-                                                                        <SheetFooter className="gap-2">
-                                                                                <Button
-                                                                                        type="button"
-                                                                                        variant="outline"
-                                                                                        onClick={() => {
-                                                                                                setIsPasteSheetOpen(false);
-                                                                                                setManualPasteValue("");
-                                                                                        }}
-                                                                                >
-                                                                                        Отмена
-                                                                                </Button>
-                                                                                <Button
-                                                                                        type="button"
-                                                                                        onClick={handleManualSubmit}
-                                                                                        disabled={!manualPasteValue.trim()}
-                                                                                >
-                                                                                        <ClipboardList className="w-4 h-4 mr-2" />
-                                                                                        Импортировать
-                                                                                </Button>
-                                                                        </SheetFooter>
-                                                                </SheetContent>
-                                                        </Sheet>
+                                                        {isMobile ? (
+                                                                <Sheet
+                                                                        open={isManualPasteOpen}
+                                                                        onOpenChange={handleManualOpenChange}
+                                                                >
+                                                                        <SheetContent
+                                                                                side="bottom"
+                                                                                className="mx-auto w-full sm:max-w-lg"
+                                                                        >
+                                                                                <SheetHeader>
+                                                                                        <SheetTitle>Вставьте прайс-лист</SheetTitle>
+                                                                                        <SheetDescription>
+                                                                                                Скопируйте данные из Excel или Google Таблиц и
+                                                                                                вставьте их в поле ниже.
+                                                                                        </SheetDescription>
+                                                                                </SheetHeader>
+                                                                                <div className="py-4 space-y-3">
+                                                                                        <Textarea
+                                                                                                autoFocus
+                                                                                                rows={6}
+                                                                                                value={manualPasteValue}
+                                                                                                onChange={(event) =>
+                                                                                                        setManualPasteValue(event.target.value)
+                                                                                                }
+                                                                                                placeholder={"Название\tЦена\nТовар 1\t199"}
+                                                                                        />
+                                                                                        <p className="text-xs text-muted-foreground">
+                                                                                                Поддерживаются данные, разделённые табами, запятыми
+                                                                                                или точкой с запятой.
+                                                                                        </p>
+                                                                                </div>
+                                                                                <SheetFooter className="gap-2">
+                                                                                        <Button
+                                                                                                type="button"
+                                                                                                variant="outline"
+                                                                                                onClick={closeManualPaste}
+                                                                                        >
+                                                                                                Отмена
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                                type="button"
+                                                                                                onClick={handleManualSubmit}
+                                                                                                disabled={!manualPasteValue.trim()}
+                                                                                        >
+                                                                                                <ClipboardList className="w-4 h-4 mr-2" />
+                                                                                                Импортировать
+                                                                                        </Button>
+                                                                                </SheetFooter>
+                                                                        </SheetContent>
+                                                                </Sheet>
+                                                        ) : (
+                                                                <Dialog
+                                                                        open={isManualPasteOpen}
+                                                                        onOpenChange={handleManualOpenChange}
+                                                                >
+                                                                        <DialogContent className="sm:max-w-lg">
+                                                                                <DialogHeader>
+                                                                                        <DialogTitle>Вставьте прайс-лист</DialogTitle>
+                                                                                        <DialogDescription>
+                                                                                                Скопируйте данные из Excel или Google Таблиц и
+                                                                                                вставьте их в поле ниже.
+                                                                                        </DialogDescription>
+                                                                                </DialogHeader>
+                                                                                <div className="py-4 space-y-3">
+                                                                                        <Textarea
+                                                                                                autoFocus
+                                                                                                rows={6}
+                                                                                                value={manualPasteValue}
+                                                                                                onChange={(event) =>
+                                                                                                        setManualPasteValue(event.target.value)
+                                                                                                }
+                                                                                                placeholder={"Название\tЦена\nТовар 1\t199"}
+                                                                                        />
+                                                                                        <p className="text-xs text-muted-foreground">
+                                                                                                Поддерживаются данные, разделённые табами, запятыми
+                                                                                                или точкой с запятой.
+                                                                                        </p>
+                                                                                </div>
+                                                                                <DialogFooter className="gap-2">
+                                                                                        <Button
+                                                                                                type="button"
+                                                                                                variant="outline"
+                                                                                                onClick={closeManualPaste}
+                                                                                        >
+                                                                                                Отмена
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                                type="button"
+                                                                                                onClick={handleManualSubmit}
+                                                                                                disabled={!manualPasteValue.trim()}
+                                                                                        >
+                                                                                                <ClipboardList className="w-4 h-4 mr-2" />
+                                                                                                Импортировать
+                                                                                        </Button>
+                                                                                </DialogFooter>
+                                                                        </DialogContent>
+                                                                </Dialog>
+                                                        )}
                                                         {!items.length && (
                                                                 <Button
                                                                         onClick={handleManualEntry}
