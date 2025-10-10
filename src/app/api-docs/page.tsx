@@ -152,6 +152,12 @@ const ApiTestingPlayground: React.FC = () => {
 	const [apiKey, setApiKey] = useState<string>("");
 	const [response, setResponse] = useState<string>("");
 	const [loading, setLoading] = useState<boolean>(false);
+	// PDF preview/download state
+	const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+	const [pdfFilename, setPdfFilename] = useState<string | null>(null);
+	// HTML preview/download state
+	const [htmlUrl, setHtmlUrl] = useState<string | null>(null);
+	const [htmlFilename, setHtmlFilename] = useState<string | null>(null);
 
 	const handleTest = async () => {
 		setLoading(true);
@@ -175,12 +181,64 @@ const ApiTestingPlayground: React.FC = () => {
 			}
 
 			const res = await fetch(url, requestInit);
-			const data =
-				selectedEndpoint.path === "/api/generate-pdf-v2"
-					? "[PDF Binary Data]"
-					: JSON.stringify(await res.json(), null, 2);
 
-			setResponse(`Status: ${res.status}\n\n${data}`);
+			if (selectedEndpoint.path === "/api/generate-pdf-v2") {
+				// Revoke previous blob URL to avoid memory leaks
+				if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+				if (htmlUrl) URL.revokeObjectURL(htmlUrl);
+
+				const blob = await res.blob();
+				const objectUrl = URL.createObjectURL(blob);
+				setPdfUrl(objectUrl);
+
+				const disposition = res.headers.get("Content-Disposition") || "";
+				const match = disposition.match(/filename="?([^"]+)"?/i);
+				const filename = match?.[1] || `price-tags-${Date.now()}.pdf`;
+				setPdfFilename(filename);
+
+				const sizeHeader = res.headers.get("Content-Length");
+				const size = sizeHeader ? Number(sizeHeader) : blob.size;
+
+				setResponse(
+					`Status: ${res.status}\n\nPDF generated.\nFilename: ${filename}\nSize: ${size} bytes`,
+				);
+			} else if (selectedEndpoint.path === "/api/generate-html") {
+				// Handle HTML JSON response and preview
+				const json = await res.json();
+				if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+				setPdfUrl(null);
+				setPdfFilename(null);
+
+				if (htmlUrl) URL.revokeObjectURL(htmlUrl);
+
+				if (json?.success && json?.data?.html) {
+					const htmlBlob = new Blob([json.data.html as string], {
+						type: "text/html",
+					});
+					const objectUrl = URL.createObjectURL(htmlBlob);
+					setHtmlUrl(objectUrl);
+					const filename = `price-tags-${Date.now()}.html`;
+					setHtmlFilename(filename);
+					const count = json?.data?.itemCount ?? undefined;
+					setResponse(
+						`Status: ${res.status}\n\nHTML generated.${
+							count ? `\nItems: ${count}` : ""
+						}`,
+					);
+				} else {
+					setResponse(`Status: ${res.status}\n\n${JSON.stringify(json, null, 2)}`);
+				}
+			} else {
+				const json = await res.json();
+				setResponse(`Status: ${res.status}\n\n${JSON.stringify(json, null, 2)}`);
+				// Clear any previous PDF/HTML state
+				if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+				if (htmlUrl) URL.revokeObjectURL(htmlUrl);
+				setPdfUrl(null);
+				setPdfFilename(null);
+				setHtmlUrl(null);
+				setHtmlFilename(null);
+			}
 		} catch (error) {
 			setResponse(
 				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -339,7 +397,7 @@ const ApiTestingPlayground: React.FC = () => {
 												</div>
 												<Button
 													variant="outline"
-													className="w-full border-green-200 hover:bg-green-50"
+													className="w-full border-green-200 hover:bg-green-900"
 													onClick={() => window.open("/openapi.json", "_blank")}
 												>
 													<ExternalLink className="h-4 w-4 mr-2" />
@@ -940,21 +998,32 @@ Here's my product list: [...]`}
 											<Select
 												value={`${selectedEndpoint.method} ${selectedEndpoint.path}`}
 												onValueChange={(value) => {
-													const endpoint = apiEndpoints.find(
-														(e) => `${e.method} ${e.path}` === value,
-													);
-													if (endpoint) {
-														setSelectedEndpoint(endpoint);
-														setRequestBody(
-															endpoint.requestBody
-																? JSON.stringify(endpoint.requestBody, null, 2)
-																: "",
-														);
-													}
-												}}
-											>
-												<SelectTrigger>
-													<SelectValue />
+											const endpoint = apiEndpoints.find(
+												(e) => `${e.method} ${e.path}` === value,
+											);
+											if (endpoint) {
+												setSelectedEndpoint(endpoint);
+												setRequestBody(
+													endpoint.requestBody
+														? JSON.stringify(endpoint.requestBody, null, 2)
+														: "",
+												);
+												// Clear PDF/HTML state when switching endpoints
+												if (pdfUrl) {
+													URL.revokeObjectURL(pdfUrl);
+												}
+												if (htmlUrl) {
+													URL.revokeObjectURL(htmlUrl);
+												}
+												setPdfUrl(null);
+												setPdfFilename(null);
+												setHtmlUrl(null);
+												setHtmlFilename(null);
+											}
+										}}
+									>
+										<SelectTrigger>
+											<SelectValue />
 												</SelectTrigger>
 												<SelectContent>
 													{apiEndpoints.map((endpoint) => (
@@ -1036,18 +1105,58 @@ Here's my product list: [...]`}
 												className="font-mono text-sm min-h-[400px]"
 											/>
 										</div>
-										{response && (
-											<Button
-												variant="outline"
-												size="sm"
-												onClick={() => copyToClipboard(response)}
-												className="w-full"
-											>
-												<Copy className="h-4 w-4 mr-2" />
-												Copy Response
-											</Button>
+										{selectedEndpoint.path === "/api/generate-html" && htmlUrl && (
+											<div className="space-y-2">
+												<Label>HTML Preview</Label>
+												<div className="border rounded">
+													<iframe src={htmlUrl} className="w-full h-[500px]" />
+												</div>
+												<div className="flex gap-2">
+													<Button onClick={() => window.open(htmlUrl!, "_blank")}>
+														<ExternalLink className="h-4 w-4 mr-2" />
+														Open in New Tab
+													</Button>
+													<a href={htmlUrl!} download={htmlFilename ?? "price-tags.html"}>
+														<Button variant="outline">
+															<Download className="h-4 w-4 mr-2" />
+															Download HTML
+														</Button>
+													</a>
+												</div>
+											</div>
 										)}
-									</div>
+										{selectedEndpoint.path === "/api/generate-pdf-v2" && pdfUrl && (
+											<div className="space-y-2">
+												<Label>PDF Preview</Label>
+												<div className="border rounded">
+													<iframe src={pdfUrl} className="w-full h-[500px]" />
+												</div>
+												<div className="flex gap-2">
+													<Button onClick={() => window.open(pdfUrl!, "_blank")}>
+														<ExternalLink className="h-4 w-4 mr-2" />
+														Open in New Tab
+													</Button>
+													<a href={pdfUrl!} download={pdfFilename ?? "price-tags.pdf"}>
+														<Button variant="outline">
+															<Download className="h-4 w-4 mr-2" />
+															Download PDF
+														</Button>
+													</a>
+												</div>
+											</div>
+										)}
+									{response && (
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => copyToClipboard(response)}
+											className="w-full"
+										>
+											<Copy className="h-4 w-4 mr-2" />
+											Copy Response
+										</Button>
+									)}
+								</div>
 								</div>
 							</CardContent>
 						</Card>
