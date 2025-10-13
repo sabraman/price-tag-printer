@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { renderPriceTagsHTML } from "@/lib/renderPriceTags";
 import { buildPriceTagsFilename } from "@/lib/utils";
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
 	try {

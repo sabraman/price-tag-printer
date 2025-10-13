@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+export const runtime = "nodejs";
 import { renderPriceTagsHTML } from "@/lib/renderPriceTags";
 import type {
 	ApiResponse,

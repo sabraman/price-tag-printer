@@ -176,9 +176,6 @@ export function createPrintableHTML(content: string): string {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Price Tags</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700;900&display=block" rel="stylesheet">
         <style>
           @page {
             size: A4 portrait;
@@ -236,56 +233,6 @@ export function createPrintableHTML(content: string): string {
             font-family: 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           }
           
-          /* Ensure fonts are loaded */
-          @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 400;
-            font-display: block;
-            src: url('https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-.woff2') format('woff2');
-          }
-          
-          @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 500;
-            font-display: block;
-            src: url('https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtZ6Ew-.woff2') format('woff2');
-          }
-          
-          @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 600;
-            font-display: block;
-            src: url('https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM61Ew-.woff2') format('woff2');
-          }
-          
-          @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 700;
-            font-display: block;
-            src: url('https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuN61Ew-.woff2') format('woff2');
-          }
-          
-          @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 900;
-            font-display: block;
-            src: url('https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCvr61Ew-.woff2') format('woff2');
-          }
-          
-          /* Additional font weights for better rendering */
-          @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 800;
-            font-display: block;
-            src: url('https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCur61Ew-.woff2') format('woff2');
-          }
-
           /* Local variable font fallbacks (base64 if available) */
           @font-face {
             font-family: 'Montserrat';
