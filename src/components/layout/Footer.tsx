@@ -31,17 +31,7 @@ const Footer = () => {
 								API Документация
 							</Link>
 							<Link
-								href="https://t.me/PriceTagPrinterBot"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-							>
-								<MessageCircle className="h-4 w-4" />
-								Telegram Bot
-								<ExternalLink className="h-3 w-3" />
-							</Link>
-							<Link
-								href="https://github.com/your-repo/price-tag-printer"
+								href="https://github.com/sabraman/price-tag-printer"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"

@@ -1618,21 +1618,6 @@ if (status.data.status !== 'healthy') {
 									</div>
 								</div>
 							</Button>
-							<Button
-								variant="outline"
-								className="h-auto p-4"
-								onClick={() =>
-									window.open("https://t.me/PriceTagPrinterBot", "_blank")
-								}
-							>
-								<div className="text-center">
-									<ExternalLink className="h-6 w-6 mx-auto mb-2" />
-									<div className="font-medium">Telegram Bot</div>
-									<div className="text-sm text-muted-foreground">
-										Try our bot interface
-									</div>
-								</div>
-							</Button>
 						</div>
 					</CardContent>
 				</Card>

@@ -41,14 +41,9 @@
       "url": "https://docs.price-tag-generator.com"
     },
     {
-      "name": "Telegram Bot",
-      "icon": "telegram",
-      "url": "https://t.me/PriceTagPrinterBot"
-    },
-    {
       "name": "GitHub",
       "icon": "github",
-      "url": "https://github.com/your-repo/price-tag-printer"
+      "url": "https://github.com/sabraman/price-tag-printer"
     }
   ],
   "navigation": [
@@ -120,8 +115,7 @@
     }
   ],
   "footerSocials": {
-    "github": "https://github.com/your-repo/price-tag-printer",
-    "telegram": "https://t.me/PriceTagPrinterBot"
+    "github": "https://github.com/sabraman/price-tag-printer"
   },
   "analytics": {
     "ga4": {

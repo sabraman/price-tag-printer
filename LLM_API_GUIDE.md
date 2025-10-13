@@ -229,7 +229,6 @@ const inventory = await fetch('/api/price-tags', {
 - **API Documentation**: `/api-docs` (interactive playground)
 - **Health Dashboard**: `/api-health` (real-time monitoring)
 - **OpenAPI Spec**: `/openapi.json` (complete schema)
-- **Telegram Bot**: Integration available for testing
 
 ---
 

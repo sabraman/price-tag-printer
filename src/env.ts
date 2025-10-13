@@ -9,7 +9,6 @@ export const env = createEnv({
 		NODE_ENV: z
 			.enum(["development", "test", "production"])
 			.default("development"),
-		TELEGRAM_BOT_TOKEN: z.string().optional(),
 	},
 
 	/**
@@ -26,6 +25,4 @@ export const env = createEnv({
 	/**
 	 * Skip validation during build if not in production
 	 */
-	skipValidation:
-		process.env.NODE_ENV !== "production" && !process.env.TELEGRAM_BOT_TOKEN,
 });
