@@ -1,5 +1,6 @@
 "use client";
 
+import { Blob } from 'node:buffer'
 import {
 	Bot,
 	Copy,
@@ -226,11 +227,15 @@ const ApiTestingPlayground: React.FC = () => {
 						}`,
 					);
 				} else {
-					setResponse(`Status: ${res.status}\n\n${JSON.stringify(json, null, 2)}`);
+					setResponse(
+						`Status: ${res.status}\n\n${JSON.stringify(json, null, 2)}`,
+					);
 				}
 			} else {
 				const json = await res.json();
-				setResponse(`Status: ${res.status}\n\n${JSON.stringify(json, null, 2)}`);
+				setResponse(
+					`Status: ${res.status}\n\n${JSON.stringify(json, null, 2)}`,
+				);
 				// Clear any previous PDF/HTML state
 				if (pdfUrl) URL.revokeObjectURL(pdfUrl);
 				if (htmlUrl) URL.revokeObjectURL(htmlUrl);
@@ -998,32 +1003,32 @@ Here's my product list: [...]`}
 											<Select
 												value={`${selectedEndpoint.method} ${selectedEndpoint.path}`}
 												onValueChange={(value) => {
-											const endpoint = apiEndpoints.find(
-												(e) => `${e.method} ${e.path}` === value,
-											);
-											if (endpoint) {
-												setSelectedEndpoint(endpoint);
-												setRequestBody(
-													endpoint.requestBody
-														? JSON.stringify(endpoint.requestBody, null, 2)
-														: "",
-												);
-												// Clear PDF/HTML state when switching endpoints
-												if (pdfUrl) {
-													URL.revokeObjectURL(pdfUrl);
-												}
-												if (htmlUrl) {
-													URL.revokeObjectURL(htmlUrl);
-												}
-												setPdfUrl(null);
-												setPdfFilename(null);
-												setHtmlUrl(null);
-												setHtmlFilename(null);
-											}
-										}}
-									>
-										<SelectTrigger>
-											<SelectValue />
+													const endpoint = apiEndpoints.find(
+														(e) => `${e.method} ${e.path}` === value,
+													);
+													if (endpoint) {
+														setSelectedEndpoint(endpoint);
+														setRequestBody(
+															endpoint.requestBody
+																? JSON.stringify(endpoint.requestBody, null, 2)
+																: "",
+														);
+														// Clear PDF/HTML state when switching endpoints
+														if (pdfUrl) {
+															URL.revokeObjectURL(pdfUrl);
+														}
+														if (htmlUrl) {
+															URL.revokeObjectURL(htmlUrl);
+														}
+														setPdfUrl(null);
+														setPdfFilename(null);
+														setHtmlUrl(null);
+														setHtmlFilename(null);
+													}
+												}}
+											>
+												<SelectTrigger>
+													<SelectValue />
 												</SelectTrigger>
 												<SelectContent>
 													{apiEndpoints.map((endpoint) => (
@@ -1105,58 +1110,73 @@ Here's my product list: [...]`}
 												className="font-mono text-sm min-h-[400px]"
 											/>
 										</div>
-										{selectedEndpoint.path === "/api/generate-html" && htmlUrl && (
-											<div className="space-y-2">
-												<Label>HTML Preview</Label>
-												<div className="border rounded">
-													<iframe src={htmlUrl} className="w-full h-[500px]" />
-												</div>
-												<div className="flex gap-2">
-													<Button onClick={() => window.open(htmlUrl!, "_blank")}>
-														<ExternalLink className="h-4 w-4 mr-2" />
-														Open in New Tab
-													</Button>
-													<a href={htmlUrl!} download={htmlFilename ?? "price-tags.html"}>
-														<Button variant="outline">
-															<Download className="h-4 w-4 mr-2" />
-															Download HTML
+										{selectedEndpoint.path === "/api/generate-html" &&
+											htmlUrl && (
+												<div className="space-y-2">
+													<Label>HTML Preview</Label>
+													<div className="border rounded">
+														<iframe
+															src={htmlUrl}
+															className="w-full h-[500px]"
+														/>
+													</div>
+													<div className="flex gap-2">
+														<Button
+															onClick={() => window.open(htmlUrl!, "_blank")}
+														>
+															<ExternalLink className="h-4 w-4 mr-2" />
+															Open in New Tab
 														</Button>
-													</a>
+														<a
+															href={htmlUrl!}
+															download={htmlFilename ?? "price-tags.html"}
+														>
+															<Button variant="outline">
+																<Download className="h-4 w-4 mr-2" />
+																Download HTML
+															</Button>
+														</a>
+													</div>
 												</div>
-											</div>
-										)}
-										{selectedEndpoint.path === "/api/generate-pdf-v2" && pdfUrl && (
-											<div className="space-y-2">
-												<Label>PDF Preview</Label>
-												<div className="border rounded">
-													<iframe src={pdfUrl} className="w-full h-[500px]" />
-												</div>
-												<div className="flex gap-2">
-													<Button onClick={() => window.open(pdfUrl!, "_blank")}>
-														<ExternalLink className="h-4 w-4 mr-2" />
-														Open in New Tab
-													</Button>
-													<a href={pdfUrl!} download={pdfFilename ?? "price-tags.pdf"}>
-														<Button variant="outline">
-															<Download className="h-4 w-4 mr-2" />
-															Download PDF
+											)}
+										{selectedEndpoint.path === "/api/generate-pdf-v2" &&
+											pdfUrl && (
+												<div className="space-y-2">
+													<Label>PDF Preview</Label>
+													<div className="border rounded">
+														<iframe src={pdfUrl} className="w-full h-[500px]" />
+													</div>
+													<div className="flex gap-2">
+														<Button
+															onClick={() => window.open(pdfUrl!, "_blank")}
+														>
+															<ExternalLink className="h-4 w-4 mr-2" />
+															Open in New Tab
 														</Button>
-													</a>
+														<a
+															href={pdfUrl!}
+															download={pdfFilename ?? "price-tags.pdf"}
+														>
+															<Button variant="outline">
+																<Download className="h-4 w-4 mr-2" />
+																Download PDF
+															</Button>
+														</a>
+													</div>
 												</div>
-											</div>
+											)}
+										{response && (
+											<Button
+												variant="outline"
+												size="sm"
+												onClick={() => copyToClipboard(response)}
+												className="w-full"
+											>
+												<Copy className="h-4 w-4 mr-2" />
+												Copy Response
+											</Button>
 										)}
-									{response && (
-										<Button
-											variant="outline"
-											size="sm"
-											onClick={() => copyToClipboard(response)}
-											className="w-full"
-										>
-											<Copy className="h-4 w-4 mr-2" />
-											Copy Response
-										</Button>
-									)}
-								</div>
+									</div>
 								</div>
 							</CardContent>
 						</Card>

@@ -44,6 +44,7 @@
 		"@radix-ui/react-tooltip": "^1.1.8",
 		"@sparticuz/chromium": "^138.0.2",
 		"@t3-oss/env-core": "^0.13.8",
+		"@types/jsdom": "^27.0.0",
 		"@types/node-xlsx": "^0.21.0",
 		"@uiw/color-convert": "^2.7.3",
 		"@uiw/react-color-hue": "^2.7.3",

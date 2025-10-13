@@ -1,4 +1,4 @@
-import { ExternalLink, FileText, Github, MessageCircle } from "lucide-react";
+import { ExternalLink, FileText, Github } from "lucide-react";
 import Link from "next/link";
 
 const Footer = () => {
