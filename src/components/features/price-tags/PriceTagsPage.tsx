@@ -916,7 +916,7 @@ export const PriceTagsPage: React.FC = () => {
                                                         <Button
                                                                 type="button"
                                                                 variant="outline"
-                                                                className="w-full"
+                                                                className="w-full hover:border-primary/50"
                                                                 disabled={isClipboardReading}
                                                                 onClick={handlePasteButtonClick}
                                                                 onPaste={handleDirectPaste}

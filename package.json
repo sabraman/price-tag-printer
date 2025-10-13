@@ -7,8 +7,6 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"bot:dev": "tsx watch src/telegram-bot.ts",
-		"bot:prod": "tsx src/telegram-bot.ts",
 		"lint": "biome lint ./src",
 		"biome:check": "biome check ./src",
 		"biome:unsafe": "biome check --write --unsafe ./src",
