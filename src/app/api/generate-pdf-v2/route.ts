@@ -202,11 +202,12 @@ export async function POST(request: NextRequest): Promise<Response> {
 			margin,
 		});
 
-		// Return PDF
+		// Return PDF with standardized filename
+		const { buildPriceTagsFilename } = await import("@/lib/utils");
 		return new Response(pdfBuffer, {
 			headers: {
 				"Content-Type": "application/pdf",
-				"Content-Disposition": `attachment; filename=price-tags-${Date.now()}.pdf`,
+				"Content-Disposition": `attachment; filename=${buildPriceTagsFilename("pdf")}`,
 				"Content-Length": pdfBuffer.length.toString(),
 			},
 		});

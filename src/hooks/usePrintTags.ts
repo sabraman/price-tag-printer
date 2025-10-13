@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { detectBrowser } from "@/lib/browser-detection";
+import { buildPriceTagsFilename } from "@/lib/utils";
 import { renderPriceTagsHTML } from "@/lib/renderPriceTags";
 import type { Item, ThemeSet } from "@/store/priceTagsStore";
 
@@ -36,6 +37,7 @@ export const usePrintTags = ({
 
 	const handleBrowserPrint = useReactToPrint({
 		contentRef: componentRef,
+		documentTitle: buildPriceTagsFilename("pdf").replace(/\.pdf$/, ""),
 		onPrintError: (_errorLocation: "onBeforePrint" | "print", error: Error) => {
 			console.error("Print error:", error);
 			onError?.(error);
@@ -138,7 +140,7 @@ export const usePrintTags = ({
 			const a = document.createElement("a");
 			a.style.display = "none";
 			a.href = url;
-			a.download = "price-tags.pdf";
+            a.download = buildPriceTagsFilename("pdf");
 			document.body.appendChild(a);
 			a.click();
 			window.URL.revokeObjectURL(url);
