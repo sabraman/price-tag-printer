@@ -1,6 +1,4 @@
 "use client";
-
-import { Blob } from 'node:buffer'
 import {
 	Bot,
 	Copy,

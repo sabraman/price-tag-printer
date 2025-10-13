@@ -68,6 +68,7 @@ export default [
                                 ClipboardEvent: "readonly",
                                 EventTarget: "readonly",
 				// File API
+				Blob: "readonly",
 				File: "readonly",
 				FileList: "readonly",
 				FileReader: "readonly",
