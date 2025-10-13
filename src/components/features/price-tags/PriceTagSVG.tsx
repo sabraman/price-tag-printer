@@ -174,7 +174,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 					) : null}
 					<div
 						id={productNameElementId}
-						className="w-[146px] h-6 overflow-hidden relative top-2 left-2.5 text-left font-medium uppercase flex items-center"
+						className="w-[140px] h-6 overflow-hidden relative top-2 left-2.5 text-left font-medium uppercase flex items-center"
 						style={{
 							fontSize: `${calculatedFontSize}px`,
 							fontFamily: font,

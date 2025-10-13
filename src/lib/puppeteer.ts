@@ -1,4 +1,6 @@
 import type { HTTPRequest } from "puppeteer-core";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 export interface PDFGenerationOptions {
 	html: string;
@@ -152,8 +154,22 @@ export async function generatePDF(
 	}
 }
 
+function getFontBase64Safe(path: string): string | null {
+  try {
+    return readFileSync(path).toString("base64");
+  } catch {
+    return null;
+  }
+}
+
 export function createPrintableHTML(content: string): string {
-	return `
+    const fontsDir = join(process.cwd(), "public", "fonts");
+    const nunitoB64 = getFontBase64Safe(join(fontsDir, "Nunito-VariableFont_wght.ttf"));
+    const interB64 = getFontBase64Safe(join(fontsDir, "Inter-VariableFont_opsz,wght.ttf"));
+    const montserratB64 = getFontBase64Safe(join(fontsDir, "Montserrat-VariableFont_wght.ttf"));
+    const montB64 = getFontBase64Safe(join(fontsDir, "mont_heavydemo.ttf"));
+    
+    return `
     <!DOCTYPE html>
     <html lang="en">
       <head>
@@ -268,6 +284,36 @@ export function createPrintableHTML(content: string): string {
             font-weight: 800;
             font-display: block;
             src: url('https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCur61Ew-.woff2') format('woff2');
+          }
+
+          /* Local variable font fallbacks (base64 if available) */
+          @font-face {
+            font-family: 'Montserrat';
+            src: ${montserratB64 ? `url("data:font/truetype;base64,${montserratB64}") format("truetype")` : `url("/fonts/Montserrat-VariableFont_wght.ttf") format("truetype")`};
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: block;
+          }
+          @font-face {
+            font-family: 'Nunito';
+            src: ${nunitoB64 ? `url("data:font/truetype;base64,${nunitoB64}") format("truetype")` : `url("/fonts/Nunito-VariableFont_wght.ttf") format("truetype")`};
+            font-weight: 200 1000;
+            font-style: normal;
+            font-display: block;
+          }
+          @font-face {
+            font-family: 'Inter';
+            src: ${interB64 ? `url("data:font/truetype;base64,${interB64}") format("truetype")` : `url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype")`};
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: block;
+          }
+          @font-face {
+            font-family: 'Mont';
+            src: ${montB64 ? `url("data:font/truetype;base64,${montB64}") format("truetype")` : `url("/fonts/mont_heavydemo.ttf") format("truetype")`};
+            font-weight: 900;
+            font-style: normal;
+            font-display: block;
           }
           
           .print-page {

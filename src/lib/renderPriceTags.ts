@@ -1,20 +1,21 @@
 // Client-side HTML generation for price tags
 import type { Item, ThemeSet } from "@/store/priceTagsStore";
 
-// Helper function to get proper font family for SVG
+// Helper function to get proper font family for SVG (case-insensitive)
 function getFontFamily(fontName: string): string {
-	switch (fontName) {
-		case "Montserrat":
-			return "'Montserrat', sans-serif";
-		case "Nunito":
-			return "'Nunito', sans-serif";
-		case "Inter":
-			return "'Inter', sans-serif";
-		case "Mont":
-			return "'Mont', 'Montserrat', sans-serif";
-		default:
-			return "'Montserrat', sans-serif";
-	}
+    const normalized = (fontName || "").trim().toLowerCase();
+    switch (normalized) {
+        case "montserrat":
+            return "'Montserrat', sans-serif";
+        case "nunito":
+            return "'Nunito', sans-serif";
+        case "inter":
+            return "'Inter', sans-serif";
+        case "mont":
+            return "'Mont', 'Montserrat', sans-serif";
+        default:
+            return "'Montserrat', sans-serif";
+    }
 }
 
 interface RenderOptions {
