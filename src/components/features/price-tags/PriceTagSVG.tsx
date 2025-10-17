@@ -66,6 +66,12 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 	// Check if we have multi-tier pricing
 	const hasMultiTierPricing = priceFor2 && priceFrom3;
 
+	// Visibility guards: blank output for NaN or non-finite prices
+	const showBasePrice = Number.isFinite(price) && price > 0;
+	const showDiscountPrice = Number.isFinite(discountPrice) && discountPrice > 0;
+	const showPriceFor2 = Number.isFinite(priceFor2 as number) && (priceFor2 as number) > 0;
+	const showPriceFrom3 = Number.isFinite(priceFrom3 as number) && (priceFrom3 as number) > 0;
+
 	// Determine if this is a solid color theme that needs a border
 	const needsBorder =
 		safeDesignType === "white" ||
@@ -107,6 +113,10 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 			adjustFontSize();
 		}
 	}, [adjustFontSize, isReady]);
+
+	// Name display: blank out when sentinel '$$$' is provided
+	const displayName =
+		typeof data === "string" && data.trim() === "$$$" ? "" : data;
 
 	return (
 		<div className="relative w-[160px] h-[110px] overflow-hidden">
@@ -182,7 +192,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 							whiteSpace: "nowrap", // Force single line
 						}}
 					>
-						{data}
+						{displayName}
 					</div>
 
 					{hasMultiTierPricing ? (
@@ -214,12 +224,12 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 									>
 										от 3 шт.
 									</span>
-									<span
-										className="text-[26px] font-bold text-right w-full"
-										style={{ fontFamily: font }}
-									>
-										{new Intl.NumberFormat("ru-RU").format(priceFrom3)}
-									</span>
+						<span
+							className="text-[26px] font-bold text-right w-full"
+							style={{ fontFamily: font }}
+						>
+							{showPriceFrom3 ? new Intl.NumberFormat("ru-RU").format(priceFrom3) : ""}
+						</span>
 								</div>
 
 								<div className="flex justify-between items-center mt-[-10px]">
@@ -229,12 +239,12 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 									>
 										2 шт.
 									</span>
-									<span
-										className="text-[20px] font-bold text-right w-full"
-										style={{ fontFamily: font }}
-									>
-										{new Intl.NumberFormat("ru-RU").format(priceFor2)}
-									</span>
+						<span
+							className="text-[20px] font-bold text-right w-full"
+							style={{ fontFamily: font }}
+						>
+							{showPriceFor2 ? new Intl.NumberFormat("ru-RU").format(priceFor2) : ""}
+						</span>
 								</div>
 
 								<div className="flex justify-between items-center mt-[-6px]">
@@ -244,12 +254,12 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 									>
 										1 шт.
 									</span>
-									<span
-										className="text-[16px] font-bold text-right w-full"
-										style={{ fontFamily: font }}
-									>
-										{new Intl.NumberFormat("ru-RU").format(price)}
-									</span>
+						<span
+							className="text-[16px] font-bold text-right w-full"
+							style={{ fontFamily: font }}
+						>
+							{showBasePrice ? new Intl.NumberFormat("ru-RU").format(price) : ""}
+						</span>
 								</div>
 							</div>
 						</div>
@@ -259,17 +269,17 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 							className="pt-[5px] font-bold w-[160px] h-[60px] text-[52px] text-center"
 							style={{ lineHeight: design ? "60px" : "75px", fontFamily: font }}
 						>
-							<span className="relative">
-								{new Intl.NumberFormat("ru-RU").format(price)}
-							</span>
+				<span className="relative">
+					{showBasePrice ? new Intl.NumberFormat("ru-RU").format(price) : ""}
+				</span>
 							<br />
 							<span
 								className="absolute bottom-[3px] left-2.5 w-[70px] h-[18px] font-normal text-[18px] text-left"
 								style={{ fontFamily: font, opacity: 0.8 }}
 							>
-								{design
-									? new Intl.NumberFormat("ru-RU").format(discountPrice)
-									: ""}
+					{design && showDiscountPrice
+						? new Intl.NumberFormat("ru-RU").format(discountPrice)
+						: ""}
 							</span>
 						</div>
 					)}

@@ -7,6 +7,9 @@ import type {
 	Item,
 	PriceTagSettings,
 } from "@/types/api";
+export const maxDuration = 60; // 60 seconds
+
+
 
 // Default settings
 const defaultSettings: PriceTagSettings = {

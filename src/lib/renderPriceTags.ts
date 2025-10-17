@@ -188,6 +188,16 @@ function generatePriceTagSVG({
 	const id = item.id;
 	const originalPrice = item.price;
 	const discountPrice = hasDiscount ? item.discountPrice : originalPrice;
+
+	// Name display guard: blank when sentinel '$$$' is provided
+	const rawName = String(item.data ?? "");
+	const displayName = rawName.trim() === "$$$" ? "" : rawName;
+
+	// Visibility guards: blank output for NaN or non-finite
+	const showBasePrice = Number.isFinite(originalPrice) && (originalPrice as number) > 0;
+	const showDiscountPrice = Number.isFinite(discountPrice) && (discountPrice as number) > 0;
+	const showPriceFor2 = Number.isFinite(item.priceFor2 as number) && (item.priceFor2 as number) > 0;
+	const showPriceFrom3 = Number.isFinite(item.priceFrom3 as number) && (item.priceFrom3 as number) > 0;
 	const hasMultiTierPricing = item.priceFor2 && item.priceFrom3;
 
 	// Determine border settings (same logic as React component)
@@ -249,7 +259,7 @@ function generatePriceTagSVG({
 					
 					<!-- Product name -->
 					<div id="product-name-${id}" style="width: 178px; height: 30px; overflow: hidden; position: relative; top: 10px; left: 12px; text-align: left; font-size: 20px; line-height: 1.2; font-weight: 500; text-transform: uppercase; font-family: ${fontFamily}; white-space: nowrap; display: flex; align-items: center;">
-						${String(item.data)}
+						${displayName}
 					</div>
 
 					${
@@ -268,7 +278,7 @@ function generatePriceTagSVG({
 								</span>
 							</div>
 								<span style="font-size: 32px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
-									${item.priceFrom3 !== undefined ? new Intl.NumberFormat("ru-RU").format(item.priceFrom3) : ""}
+							${showPriceFrom3 ? new Intl.NumberFormat("ru-RU").format(item.priceFrom3 as number) : ""}
 								</span>
 							</div>
 							<div style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
@@ -276,7 +286,7 @@ function generatePriceTagSVG({
 									2 шт.
 								</span>
 								<span style="font-size: 24px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
-									${item.priceFor2 !== undefined ? new Intl.NumberFormat("ru-RU").format(item.priceFor2) : ""}
+							${showPriceFor2 ? new Intl.NumberFormat("ru-RU").format(item.priceFor2 as number) : ""}
 								</span>
 							</div>
 							<div style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
@@ -284,7 +294,7 @@ function generatePriceTagSVG({
 									1 шт.
 								</span>
 								<span style="font-size: 20px; font-weight: bold; text-align: right; width: 100%; font-family: ${fontFamily};">
-									${originalPrice !== undefined ? new Intl.NumberFormat("ru-RU").format(originalPrice) : ""}
+							${showBasePrice ? new Intl.NumberFormat("ru-RU").format(originalPrice as number) : ""}
 								</span>
 							</div>
 						</div>
@@ -294,14 +304,14 @@ function generatePriceTagSVG({
 						<!-- Single price layout -->
 						<div style="padding-top: 6px; font-weight: bold; width: 200px; height: 76px; font-size: 65px; text-align: center; line-height: ${hasDiscount ? "76px" : "95px"}; font-family: ${fontFamily};">
 							<span style="position: relative;">
-								${new Intl.NumberFormat("ru-RU").format(originalPrice)}
+							${showBasePrice ? new Intl.NumberFormat("ru-RU").format(originalPrice as number) : ""}
 							</span>
 							${
 								hasDiscount && discountPrice !== originalPrice
 									? `
 								<br>
 								<span style="position: absolute; bottom: 4px; left: 12px; width: 88px; height: 22px; font-weight: normal; font-size: 22px; text-align: left; opacity: 0.8; font-family: ${fontFamily};">
-									${new Intl.NumberFormat("ru-RU").format(discountPrice)}
+							${showDiscountPrice ? new Intl.NumberFormat("ru-RU").format(discountPrice as number) : ""}
 								</span>
 							`
 									: ""
