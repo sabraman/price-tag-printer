@@ -45,7 +45,20 @@
       "Bash(npx next lint:*)",
       "WebFetch(domain:mintlify.com)",
       "Bash(ls:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp list:*)",
+      "Bash(claude mcp:*)",
+      "WebSearch",
+      "WebFetch(domain:mcp.context7.com)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm biome:write:*)",
+      "Bash(pnpm generate-theme-previews:*)",
+      "Bash(tsx:*)",
+      "Bash(pnpm exec tsx:*)",
+      "Bash(pnpm dev)",
+      "Bash(git checkout:*)",
+      "Bash(git ls-tree:*)"
     ],
     "deny": []
   }

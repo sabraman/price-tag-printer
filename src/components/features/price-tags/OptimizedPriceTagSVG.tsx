@@ -57,9 +57,12 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 
 		// Visibility guards for price outputs
 		const showBasePrice = Number.isFinite(price) && price > 0;
-		const showDiscountPrice = Number.isFinite(discountPrice) && discountPrice > 0;
-		const showPriceFor2 = Number.isFinite(priceFor2 as number) && (priceFor2 as number) > 0;
-		const showPriceFrom3 = Number.isFinite(priceFrom3 as number) && (priceFrom3 as number) > 0;
+		const showDiscountPrice =
+			Number.isFinite(discountPrice) && discountPrice > 0;
+		const showPriceFor2 =
+			Number.isFinite(priceFor2 as number) && (priceFor2 as number) > 0;
+		const showPriceFrom3 =
+			Number.isFinite(priceFrom3 as number) && (priceFrom3 as number) > 0;
 
 		// Reset font size when component mounts or data changes
 		useEffect(() => {
@@ -133,9 +136,9 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 								}}
 								key={key}
 							>
-							{displayName}
-						</div>
-					</foreignObject>
+								{displayName}
+							</div>
+						</foreignObject>
 
 						{/* Price display */}
 						{hasMultiTierPricing ? (
@@ -149,7 +152,9 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 									fontFamily={font}
 									fontWeight="600"
 								>
-						{showBasePrice ? new Intl.NumberFormat("ru-RU").format(price) + "₽" : ""}
+									{showBasePrice
+										? new Intl.NumberFormat("ru-RU").format(price) + "₽"
+										: ""}
 								</text>
 								<text
 									x="10"
@@ -158,7 +163,18 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 									fontSize="8"
 									fontFamily={font}
 								>
-						2+ шт: {showPriceFor2 ? new Intl.NumberFormat("ru-RU").format(priceFor2 as number) + "₽" : ""} | 3+ шт: {showPriceFrom3 ? new Intl.NumberFormat("ru-RU").format(priceFrom3 as number) + "₽" : ""}
+									2+ шт:{" "}
+									{showPriceFor2
+										? new Intl.NumberFormat("ru-RU").format(
+												priceFor2 as number,
+											) + "₽"
+										: ""}{" "}
+									| 3+ шт:{" "}
+									{showPriceFrom3
+										? new Intl.NumberFormat("ru-RU").format(
+												priceFrom3 as number,
+											) + "₽"
+										: ""}
 								</text>
 							</g>
 						) : (
@@ -176,7 +192,9 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 											textDecoration="line-through"
 											opacity="0.8"
 										>
-							{showBasePrice ? new Intl.NumberFormat("ru-RU").format(price) + "₽" : ""}
+											{showBasePrice
+												? new Intl.NumberFormat("ru-RU").format(price) + "₽"
+												: ""}
 										</text>
 										{/* Discount price */}
 										<text
@@ -187,7 +205,10 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 											fontFamily={font}
 											fontWeight="bold"
 										>
-							{showDiscountPrice ? new Intl.NumberFormat("ru-RU").format(discountPrice) + "₽" : ""}
+											{showDiscountPrice
+												? new Intl.NumberFormat("ru-RU").format(discountPrice) +
+													"₽"
+												: ""}
 										</text>
 										{/* Discount text */}
 										{discountLines.map((line, index) => (
@@ -212,7 +233,9 @@ const OptimizedPriceTagSVG: React.FC<OptimizedPriceTagSVGProps> = memo(
 										fontFamily={font}
 										fontWeight="bold"
 									>
-							{showBasePrice ? new Intl.NumberFormat("ru-RU").format(price) + "₽" : ""}
+										{showBasePrice
+											? new Intl.NumberFormat("ru-RU").format(price) + "₽"
+											: ""}
 									</text>
 								)}
 							</g>

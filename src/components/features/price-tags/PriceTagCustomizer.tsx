@@ -1,4 +1,8 @@
+import React from "react";
+import { Download, Save, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -14,6 +18,7 @@ import { usePriceTagsStore } from "@/store/priceTagsStore";
 import { FancyDesignTypeSelector } from "./FancyDesignTypeSelector";
 import { GradientPicker } from "./GradientPicker";
 import PlusMinusInput from "./PlusMinusInput";
+import { ThemeStore, THEME_METADATA } from "@/lib/themes";
 
 interface PriceTagCustomizerProps {
 	themes: ThemeSet;
@@ -21,6 +26,7 @@ interface PriceTagCustomizerProps {
 	discountText: string;
 	designType?: string;
 	showThemeLabels?: boolean;
+	allowThemeSaving?: boolean; // Control whether theme saving functionality is shown
 	onThemeChange: (themes: ThemeSet) => void;
 	onFontChange: (font: string) => void;
 	onDiscountTextChange: (text: string) => void;
@@ -41,6 +47,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	discountText,
 	designType = "default",
 	showThemeLabels = true,
+	allowThemeSaving = false,
 	onThemeChange,
 	onFontChange,
 	onDiscountTextChange,
@@ -48,6 +55,8 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 	onShowThemeLabelsChange,
 }) => {
 	const _currentFontData = fonts.find((f) => f.id === currentFont) || fonts[0];
+	const [customThemeName, setCustomThemeName] = React.useState("");
+	const [showThemeSaveDialog, setShowThemeSaveDialog] = React.useState(false);
 	const {
 		design,
 		hasTableDiscounts,
@@ -119,6 +128,91 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 		clearSettings();
 		window.location.reload();
 	};
+
+	// Get saved themes from localStorage
+	const getSavedThemes = () => {
+		const saved = localStorage.getItem("custom-themes");
+		return saved ? JSON.parse(saved) : {};
+	};
+
+	// Save theme to localStorage
+	const saveThemeToStorage = (themeName: string, themeData: ThemeSet) => {
+		const savedThemes = getSavedThemes();
+		savedThemes[themeName] = themeData;
+		localStorage.setItem("custom-themes", JSON.stringify(savedThemes));
+	};
+
+	// Handle saving current theme
+	const handleSaveTheme = () => {
+		if (!customThemeName.trim()) {
+			toast.error("Пожалуйста, введите название темы");
+			return;
+		}
+
+		try {
+			saveThemeToStorage(customThemeName.trim(), themes);
+			toast.success(`Тема "${customThemeName.trim()}" успешно сохранена`);
+			setCustomThemeName("");
+			setShowThemeSaveDialog(false);
+		} catch (error) {
+			toast.error("Не удалось сохранить тему");
+		}
+	};
+
+	// Copy theme as code using unified format
+	const handleCopyAsCode = () => {
+		try {
+			// Create a properly formatted theme object with metadata
+			const formattedTheme = {
+				name: "Custom Theme",
+				description: "Пользовательская тема",
+				created: new Date().toISOString(),
+				themes: themes,
+				metadata: THEME_METADATA.map(meta => ({
+					id: meta.id,
+					name: meta.name,
+					category: meta.category,
+					order: meta.order,
+				})),
+				version: "1.0.0",
+				format: "unified-theme-store"
+			};
+
+			const themeCode = JSON.stringify(formattedTheme, null, 2);
+			navigator.clipboard.writeText(themeCode);
+			toast.success("Код темы скопирован в буфер обмена");
+		} catch (error) {
+			toast.error("Не удалось скопировать код темы");
+		}
+	};
+
+	// Load saved theme
+	const handleLoadTheme = (themeName: string) => {
+		try {
+			const savedThemes = getSavedThemes();
+			const themeData = savedThemes[themeName];
+			if (themeData) {
+				onThemeChange(themeData);
+				toast.success(`Тема "${themeName}" успешно загружена`);
+			}
+		} catch (error) {
+			toast.error("Не удалось загрузить тему");
+		}
+	};
+
+	// Delete saved theme
+	const handleDeleteTheme = (themeName: string) => {
+		try {
+			const savedThemes = getSavedThemes();
+			delete savedThemes[themeName];
+			localStorage.setItem("custom-themes", JSON.stringify(savedThemes));
+			toast.success(`Тема "${themeName}" удалена`);
+		} catch (error) {
+			toast.error("Не удалось удалить тему");
+		}
+	};
+
+	const savedThemes = getSavedThemes();
 
 	return (
 		<div className="space-y-6">
@@ -201,6 +295,93 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 						cuttingLineColor={cuttingLineColor}
 						onCuttingLineColorChange={setCuttingLineColor}
 					/>
+
+					{/* Theme Actions - Only show when allowThemeSaving is true */}
+					{allowThemeSaving && (
+						<div className="space-y-2 pt-2">
+							<Button
+								onClick={() => setShowThemeSaveDialog(!showThemeSaveDialog)}
+								variant="outline"
+								className="w-full justify-start"
+							>
+								<Save className="w-4 h-4 mr-2" />
+								Сохранить тему
+							</Button>
+
+							{process.env.NODE_ENV === "development" && (
+								<Button
+									onClick={handleCopyAsCode}
+									variant="outline"
+									className="w-full justify-start"
+								>
+									<Download className="w-4 h-4 mr-2" />
+									Копировать как код
+								</Button>
+							)}
+						</div>
+					)}
+
+					{/* Save Theme Dialog - Only show when allowThemeSaving is true */}
+					{showThemeSaveDialog && allowThemeSaving && (
+						<div className="space-y-3 pt-3 border-t border-border/30">
+							<Label className="text-sm font-medium">Название новой темы</Label>
+							<div className="flex gap-2">
+								<Input
+									value={customThemeName}
+									onChange={(e) => setCustomThemeName(e.target.value)}
+									placeholder="Моя крутая тема"
+									className="flex-1"
+								/>
+								<Button
+									onClick={handleSaveTheme}
+									size="sm"
+									disabled={!customThemeName.trim()}
+								>
+									Сохранить
+								</Button>
+								<Button
+									onClick={() => {
+										setShowThemeSaveDialog(false);
+										setCustomThemeName("");
+									}}
+									variant="outline"
+									size="sm"
+								>
+									Отмена
+								</Button>
+							</div>
+						</div>
+					)}
+
+					{/* Saved Themes - Only show when allowThemeSaving is true */}
+					{allowThemeSaving && Object.keys(savedThemes).length > 0 && (
+						<div className="space-y-3 pt-3 border-t border-border/30">
+							<Label className="text-sm font-medium">Сохраненные темы</Label>
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+								{Object.entries(savedThemes).map(([name, _themeData]) => (
+									<div key={name} className="flex gap-2">
+										<Button
+											onClick={() => handleLoadTheme(name)}
+											variant="outline"
+											size="sm"
+											className="flex-1 text-left justify-start"
+										>
+											<Download className="w-4 h-4 mr-2" />
+											{name}
+										</Button>
+										<Button
+											onClick={() => handleDeleteTheme(name)}
+											variant="destructive"
+											size="sm"
+											className="px-2"
+										>
+											<Trash2 className="w-4 h-4" />
+										</Button>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
 				</div>
 			)}
 

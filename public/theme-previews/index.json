@@ -1,0 +1,42 @@
+{
+  "generated": "2025-10-18T11:12:09.942Z",
+  "themes": [
+    "default",
+    "new",
+    "sale",
+    "white",
+    "black",
+    "sunset",
+    "ocean",
+    "forest",
+    "royal",
+    "vintage",
+    "neon",
+    "monochrome",
+    "silver",
+    "charcoal",
+    "paper",
+    "ink",
+    "snow"
+  ],
+  "baseUrl": "/theme-previews",
+  "files": [
+    "default.svg",
+    "new.svg",
+    "sale.svg",
+    "white.svg",
+    "black.svg",
+    "sunset.svg",
+    "ocean.svg",
+    "forest.svg",
+    "royal.svg",
+    "vintage.svg",
+    "neon.svg",
+    "monochrome.svg",
+    "silver.svg",
+    "charcoal.svg",
+    "paper.svg",
+    "ink.svg",
+    "snow.svg"
+  ]
+}

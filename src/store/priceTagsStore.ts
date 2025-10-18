@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { DEFAULT_THEMES, ThemeSet, Theme } from "@/lib/themes";
 
 // Add ID counter to prevent collisions - use a more robust approach
 let uniqueIdCounter = 0;
@@ -39,31 +40,8 @@ export interface Item {
 	priceFrom3?: number;
 }
 
-export interface Theme {
-	start: string;
-	end: string;
-	textColor: string;
-}
-
-export interface ThemeSet {
-	default: Theme;
-	new: Theme;
-	sale: Theme;
-	white: Theme;
-	black: Theme;
-	sunset: Theme;
-	ocean: Theme;
-	forest: Theme;
-	royal: Theme;
-	vintage: Theme;
-	neon: Theme;
-	monochrome: Theme;
-	silver: Theme;
-	charcoal: Theme;
-	paper: Theme;
-	ink: Theme;
-	snow: Theme;
-}
+// Re-export types from unified theme store for backward compatibility
+export type { Theme, ThemeSet } from "@/lib/themes";
 
 interface PriceTagsState {
 	items: Item[];
@@ -135,93 +113,7 @@ export const usePriceTagsStore = create<PriceTagsState>()(
 			discountAmount: 500,
 			maxDiscountPercent: 5,
 			columnLabels: [],
-			themes: {
-				default: {
-					start: "#222222",
-					end: "#dd4c9b",
-					textColor: "#ffffff",
-				},
-				new: {
-					start: "#222222",
-					end: "#9cdd4c",
-					textColor: "#ffffff",
-				},
-				sale: {
-					start: "#222222",
-					end: "#dd4c54",
-					textColor: "#ffffff",
-				},
-				white: {
-					start: "#ffffff",
-					end: "#ffffff",
-					textColor: "#000000",
-				},
-				black: {
-					start: "#000000",
-					end: "#000000",
-					textColor: "#ffffff",
-				},
-				sunset: {
-					start: "#ff7e5f",
-					end: "#feb47b",
-					textColor: "#ffffff",
-				},
-				ocean: {
-					start: "#667eea",
-					end: "#764ba2",
-					textColor: "#ffffff",
-				},
-				forest: {
-					start: "#134e5e",
-					end: "#71b280",
-					textColor: "#ffffff",
-				},
-				royal: {
-					start: "#4c63d2",
-					end: "#9c27b0",
-					textColor: "#ffffff",
-				},
-				vintage: {
-					start: "#8b4513",
-					end: "#d2b48c",
-					textColor: "#ffffff",
-				},
-				neon: {
-					start: "#00ff00",
-					end: "#ff00ff",
-					textColor: "#000000",
-				},
-				monochrome: {
-					start: "#4a4a4a",
-					end: "#888888",
-					textColor: "#ffffff",
-				},
-				silver: {
-					start: "#c0c0c0",
-					end: "#e8e8e8",
-					textColor: "#000000",
-				},
-				charcoal: {
-					start: "#2c2c2c",
-					end: "#2c2c2c",
-					textColor: "#ffffff",
-				},
-				paper: {
-					start: "#f8f8f8",
-					end: "#f0f0f0",
-					textColor: "#333333",
-				},
-				ink: {
-					start: "#1a1a1a",
-					end: "#1a1a1a",
-					textColor: "#ffffff",
-				},
-				snow: {
-					start: "#ffffff",
-					end: "#f5f5f5",
-					textColor: "#000000",
-				},
-			},
+			themes: { ...DEFAULT_THEMES },
 			currentFont: "montserrat",
 			discountText: "цена при подписке\nна телеграм канал",
 			hasTableDesigns: false,

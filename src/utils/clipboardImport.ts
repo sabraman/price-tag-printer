@@ -40,17 +40,17 @@ const NEGATIVE_DISCOUNT_VALUES = new Set([
 ]);
 
 const sanitizeNumericValue = (
-    value: string | undefined,
+	value: string | undefined,
 ): number | undefined => {
-    if (!value) {
-        return undefined;
-    }
+	if (!value) {
+		return undefined;
+	}
 
-    // Treat the special marker "$$$" as an intentional blank price
-    // Return NaN so downstream logic can keep the item but render blank
-    if (value.trim() === "$$$") {
-        return Number.NaN;
-    }
+	// Treat the special marker "$$$" as an intentional blank price
+	// Return NaN so downstream logic can keep the item but render blank
+	if (value.trim() === "$$$") {
+		return Number.NaN;
+	}
 
 	const normalized = value
 		.replace(/[\u00A0\s]/g, "")
@@ -61,12 +61,12 @@ const sanitizeNumericValue = (
 		return undefined;
 	}
 
-    const parsed = Number(normalized);
-    if (Number.isFinite(parsed)) {
-        return parsed;
-    }
+	const parsed = Number(normalized);
+	if (Number.isFinite(parsed)) {
+		return parsed;
+	}
 
-    return undefined;
+	return undefined;
 };
 
 const parseDiscountValue = (value: string | undefined): boolean | undefined => {

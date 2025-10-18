@@ -155,21 +155,27 @@ export async function generatePDF(
 }
 
 function getFontBase64Safe(path: string): string | null {
-  try {
-    return readFileSync(path).toString("base64");
-  } catch {
-    return null;
-  }
+	try {
+		return readFileSync(path).toString("base64");
+	} catch {
+		return null;
+	}
 }
 
 export function createPrintableHTML(content: string): string {
-    const fontsDir = join(process.cwd(), "public", "fonts");
-    const nunitoB64 = getFontBase64Safe(join(fontsDir, "Nunito-VariableFont_wght.ttf"));
-    const interB64 = getFontBase64Safe(join(fontsDir, "Inter-VariableFont_opsz,wght.ttf"));
-    const montserratB64 = getFontBase64Safe(join(fontsDir, "Montserrat-VariableFont_wght.ttf"));
-    const montB64 = getFontBase64Safe(join(fontsDir, "mont_heavydemo.ttf"));
-    
-    return `
+	const fontsDir = join(process.cwd(), "public", "fonts");
+	const nunitoB64 = getFontBase64Safe(
+		join(fontsDir, "Nunito-VariableFont_wght.ttf"),
+	);
+	const interB64 = getFontBase64Safe(
+		join(fontsDir, "Inter-VariableFont_opsz,wght.ttf"),
+	);
+	const montserratB64 = getFontBase64Safe(
+		join(fontsDir, "Montserrat-VariableFont_wght.ttf"),
+	);
+	const montB64 = getFontBase64Safe(join(fontsDir, "mont_heavydemo.ttf"));
+
+	return `
     <!DOCTYPE html>
     <html lang="en">
       <head>

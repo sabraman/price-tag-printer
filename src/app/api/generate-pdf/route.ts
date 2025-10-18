@@ -22,12 +22,12 @@ export async function POST(request: NextRequest) {
 				margin: { top: "0", right: "0", bottom: "0", left: "0" },
 			});
 
-            return new Response(pdfBuffer, {
-                headers: {
-                    "Content-Type": "application/pdf",
-                    "Content-Disposition": `attachment; filename=${buildPriceTagsFilename("pdf")}`,
-                },
-            });
+			return new Response(pdfBuffer, {
+				headers: {
+					"Content-Type": "application/pdf",
+					"Content-Disposition": `attachment; filename=${buildPriceTagsFilename("pdf")}`,
+				},
+			});
 		}
 
 		// Legacy mode: Generate HTML from items and settings
@@ -100,12 +100,12 @@ export async function POST(request: NextRequest) {
 			margin: { top: "0", right: "0", bottom: "0", left: "0" },
 		});
 
-    return new Response(pdfBuffer, {
-        headers: {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename=${buildPriceTagsFilename("pdf")}`,
-        },
-    });
+		return new Response(pdfBuffer, {
+			headers: {
+				"Content-Type": "application/pdf",
+				"Content-Disposition": `attachment; filename=${buildPriceTagsFilename("pdf")}`,
+			},
+		});
 	} catch (error) {
 		console.error("PDF generation error:", error);
 		return NextResponse.json(

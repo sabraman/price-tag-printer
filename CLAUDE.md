@@ -5,19 +5,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ### Core Development
-- `pnpm dev` - Start development server (Vite)
-- `pnpm build` - Build for production (TypeScript compilation + Vite build)
-- `pnpm preview` - Preview production build
+- `pnpm dev` - Start development server (Next.js)
+- `pnpm build` - Build for production (Next.js build)
+- `pnpm start` - Start production server
 
 ### Code Quality
-- `pnpm lint` - Run ESLint with TypeScript support
+- `pnpm lint` - Run Biome linter (configured via Next.js ESLint integration)
 - `pnpm biome:check` - Run Biome linter/formatter check
 - `pnpm biome:unsafe` - Run Biome with unsafe fixes
 - `pnpm biome:write` - Format code with Biome
+- `pnpm typecheck` - Run TypeScript type checking without emitting files
 
 ### Development Hints
-- Dont ever build the project, use these commands to find errors:
-  - `lint`: Run ESLint to check for TypeScript/React errors
+- Don't build the project to find errors - use these commands instead:
+  - `lint`: Run linter to check for TypeScript/React errors
+  - `typecheck`: Run TypeScript compiler for type errors
   - `biome:check`: Run Biome for comprehensive code quality check
   - `biome:unsafe`: Run Biome with more aggressive checks
   - `biome:write`: Automatically format code with Biome
@@ -42,9 +44,10 @@ The application uses **Zustand** with persistence as the primary state managemen
 - **Key state**: items, themes, design settings, discount configurations, table-specific settings
 
 ### Routing
-Uses **TanStack Router** (`src/router.tsx`):
-- Root route: `/` - PriceTagsPage (main application)  
-- Secondary route: `/marketing` - QrCodePage
+Uses **Next.js App Router**:
+- Root route: `/` - PriceTagsPage (main application)
+- Secondary route: `/marketing` - QR code functionality
+- API routes in `src/app/api/` for PDF generation, data processing, and Telegram bot
 
 ### Component Architecture
 Organized in a feature-based structure:
@@ -76,12 +79,13 @@ Organized in a feature-based structure:
 - **History management**: Undo/redo functionality for all table operations
 
 ### Technology Stack
-- **Frontend**: React 19 + TypeScript + Vite
+- **Frontend**: React 19 + TypeScript + Next.js 15.4.6 (App Router)
 - **Styling**: TailwindCSS + Shadcn/ui
-- **State**: Zustand with persistence
+- **State**: Zustand with persistence and Immer middleware
 - **Forms**: React Hook Form + Zod validation
 - **PDF**: pdf-lib for generation, react-to-print for browser printing
 - **Excel**: xlsx library for file processing
+- **Bot Framework**: Grammy for Telegram bot functionality
 - **Testing**: Vitest + React Testing Library
 
 ### Important Patterns
@@ -89,6 +93,12 @@ Organized in a feature-based structure:
 - Unique ID generation uses timestamp + counter to prevent collisions
 - Price calculations are reactive and update automatically when discount settings change
 - Theme system supports per-item design overrides when in table mode
+- API routes follow Next.js App Router conventions in `src/app/api/`
+
+### Telegram Bot Integration
+- Framework is in place with Grammy dependencies
+- API endpoints exist at `src/app/api/bot/` and `src/app/api/telegram-webhook/`
+- Used for automated price tag generation and sharing via Telegram
 
 ## Git Commit Guidelines
 - Do NOT add Claude as co-author in commit messages

@@ -3,19 +3,19 @@ import type { Item, ThemeSet } from "@/store/priceTagsStore";
 
 // Helper function to get proper font family for SVG (case-insensitive)
 function getFontFamily(fontName: string): string {
-    const normalized = (fontName || "").trim().toLowerCase();
-    switch (normalized) {
-        case "montserrat":
-            return "'Montserrat', sans-serif";
-        case "nunito":
-            return "'Nunito', sans-serif";
-        case "inter":
-            return "'Inter', sans-serif";
-        case "mont":
-            return "'Mont', 'Montserrat', sans-serif";
-        default:
-            return "'Montserrat', sans-serif";
-    }
+	const normalized = (fontName || "").trim().toLowerCase();
+	switch (normalized) {
+		case "montserrat":
+			return "'Montserrat', sans-serif";
+		case "nunito":
+			return "'Nunito', sans-serif";
+		case "inter":
+			return "'Inter', sans-serif";
+		case "mont":
+			return "'Mont', 'Montserrat', sans-serif";
+		default:
+			return "'Montserrat', sans-serif";
+	}
 }
 
 interface RenderOptions {
@@ -194,10 +194,15 @@ function generatePriceTagSVG({
 	const displayName = rawName.trim() === "$$$" ? "" : rawName;
 
 	// Visibility guards: blank output for NaN or non-finite
-	const showBasePrice = Number.isFinite(originalPrice) && (originalPrice as number) > 0;
-	const showDiscountPrice = Number.isFinite(discountPrice) && (discountPrice as number) > 0;
-	const showPriceFor2 = Number.isFinite(item.priceFor2 as number) && (item.priceFor2 as number) > 0;
-	const showPriceFrom3 = Number.isFinite(item.priceFrom3 as number) && (item.priceFrom3 as number) > 0;
+	const showBasePrice =
+		Number.isFinite(originalPrice) && (originalPrice as number) > 0;
+	const showDiscountPrice =
+		Number.isFinite(discountPrice) && (discountPrice as number) > 0;
+	const showPriceFor2 =
+		Number.isFinite(item.priceFor2 as number) && (item.priceFor2 as number) > 0;
+	const showPriceFrom3 =
+		Number.isFinite(item.priceFrom3 as number) &&
+		(item.priceFrom3 as number) > 0;
 	const hasMultiTierPricing = item.priceFor2 && item.priceFrom3;
 
 	// Determine border settings (same logic as React component)

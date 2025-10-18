@@ -1074,6 +1074,7 @@ export const PriceTagsPage: React.FC = () => {
 										discountText={discountText}
 										designType={designType}
 										showThemeLabels={showThemeLabels}
+										allowThemeSaving={true}
 										onThemeChange={setThemes}
 										onFontChange={setCurrentFont}
 										onDiscountTextChange={setDiscountText}
