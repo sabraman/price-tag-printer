@@ -284,8 +284,12 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 									: "pt-[5px] h-[60px]"
 							}`}
 							style={{
-								lineHeight: shouldCenterPriceVertically ? "1" : (design ? "60px" : "75px"),
-								fontFamily: font
+								lineHeight: shouldCenterPriceVertically
+									? "1"
+									: design
+										? "60px"
+										: "75px",
+								fontFamily: font,
 							}}
 						>
 							<span className="relative">

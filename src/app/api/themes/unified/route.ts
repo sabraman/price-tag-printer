@@ -11,21 +11,22 @@ import { ThemeStore } from "@/lib/themes";
  */
 export async function GET(request: Request) {
 	const { searchParams } = new URL(request.url);
-	const format = searchParams.get('format') || 'json';
-	const platform = searchParams.get('platform') || 'web';
-	const themeId = searchParams.get('id');
+	const format = searchParams.get("format") || "json";
+	const platform = searchParams.get("platform") || "web";
+	const themeId = searchParams.get("id");
 
 	try {
 		// Single theme request
 		if (themeId) {
-			const theme = ThemeStore.getTheme(themeId as keyof import("@/lib/themes").ThemeSet);
-			const metadata = ThemeStore.getThemeMetadata(themeId as keyof import("@/lib/themes").ThemeSet);
+			const theme = ThemeStore.getTheme(
+				themeId as keyof import("@/lib/themes").ThemeSet,
+			);
+			const metadata = ThemeStore.getThemeMetadata(
+				themeId as keyof import("@/lib/themes").ThemeSet,
+			);
 
 			if (!theme) {
-				return NextResponse.json(
-					{ error: "Theme not found" },
-					{ status: 404 }
-				);
+				return NextResponse.json({ error: "Theme not found" }, { status: 404 });
 			}
 
 			const response = {
@@ -34,19 +35,19 @@ export async function GET(request: Request) {
 				metadata,
 			};
 
-			return format === 'json'
+			return format === "json"
 				? NextResponse.json(response)
 				: NextResponse.json(response, {
-					headers: {
-						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin': '*',
-					},
-				});
+						headers: {
+							"Content-Type": "application/json",
+							"Access-Control-Allow-Origin": "*",
+						},
+					});
 		}
 
 		// Platform-specific responses
 		switch (platform) {
-			case 'bot':
+			case "bot": {
 				const botThemes = ThemeStore.getBotThemes();
 				return NextResponse.json({
 					themes: botThemes,
@@ -54,19 +55,21 @@ export async function GET(request: Request) {
 					version: "1.0.0",
 					platform: "bot",
 				});
+			}
 
-			case 'api':
+			case "api": {
 				const serialized = ThemeStore.serializeThemes();
 				const data = JSON.parse(serialized);
 				data.categories = ThemeStore.getThemesByCategories();
 				return NextResponse.json(data, {
 					headers: {
-						'Access-Control-Allow-Origin': '*',
-						'Cache-Control': 'public, max-age=3600', // 1 hour cache
+						"Access-Control-Allow-Origin": "*",
+						"Cache-Control": "public, max-age=3600", // 1 hour cache
 					},
 				});
+			}
 
-			case 'web':
+			case "web":
 			default:
 				return NextResponse.json({
 					themes: ThemeStore.getAllThemes(),
@@ -76,12 +79,11 @@ export async function GET(request: Request) {
 					platform: "web",
 				});
 		}
-
 	} catch (error) {
 		console.error("Theme API error:", error);
 		return NextResponse.json(
 			{ error: "Internal server error" },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
@@ -95,7 +97,7 @@ export async function POST(request: Request) {
 
 		if (validate) {
 			const isValid = Object.values(themes).every((theme: any) =>
-				ThemeStore.validateTheme(theme)
+				ThemeStore.validateTheme(theme),
 			);
 
 			return NextResponse.json({
@@ -105,12 +107,11 @@ export async function POST(request: Request) {
 		}
 
 		return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-
 	} catch (error) {
 		console.error("Theme validation error:", error);
 		return NextResponse.json(
 			{ error: "Invalid request format" },
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
 }

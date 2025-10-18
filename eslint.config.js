@@ -4,16 +4,16 @@ import typescript from "@typescript-eslint/eslint-plugin";
 import typescriptParser from "@typescript-eslint/parser";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import { FlatCompat } from "@eslint/eslintrc";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const compat = new FlatCompat({
     baseDirectory: __dirname
 });
-
-const __dirname = dirname(__filename);
-const __filename = fileURLToPath(import.meta.url);
-import { FlatCompat } from "@eslint/eslintrc";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 export default [...compat.extends("next/core-web-vitals", "next/typescript"), {
     ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"]
@@ -129,6 +129,8 @@ export default [...compat.extends("next/core-web-vitals", "next/typescript"), {
                 allowTaggedTemplates: true,
             },
         ],
+        // Disable unescaped entities rule for internationalized content
+        "react/no-unescaped-entities": "off",
     },
 }, {
     files: ["src/app/api/**/*.{js,ts}"],

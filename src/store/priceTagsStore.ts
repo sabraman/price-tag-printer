@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { DEFAULT_THEMES, ThemeSet, Theme } from "@/lib/themes";
+import { DEFAULT_THEMES, ThemeSet } from "@/lib/themes";
 
 // Add ID counter to prevent collisions - use a more robust approach
 let uniqueIdCounter = 0;

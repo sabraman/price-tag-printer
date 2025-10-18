@@ -17,10 +17,39 @@ interface ThemePreviewResponse {
 
 export async function GET(
 	request: Request,
-): Promise<NextResponse<ThemePreviewResponse>> {
+): Promise<
+	NextResponse<
+		ThemePreviewResponse | { success: boolean; data?: any; error?: string }
+	>
+> {
 	try {
 		const { searchParams } = new URL(request.url);
 		const themeName = searchParams.get("theme") || "default";
+		const listThemes = searchParams.get("list") === "true";
+
+		// If listing themes, return theme list
+		if (listThemes) {
+			const publicDir = path.join(process.cwd(), "public");
+			const indexPath = path.join(publicDir, "theme-previews", "index.json");
+
+			if (!fs.existsSync(indexPath)) {
+				return NextResponse.json(
+					{
+						success: false,
+						error:
+							'Theme previews not generated. Run "pnpm generate-theme-previews" first.',
+					},
+					{ status: 404 },
+				);
+			}
+
+			const indexData = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
+
+			return NextResponse.json({
+				success: true,
+				data: indexData,
+			});
+		}
 
 		// Validate theme name
 		const validThemes = [
@@ -94,41 +123,6 @@ export async function GET(
 		});
 	} catch (error) {
 		console.error("Theme preview API error:", error);
-		return NextResponse.json(
-			{
-				success: false,
-				error: error instanceof Error ? error.message : "Unknown error",
-			},
-			{ status: 500 },
-		);
-	}
-}
-
-// GET /api/theme-preview/theme-list - List all available themes
-export async function getAllThemes(): Promise<NextResponse> {
-	try {
-		const publicDir = path.join(process.cwd(), "public");
-		const indexPath = path.join(publicDir, "theme-previews", "index.json");
-
-		if (!fs.existsSync(indexPath)) {
-			return NextResponse.json(
-				{
-					success: false,
-					error:
-						'Theme previews not generated. Run "pnpm generate-theme-previews" first.',
-				},
-				{ status: 404 },
-			);
-		}
-
-		const indexData = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
-
-		return NextResponse.json({
-			success: true,
-			data: indexData,
-		});
-	} catch (error) {
-		console.error("Theme list API error:", error);
 		return NextResponse.json(
 			{
 				success: false,

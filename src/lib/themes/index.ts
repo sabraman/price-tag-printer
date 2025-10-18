@@ -35,7 +35,11 @@ export interface ThemeSet {
 	snow: Theme;
 }
 
-export type ThemeCategory = 'light' | 'dark' | 'light-monochrome' | 'dark-monochrome';
+export type ThemeCategory =
+	| "light"
+	| "dark"
+	| "light-monochrome"
+	| "dark-monochrome";
 
 export interface ThemeMetadata {
 	id: keyof ThemeSet;
@@ -146,10 +150,15 @@ export const THEME_METADATA: ThemeMetadata[] = [
 	{ id: "snow", name: "Снег", emoji: "❄️", category: "light", order: 2 },
 	{ id: "silver", name: "Серебро", emoji: "🥈", category: "light", order: 3 },
 	{ id: "paper", name: "Бумага", emoji: "📄", category: "light", order: 4 },
-	
 
 	// Light monochrome themes - light grayscale with dark text
-	{ id: "monochrome", name: "Монохром", emoji: "🎨", category: "light-monochrome", order: 1 },
+	{
+		id: "monochrome",
+		name: "Монохром",
+		emoji: "🎨",
+		category: "light-monochrome",
+		order: 1,
+	},
 
 	// Dark themes - dark backgrounds with light text
 	{ id: "default", name: "Классик", emoji: "🎯", category: "dark", order: 1 },
@@ -163,9 +172,27 @@ export const THEME_METADATA: ThemeMetadata[] = [
 	{ id: "neon", name: "Неон", emoji: "💫", category: "dark", order: 9 },
 
 	// Dark monochrome themes - dark grayscale with light text
-	{ id: "black", name: "Черный", emoji: "⚫", category: "dark-monochrome", order: 1 },
-	{ id: "charcoal", name: "Уголь", emoji: "⚫", category: "dark-monochrome", order: 2 },
-	{ id: "ink", name: "Чернила", emoji: "🖋️", category: "dark-monochrome", order: 3 },
+	{
+		id: "black",
+		name: "Черный",
+		emoji: "⚫",
+		category: "dark-monochrome",
+		order: 1,
+	},
+	{
+		id: "charcoal",
+		name: "Уголь",
+		emoji: "⚫",
+		category: "dark-monochrome",
+		order: 2,
+	},
+	{
+		id: "ink",
+		name: "Чернила",
+		emoji: "🖋️",
+		category: "dark-monochrome",
+		order: 3,
+	},
 ];
 
 /**
@@ -190,7 +217,7 @@ export class ThemeStore {
 	 * Get theme metadata
 	 */
 	static getThemeMetadata(id: keyof ThemeSet): ThemeMetadata | undefined {
-		return THEME_METADATA.find(meta => meta.id === id);
+		return THEME_METADATA.find((meta) => meta.id === id);
 	}
 
 	/**
@@ -204,9 +231,9 @@ export class ThemeStore {
 	 * Get themes filtered by category (sorted by order)
 	 */
 	static getThemesByCategory(category: ThemeCategory): ThemeMetadata[] {
-		return THEME_METADATA
-			.filter(meta => meta.category === category)
-			.sort((a, b) => a.order - b.order);
+		return THEME_METADATA.filter((meta) => meta.category === category).sort(
+			(a, b) => a.order - b.order,
+		);
 	}
 
 	/**
@@ -216,16 +243,16 @@ export class ThemeStore {
 		const categories: Record<ThemeCategory, ThemeMetadata[]> = {
 			light: [],
 			dark: [],
-			'light-monochrome': [],
-			'dark-monochrome': [],
+			"light-monochrome": [],
+			"dark-monochrome": [],
 		};
 
-		THEME_METADATA.forEach(meta => {
+		THEME_METADATA.forEach((meta) => {
 			categories[meta.category].push(meta);
 		});
 
 		// Sort each category by order
-		Object.keys(categories).forEach(category => {
+		Object.keys(categories).forEach((category) => {
 			categories[category as ThemeCategory].sort((a, b) => a.order - b.order);
 		});
 
@@ -239,8 +266,8 @@ export class ThemeStore {
 		const names: Record<ThemeCategory, string> = {
 			light: "Светлые",
 			dark: "Темные",
-			'light-monochrome': "Светлые монохром",
-			'dark-monochrome': "Темные монохром",
+			"light-monochrome": "Светлые монохром",
+			"dark-monochrome": "Темные монохром",
 		};
 		return names[category];
 	}
@@ -252,8 +279,8 @@ export class ThemeStore {
 		const descriptions: Record<ThemeCategory, string> = {
 			light: "Светлые фоны с темным текстом",
 			dark: "Темные фоны со светлым текстом",
-			'light-monochrome': "Светлые градиенты серых тонов",
-			'dark-monochrome': "Темные градиенты серых тонов",
+			"light-monochrome": "Светлые градиенты серых тонов",
+			"dark-monochrome": "Темные градиенты серых тонов",
 		};
 		return descriptions[category];
 	}
@@ -262,12 +289,16 @@ export class ThemeStore {
 	 * Serialize themes for API/bot usage
 	 */
 	static serializeThemes(): string {
-		return JSON.stringify({
-			themes: DEFAULT_THEMES,
-			metadata: THEME_METADATA,
-			version: "1.0.0",
-			lastUpdated: new Date().toISOString(),
-		}, null, 2);
+		return JSON.stringify(
+			{
+				themes: DEFAULT_THEMES,
+				metadata: THEME_METADATA,
+				version: "1.0.0",
+				lastUpdated: new Date().toISOString(),
+			},
+			null,
+			2,
+		);
 	}
 
 	/**
@@ -287,10 +318,10 @@ export class ThemeStore {
 	 */
 	static validateTheme(theme: any): theme is Theme {
 		return (
-			typeof theme === 'object' &&
-			typeof theme.start === 'string' &&
-			typeof theme.end === 'string' &&
-			typeof theme.textColor === 'string' &&
+			typeof theme === "object" &&
+			typeof theme.start === "string" &&
+			typeof theme.end === "string" &&
+			typeof theme.textColor === "string" &&
 			/^#[0-9A-Fa-f]{6}$/.test(theme.start) &&
 			/^#[0-9A-Fa-f]{6}$/.test(theme.end) &&
 			/^#[0-9A-Fa-f]{6}$/.test(theme.textColor)
@@ -300,8 +331,13 @@ export class ThemeStore {
 	/**
 	 * Get theme for bot (with emoji and name)
 	 */
-	static getBotThemes(): Array<{ id: string; name: string; emoji: string; colors: Theme }> {
-		return THEME_METADATA.map(meta => ({
+	static getBotThemes(): Array<{
+		id: string;
+		name: string;
+		emoji: string;
+		colors: Theme;
+	}> {
+		return THEME_METADATA.map((meta) => ({
 			id: meta.id,
 			name: meta.name,
 			emoji: meta.emoji,
@@ -312,7 +348,10 @@ export class ThemeStore {
 	/**
 	 * Generate CSS variables for theme
 	 */
-	static generateCSSVariables(theme: Theme, prefix = '--theme'): Record<string, string> {
+	static generateCSSVariables(
+		theme: Theme,
+		prefix = "--theme",
+	): Record<string, string> {
 		return {
 			[`${prefix}-start`]: theme.start,
 			[`${prefix}-end`]: theme.end,
@@ -323,7 +362,7 @@ export class ThemeStore {
 	/**
 	 * Create gradient CSS string
 	 */
-	static createGradient(theme: Theme, direction = '135deg'): string {
+	static createGradient(theme: Theme, direction = "135deg"): string {
 		return `linear-gradient(${direction}, ${theme.start}, ${theme.end})`;
 	}
 }

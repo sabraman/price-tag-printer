@@ -58,7 +58,9 @@
       "Bash(pnpm exec tsx:*)",
       "Bash(pnpm dev)",
       "Bash(git checkout:*)",
-      "Bash(git ls-tree:*)"
+      "Bash(git ls-tree:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": []
   }

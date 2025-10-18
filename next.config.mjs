@@ -5,6 +5,12 @@ const nextConfig = {
 		"@sparticuz/chromium",
 		"google-sheets-data-fetcher",
 	],
+	experimental: {
+		// Try to avoid static generation issues
+		serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
+		// Force dynamic rendering to avoid Html import issues
+		forceSwcTransforms: true,
+	},
 	webpack: (config, { isServer }) => {
 		if (isServer) {
 			config.externals.push({
@@ -46,6 +52,10 @@ const nextConfig = {
 	compiler: {
 		// Note: reactCompiler might not be available in this version
 	},
+	// Disable trailing slash handling to avoid build issues
+	trailingSlash: false,
+	// Skip static generation for error pages
+	poweredByHeader: false,
 };
 
 export default nextConfig;

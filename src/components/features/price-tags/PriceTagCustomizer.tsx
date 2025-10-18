@@ -18,7 +18,7 @@ import { usePriceTagsStore } from "@/store/priceTagsStore";
 import { FancyDesignTypeSelector } from "./FancyDesignTypeSelector";
 import { GradientPicker } from "./GradientPicker";
 import PlusMinusInput from "./PlusMinusInput";
-import { ThemeStore, THEME_METADATA } from "@/lib/themes";
+import { THEME_METADATA } from "@/lib/themes";
 
 interface PriceTagCustomizerProps {
 	themes: ThemeSet;
@@ -154,7 +154,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 			toast.success(`Тема "${customThemeName.trim()}" успешно сохранена`);
 			setCustomThemeName("");
 			setShowThemeSaveDialog(false);
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Не удалось сохранить тему");
 		}
 	};
@@ -168,20 +168,20 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 				description: "Пользовательская тема",
 				created: new Date().toISOString(),
 				themes: themes,
-				metadata: THEME_METADATA.map(meta => ({
+				metadata: THEME_METADATA.map((meta) => ({
 					id: meta.id,
 					name: meta.name,
 					category: meta.category,
 					order: meta.order,
 				})),
 				version: "1.0.0",
-				format: "unified-theme-store"
+				format: "unified-theme-store",
 			};
 
 			const themeCode = JSON.stringify(formattedTheme, null, 2);
 			navigator.clipboard.writeText(themeCode);
 			toast.success("Код темы скопирован в буфер обмена");
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Не удалось скопировать код темы");
 		}
 	};
@@ -195,7 +195,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 				onThemeChange(themeData);
 				toast.success(`Тема "${themeName}" успешно загружена`);
 			}
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Не удалось загрузить тему");
 		}
 	};
@@ -207,7 +207,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 			delete savedThemes[themeName];
 			localStorage.setItem("custom-themes", JSON.stringify(savedThemes));
 			toast.success(`Тема "${themeName}" удалена`);
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Не удалось удалить тему");
 		}
 	};
