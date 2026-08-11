@@ -1,4 +1,3 @@
-// Note: Google Sheets functionality temporarily disabled due to SSR compatibility issues
 import { AlertCircle } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
@@ -6,7 +5,8 @@ import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { fetchGoogleSheetsData } from "@/lib/googleSheets";
+import { fetchGoogleSheetsData } from "@/lib/googleSheetsClient";
+import type { GoogleSheetsResponse } from "@/lib/googleSheetsTypes";
 import type { Item } from "@/store/itemsStore";
 import ExcelUploaderLazy from "./ExcelUploaderLazy";
 import GoogleSheetsForm from "./GoogleSheetsForm";
@@ -15,17 +15,6 @@ interface DataImportSectionProps {
 	onDataImported: (items: Item[], columnLabels: string[]) => void;
 	onError: (error: string) => void;
 	onLoadingChange: (loading: boolean) => void;
-}
-
-interface GoogleSheetsResponse {
-	[columnKey: string]: {
-		id: string;
-		label: string;
-		type: string;
-		rows: {
-			[rowKey: string]: { id: number; data: string | number };
-		};
-	};
 }
 
 // Utility function to parse discount values

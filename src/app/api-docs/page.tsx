@@ -256,7 +256,7 @@ const ApiTestingPlayground: React.FC = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+		<div className="min-h-screen bg-linear-to-br from-background via-background to-muted/20">
 			<div className="container mx-auto py-8 px-4 max-w-7xl">
 				{/* Hero Section */}
 				<div className="text-center mb-12 py-12">
@@ -266,7 +266,7 @@ const ApiTestingPlayground: React.FC = () => {
 							LLM-Friendly API
 						</span>
 					</div>
-					<h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+					<h1 className="text-5xl font-bold mb-6 bg-linear-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
 						Price Tag API
 					</h1>
 					<p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -296,7 +296,7 @@ const ApiTestingPlayground: React.FC = () => {
 					<div className="flex flex-col sm:flex-row gap-4 justify-center">
 						<Button
 							size="lg"
-							className="px-8 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+							className="px-8 bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
 							onClick={() => window.open("/api/llms", "_blank")}
 						>
 							<Bot className="h-4 w-4 mr-2" />
@@ -340,7 +340,7 @@ const ApiTestingPlayground: React.FC = () => {
 
 					<TabsContent value="llm-quick-start" className="space-y-8">
 						{/* AI Assistant Quick Start */}
-						<Card className="bg-gradient-to-br from-violet-500/10 to-purple-600/5 border-violet-200/50 dark:border-violet-800/50">
+						<Card className="bg-linear-to-br from-violet-500/10 to-purple-600/5 border-violet-200/50 dark:border-violet-800/50">
 							<CardHeader>
 								<CardTitle className="text-3xl flex items-center gap-3">
 									<Bot className="h-10 w-10 text-violet-600" />
@@ -355,7 +355,7 @@ const ApiTestingPlayground: React.FC = () => {
 							<CardContent className="space-y-8">
 								{/* Direct Integration Resources */}
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-									<Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
+									<Card className="bg-linear-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
 										<CardContent className="pt-6">
 											<div className="space-y-4">
 												<div className="flex items-center gap-3">
@@ -382,7 +382,7 @@ const ApiTestingPlayground: React.FC = () => {
 										</CardContent>
 									</Card>
 
-									<Card className="bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800">
+									<Card className="bg-linear-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800">
 										<CardContent className="pt-6">
 											<div className="space-y-4">
 												<div className="flex items-center gap-3">
@@ -469,15 +469,15 @@ const ApiTestingPlayground: React.FC = () => {
 										<CardContent>
 											<div className="bg-muted/50 p-4 rounded-lg">
 												<pre className="text-xs overflow-x-auto whitespace-pre-wrap">
-													{`I want to integrate the Price Tag API. 
-Can you help me create price tags for 
+													{`I want to integrate the Price Tag API.
+Can you help me create price tags for
 my coffee shop with these products:
 
 - Premium Coffee: $12.99
-- House Blend: $9.99  
+- House Blend: $9.99
 - Specialty Roast: $15.99
 
-I want them to have a "new" theme 
+I want them to have a "new" theme
 and generate a PDF for printing.`}
 												</pre>
 											</div>
@@ -493,7 +493,7 @@ and generate a PDF for printing.`}
 										<CardContent>
 											<div className="bg-muted/50 p-4 rounded-lg">
 												<pre className="text-xs overflow-x-auto whitespace-pre-wrap">
-													{`Use the Price Tag API to create 
+													{`Use the Price Tag API to create
 bulk price tags for my inventory:
 
 1. Set up the API connection
@@ -509,7 +509,7 @@ Here's my product list: [...]`}
 								</div>
 
 								{/* Benefits */}
-								<Card className="bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm">
+								<Card className="bg-linear-to-r from-card/80 to-card/60 backdrop-blur-sm">
 									<CardContent className="pt-6">
 										<h3 className="text-lg font-semibold mb-4">
 											Why This API Works Great with AI Assistants
@@ -553,7 +553,7 @@ Here's my product list: [...]`}
 					<TabsContent value="overview" className="space-y-8">
 						{/* Quick Stats */}
 						<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-							<Card className="text-center bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
+							<Card className="text-center bg-linear-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
 								<CardContent className="pt-6">
 									<div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
 										8
@@ -563,7 +563,7 @@ Here's my product list: [...]`}
 									</div>
 								</CardContent>
 							</Card>
-							<Card className="text-center bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800">
+							<Card className="text-center bg-linear-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800">
 								<CardContent className="pt-6">
 									<div className="text-2xl font-bold text-green-600 dark:text-green-400">
 										17
@@ -573,7 +573,7 @@ Here's my product list: [...]`}
 									</div>
 								</CardContent>
 							</Card>
-							<Card className="text-center bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border-purple-200 dark:border-purple-800">
+							<Card className="text-center bg-linear-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border-purple-200 dark:border-purple-800">
 								<CardContent className="pt-6">
 									<div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
 										1000
@@ -583,7 +583,7 @@ Here's my product list: [...]`}
 									</div>
 								</CardContent>
 							</Card>
-							<Card className="text-center bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20 border-orange-200 dark:border-orange-800">
+							<Card className="text-center bg-linear-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20 border-orange-200 dark:border-orange-800">
 								<CardContent className="pt-6">
 									<div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
 										3
@@ -596,7 +596,7 @@ Here's my product list: [...]`}
 						</div>
 
 						{/* API Configuration */}
-						<Card className="bg-gradient-to-r from-card/50 to-card/30 backdrop-blur-sm">
+						<Card className="bg-linear-to-r from-card/50 to-card/30 backdrop-blur-sm">
 							<CardHeader>
 								<CardTitle className="text-2xl">API Configuration</CardTitle>
 								<CardDescription>
@@ -613,7 +613,7 @@ Here's my product list: [...]`}
 										<div className="bg-muted/50 p-3 rounded-lg font-mono text-sm border">
 											{typeof window !== "undefined"
 												? window.location.origin
-												: "https://your-domain.com"}
+												: "https://print.sabraman.art"}
 											/api
 										</div>
 										<Button
@@ -623,7 +623,7 @@ Here's my product list: [...]`}
 												copyToClipboard(
 													typeof window !== "undefined"
 														? `${window.location.origin}/api`
-														: "https://your-domain.com/api",
+														: "https://print.sabraman.art/api",
 												)
 											}
 											className="h-8 px-2"
@@ -671,7 +671,7 @@ Here's my product list: [...]`}
 
 						{/* Core Features */}
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							<Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-200/50 dark:border-blue-800/50">
+							<Card className="bg-linear-to-br from-blue-500/10 to-blue-600/5 border-blue-200/50 dark:border-blue-800/50">
 								<CardHeader>
 									<CardTitle className="text-lg flex items-center gap-2">
 										<div className="h-8 w-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
@@ -693,7 +693,7 @@ Here's my product list: [...]`}
 								</CardContent>
 							</Card>
 
-							<Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-200/50 dark:border-green-800/50">
+							<Card className="bg-linear-to-br from-green-500/10 to-green-600/5 border-green-200/50 dark:border-green-800/50">
 								<CardHeader>
 									<CardTitle className="text-lg flex items-center gap-2">
 										<div className="h-8 w-8 bg-green-500/20 rounded-lg flex items-center justify-center">
@@ -715,7 +715,7 @@ Here's my product list: [...]`}
 								</CardContent>
 							</Card>
 
-							<Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-200/50 dark:border-purple-800/50">
+							<Card className="bg-linear-to-br from-purple-500/10 to-purple-600/5 border-purple-200/50 dark:border-purple-800/50">
 								<CardHeader>
 									<CardTitle className="text-lg flex items-center gap-2">
 										<div className="h-8 w-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -741,7 +741,7 @@ Here's my product list: [...]`}
 
 					<TabsContent value="llm-integration" className="space-y-8">
 						{/* LLM Integration Guide */}
-						<Card className="bg-gradient-to-br from-violet-500/10 to-purple-600/5 border-violet-200/50 dark:border-violet-800/50">
+						<Card className="bg-linear-to-br from-violet-500/10 to-purple-600/5 border-violet-200/50 dark:border-violet-800/50">
 							<CardHeader>
 								<CardTitle className="text-2xl flex items-center gap-3">
 									<Bot className="h-8 w-8 text-violet-600" />
@@ -775,7 +775,7 @@ Here's my product list: [...]`}
 											variant="outline"
 											onClick={() =>
 												copyToClipboard(
-													`${typeof window !== "undefined" ? window.location.origin : "https://your-domain.com"}/openapi.json`,
+													`${typeof window !== "undefined" ? window.location.origin : "https://print.sabraman.art"}/openapi.json`,
 												)
 											}
 										>
@@ -1116,6 +1116,8 @@ Here's my product list: [...]`}
 														<iframe
 															src={htmlUrl}
 															className="w-full h-[500px]"
+															title="HTML price tag preview"
+															sandbox=""
 														/>
 													</div>
 													<div className="flex gap-2">
@@ -1142,7 +1144,12 @@ Here's my product list: [...]`}
 												<div className="space-y-2">
 													<Label>PDF Preview</Label>
 													<div className="border rounded">
-														<iframe src={pdfUrl} className="w-full h-[500px]" />
+														<iframe
+															src={pdfUrl}
+															className="w-full h-[500px]"
+															title="PDF price tag preview"
+															sandbox=""
+														/>
 													</div>
 													<div className="flex gap-2">
 														<Button
@@ -1190,7 +1197,7 @@ Here's my product list: [...]`}
 									<div>
 										<h4 className="font-medium mb-2">1. Create a Price Tag</h4>
 										<pre className="text-xs bg-muted p-3 rounded overflow-auto">
-											{`curl -X POST ${typeof window !== "undefined" ? window.location.origin : "https://your-domain.com"}/api/price-tags \\
+											{`curl -X POST ${typeof window !== "undefined" ? window.location.origin : "https://print.sabraman.art"}/api/price-tags \\
   -H "Content-Type: application/json" \\
   -d '{
     "data": "Premium Coffee",
@@ -1204,7 +1211,7 @@ Here's my product list: [...]`}
 									<div>
 										<h4 className="font-medium mb-2">2. Generate PDF</h4>
 										<pre className="text-xs bg-muted p-3 rounded overflow-auto">
-											{`curl -X POST ${typeof window !== "undefined" ? window.location.origin : "https://your-domain.com"}/api/generate-pdf-v2 \\
+											{`curl -X POST ${typeof window !== "undefined" ? window.location.origin : "https://print.sabraman.art"}/api/generate-pdf-v2 \\
   -H "Content-Type: application/json" \\
   -d '{
     "items": [
@@ -1228,7 +1235,7 @@ Here's my product list: [...]`}
 									<div>
 										<h4 className="font-medium mb-2">3. Get All Price Tags</h4>
 										<pre className="text-xs bg-muted p-3 rounded overflow-auto">
-											{`curl "${typeof window !== "undefined" ? window.location.origin : "https://your-domain.com"}/api/price-tags?limit=20&sortBy=price&sortOrder=desc"`}
+											{`curl "${typeof window !== "undefined" ? window.location.origin : "https://print.sabraman.art"}/api/price-tags?limit=20&sortBy=price&sortOrder=desc"`}
 										</pre>
 									</div>
 								</CardContent>
@@ -1263,7 +1270,7 @@ const result = await response.json();`}
 											{`import requests
 
 # Create price tag
-response = requests.post('${typeof window !== "undefined" ? window.location.origin : "https://your-domain.com"}/api/price-tags', 
+response = requests.post('${typeof window !== "undefined" ? window.location.origin : "https://print.sabraman.art"}/api/price-tags',
   json={
     'data': 'Product Name',
     'price': 1000,
@@ -1352,7 +1359,7 @@ result = response.json()`}
   "designType": "new",
   "hasDiscount": true
 }, {
-  "data": "House Blend", 
+  "data": "House Blend",
   "price": 999,
   "designType": "default"
 }]
@@ -1388,7 +1395,7 @@ result = response.json()`}
   }
 }
 
-// Rate Limit Error  
+// Rate Limit Error
 {
   "success": false,
   "error": "Too many requests. Maximum 1000 items per request.",
@@ -1442,7 +1449,7 @@ POST /api/price-tags
   "items": [...1000_items]
 }
 
-// Inefficient: Multiple single requests  
+// Inefficient: Multiple single requests
 for (item of items) {
   POST /api/price-tags { item }
 }`}
@@ -1527,7 +1534,7 @@ async function updateInventoryPricing(updates) {
       hasDiscount: update.onSale
     });
   }
-  
+
   // Regenerate PDFs for updated sections
   const updatedTags = await getPriceTagsByIds(updates.map(u => u.tagId));
   return generatePDF({ items: updatedTags });
@@ -1597,7 +1604,7 @@ if (status.data.status !== 'healthy') {
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 							<Button
 								variant="outline"
-								className="h-auto p-4 bg-gradient-to-br from-violet-50 to-purple-50 hover:from-violet-100 hover:to-purple-100 border-violet-200"
+								className="h-auto p-4 bg-linear-to-br from-violet-50 to-purple-50 hover:from-violet-100 hover:to-purple-100 border-violet-200"
 								onClick={() => window.open("/api/llms", "_blank")}
 							>
 								<div className="text-center">

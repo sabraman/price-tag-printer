@@ -169,7 +169,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 				>
 					{shouldShowLabel && safeDesignType === "new" ? (
 						<div
-							className="absolute -right-[52px] bottom-[-14px] rotate-[-90deg] text-[52px] font-black whitespace-nowrap overflow-hidden w-[118px]"
+							className="absolute right-[-52px] bottom-[-14px] -rotate-90 text-[52px] font-black whitespace-nowrap overflow-hidden w-[118px]"
 							style={{
 								fontFamily: font,
 								color: themes.new.start,
@@ -179,7 +179,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 						</div>
 					) : shouldShowLabel && safeDesignType === "sale" ? (
 						<div
-							className="absolute -right-[48px] bottom-[-14px] rotate-[-90deg] text-[48px] font-black whitespace-nowrap overflow-hidden w-[124px]"
+							className="absolute right-[-48px] bottom-[-14px] -rotate-90 text-[48px] font-black whitespace-nowrap overflow-hidden w-[124px]"
 							style={{
 								fontFamily: font,
 								color: themes.sale.start,
@@ -208,7 +208,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 							style={{ fontFamily: font }}
 						>
 							{/* Main price - largest and on the right */}
-							{/* <div 
+							{/* <div
                 className="absolute top-0 right-[12px] font-bold text-[24px]" 
                 style={{ fontFamily: font }}
               >
@@ -341,7 +341,7 @@ const PriceTagSVG: React.FC<PriceTagSVGProps> = ({
 					xmlns="http://www.w3.org/2000/svg"
 				>
 					<title>Линии для вырезания</title>
-					{/* Линии для вырезания - более длинные штрихи с небольшими промежутками, 
+					{/* Линии для вырезания - более длинные штрихи с небольшими промежутками,
             подходят для печати и будут заметны даже при наложении друг на друга в сетке */}
 					<line
 						x1="0"

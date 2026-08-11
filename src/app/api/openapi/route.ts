@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { NextResponse } from "next/server";
+import { siteConfig } from "@/config/site";
 
 export async function GET() {
 	try {
@@ -8,17 +9,11 @@ export async function GET() {
 		const openapiSpec = readFileSync(openapiPath, "utf8");
 		const spec = JSON.parse(openapiSpec);
 
-		// Update the server URL to match the current request
-		const currentUrl = new URL(
-			"/api",
-			process.env.VERCEL_URL
-				? `https://${process.env.VERCEL_URL}`
-				: "http://localhost:3000",
-		);
+		// Keep generated examples stable across local, preview, and production builds.
 		spec.servers = [
 			{
-				url: currentUrl.toString(),
-				description: "Current API server",
+				url: siteConfig.apiUrl,
+				description: "Production API server",
 			},
 		];
 
@@ -45,8 +40,8 @@ export async function GET() {
 			},
 			servers: [
 				{
-					url: "/api",
-					description: "Current server",
+					url: siteConfig.apiUrl,
+					description: "Production API server",
 				},
 			],
 			paths: {

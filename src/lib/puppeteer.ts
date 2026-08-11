@@ -23,15 +23,12 @@ export async function generatePDF(
 		margin = { top: "0", right: "0", bottom: "0", left: "0" },
 	} = options;
 
-	// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 	let browser: any | null = null;
 
 	try {
 		// Configure for different environments based on Vercel's official guide
 		const isVercel = !!process.env.VERCEL_ENV;
-		// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 		let puppeteer: any;
-		// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 		let launchOptions: any = { headless: true };
 
 		if (isVercel) {
@@ -146,6 +143,7 @@ export async function generatePDF(
 		console.error("PDF generation error:", error);
 		throw new Error(
 			`Failed to generate PDF: ${error instanceof Error ? error.message : "Unknown error"}`,
+			{ cause: error },
 		);
 	} finally {
 		if (browser) {

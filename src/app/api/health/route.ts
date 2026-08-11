@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { siteConfig } from "@/config/site";
 import type { ApiResponse } from "@/types/api";
 
 interface HealthData {
@@ -38,7 +39,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<HealthData>>> {
 			: "unknown",
 		responseTime: `${Date.now() - startTime}ms`,
 		llm_integration: {
-			openapi_spec_url: "/api/openapi",
+			openapi_spec_url: `${siteConfig.apiUrl}/openapi`,
 			function_calling_ready: true,
 			structured_outputs: true,
 			max_items_per_request: 1000,

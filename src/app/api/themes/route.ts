@@ -14,7 +14,7 @@ export async function GET() {
 				{
 					success: false,
 					error:
-						'Theme previews not generated. Run "pnpm generate-theme-previews" first.',
+						'Theme previews not generated. Run "bun run generate-theme-previews" first.',
 				},
 				{ status: 404 },
 			);

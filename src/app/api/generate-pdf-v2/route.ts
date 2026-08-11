@@ -176,9 +176,8 @@ export async function POST(request: NextRequest): Promise<Response> {
 		}
 
 		// Generate PDF
-		const { generatePDF, createPrintableHTML } = await import(
-			"@/lib/puppeteer"
-		);
+		const { generatePDF, createPrintableHTML } =
+			await import("@/lib/puppeteer");
 
 		const printableHTML = createPrintableHTML(html);
 		const pdfBuffer = await generatePDF({
@@ -189,7 +188,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
 		// Return PDF with standardized filename
 		const { buildPriceTagsFilename } = await import("@/lib/utils");
-		return new Response(pdfBuffer, {
+		return new Response(new Uint8Array(pdfBuffer), {
 			headers: {
 				"Content-Type": "application/pdf",
 				"Content-Disposition": `attachment; filename=${buildPriceTagsFilename("pdf")}`,

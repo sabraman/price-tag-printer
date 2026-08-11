@@ -217,6 +217,7 @@ export function GradientPicker({
 									<button
 										type="button"
 										key={darkThemeIds[i]}
+										aria-label={`Выбрать тему ${darkThemeIds[i]}`}
 										className="group relative overflow-hidden rounded-lg hover:border-primary/50 transition-all duration-200 hover:scale-105 aspect-square"
 										onClick={() => onChange(preset)}
 									>
@@ -252,6 +253,7 @@ export function GradientPicker({
 									<button
 										type="button"
 										key={lightThemeIds[i]}
+										aria-label={`Выбрать тему ${lightThemeIds[i]}`}
 										className="group relative overflow-hidden rounded-lg hover:border-primary/50 transition-all duration-200 hover:scale-105 aspect-square"
 										onClick={() => onChange(preset)}
 									>
@@ -287,6 +289,7 @@ export function GradientPicker({
 									<button
 										type="button"
 										key={lightMonochromeThemeIds[i]}
+										aria-label={`Выбрать тему ${lightMonochromeThemeIds[i]}`}
 										className="group relative overflow-hidden rounded-lg hover:border-primary/50 transition-all duration-200 hover:scale-105 aspect-square"
 										onClick={() => onChange(preset)}
 									>
@@ -317,6 +320,7 @@ export function GradientPicker({
 									<button
 										type="button"
 										key={darkMonochromeThemeIds[i]}
+										aria-label={`Выбрать тему ${darkMonochromeThemeIds[i]}`}
 										className="group relative overflow-hidden rounded-lg hover:border-primary/50 transition-all duration-200 hover:scale-105 aspect-square"
 										onClick={() => onChange(preset)}
 									>

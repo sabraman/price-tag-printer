@@ -44,7 +44,7 @@ const AccordionInfo: React.FC = () => {
 						{/* Steps */}
 						<div className="space-y-3">
 							<div className="flex items-start gap-3 p-3 rounded-lg bg-card/50 border border-border/30">
-								<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+								<div className="shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
 									1
 								</div>
 								<div className="flex-1">
@@ -59,7 +59,7 @@ const AccordionInfo: React.FC = () => {
 							</div>
 
 							<div className="flex items-start gap-3 p-3 rounded-lg bg-card/50 border border-border/30">
-								<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+								<div className="shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
 									2
 								</div>
 								<div className="flex-1">
@@ -74,7 +74,7 @@ const AccordionInfo: React.FC = () => {
 							</div>
 
 							<div className="flex items-start gap-3 p-3 rounded-lg bg-card/50 border border-border/30">
-								<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+								<div className="shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
 									3
 								</div>
 								<div className="flex-1">

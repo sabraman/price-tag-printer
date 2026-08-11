@@ -14,16 +14,18 @@ When a user visits the application for the first time on a configured domain, th
 ## Configured Domains
 
 ### `print.archsmoke.ru`
+
 - **Theme**: Sunset gradient (`#2B2827` → `#FF731D`)
 - **Font**: Nunito
 - **Design Type**: sunset
 - **Config Name**: "ArchSmoke Print"
 
-### `vapar-print.vercel.app`
+### `print.sabraman.art`
+
 - **Theme**: Vapar gradient (`#dd4c9b` → `#f6989a`)
-- **Font**: Montserrat  
+- **Font**: Montserrat
 - **Design Type**: default
-- **Config Name**: "Vapar Print"
+- **Config Name**: "Price Tag Generator"
 
 ## Files Structure
 
@@ -44,8 +46,9 @@ src/
 ## Adding New Domains
 
 1. **Edit `src/config/domain-settings.ts`**:
+
    ```typescript
-   "your-domain.com": {
+   "print.sabraman.art": {
      ...defaultSettings,
      themes: {
        ...defaultSettings.themes,
@@ -64,60 +67,67 @@ src/
 ## Usage Examples
 
 ### Automatic Application (Default)
+
 Settings are applied automatically on first visit. The `DomainSettingsInitializer` component handles this.
 
 ### Manual Domain Detection
+
 ```tsx
 import { useDomainSettings } from "@/hooks/useDomainSettings";
 
 function MyComponent() {
-  const { hostname, configName, hasCustomization, settings } = useDomainSettings();
-  
-  if (hasCustomization) {
-    return <div>Using {configName} configuration</div>;
-  }
-  return <div>Using default settings</div>;
+	const { hostname, configName, hasCustomization, settings } =
+		useDomainSettings();
+
+	if (hasCustomization) {
+		return <div>Using {configName} configuration</div>;
+	}
+	return <div>Using default settings</div>;
 }
 ```
 
 ### Domain Indicator
+
 ```tsx
 import { DomainIndicator } from "@/components/DomainIndicator";
 
 // Shows a small indicator with domain info
-<DomainIndicator />
+<DomainIndicator />;
 ```
 
 ### Server-Side Usage
+
 ```tsx
 import { getDomainSettingsFromHeaders } from "@/hooks/useDomainSettings";
 
 export async function GET(request: NextRequest) {
-  const settings = getDomainSettingsFromHeaders(request.headers);
-  // Use settings...
+	const settings = getDomainSettingsFromHeaders(request.headers);
+	// Use settings...
 }
 ```
 
 ## Development & Testing
 
 ### Test Component
+
 Use `DomainSettingsTest` component to test different domains:
 
 ```tsx
 import { DomainSettingsTest } from "@/components/DomainSettingsTest";
 
 // Add to any page for testing
-<DomainSettingsTest />
+<DomainSettingsTest />;
 ```
 
 ### Debug Mode
+
 Add debug indicator to see what's happening:
 
 ```tsx
 import { DomainSettingsDebug } from "@/components/DomainSettingsInitializer";
 
 // Shows debug info in bottom-right corner
-<DomainSettingsDebug enabled={process.env.NODE_ENV === "development"} />
+<DomainSettingsDebug enabled={process.env.NODE_ENV === "development"} />;
 ```
 
 ## Important Notes

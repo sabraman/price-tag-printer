@@ -1,106 +1,85 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code and other coding agents working in this repository.
 
-## Development Commands
+## Project facts
 
-### Core Development
-- `pnpm dev` - Start development server (Next.js)
-- `pnpm build` - Build for production (Next.js build)
-- `pnpm start` - Start production server
+- Product: Price Tag Generator, a browser editor for printable price tags.
+- Framework: Next.js 16 App Router with React 19.2, Turbopack, and TypeScript 7.
+- Styling: Tailwind CSS 4 through the `@tailwindcss/postcss` plugin.
+- Tests: Vitest 4 with React Testing Library.
+- Canonical production URL: `https://print.sabraman.art`.
+- API base URL: `https://print.sabraman.art/api`.
+- Package manager: Bun 1.3.3. Do not reintroduce pnpm or add a second lockfile.
+- Runtime: Node.js 20.9 or newer for local Next.js development and builds.
 
-### Code Quality
-- `pnpm lint` - Run Biome linter (configured via Next.js ESLint integration)
-- `pnpm biome:check` - Run Biome linter/formatter check
-- `pnpm biome:unsafe` - Run Biome with unsafe fixes
-- `pnpm biome:write` - Format code with Biome
-- `pnpm typecheck` - Run TypeScript type checking without emitting files
+## Commands
 
-### Development Hints
-- Don't build the project to find errors - use these commands instead:
-  - `lint`: Run linter to check for TypeScript/React errors
-  - `typecheck`: Run TypeScript compiler for type errors
-  - `biome:check`: Run Biome for comprehensive code quality check
-  - `biome:unsafe`: Run Biome with more aggressive checks
-  - `biome:write`: Automatically format code with Biome
+```bash
+bun install
+bun run dev
+bun run lint
+bun run format:check
+bun run typecheck
+bun run test
+bun run build
+bun run check:discoverability -- https://print.sabraman.art
+```
 
-### Testing
-- `pnpm test` - Run all tests with Vitest
-- `pnpm test:selection` - Run OptimizedEditTable tests
-- `pnpm test:duplication` - Run DuplicationSystem tests
-- `pnpm test:duplication-ui` - Run duplication UI tests
-- `pnpm test:selection-filtering` - Run selection/filtering tests
-- `pnpm test:all-table` - Run all table-related tests
+Use the focused test scripts in `package.json` when working on table selection,
+duplication, or filtering. Run `bun run build` for release confidence after
+code changes; lint, formatting, and typecheck are faster feedback during
+iteration.
 
-## Package Management
-- Always use pnpm instead of npm
+## Architecture
 
-## Architecture Overview
+- `src/app/` contains App Router pages, metadata routes, and API handlers.
+- `src/components/features/price-tags/` contains the main import, editing,
+  customization, preview, and print flows.
+- `src/store/` contains Zustand stores for items, themes, settings, and UI.
+- `src/lib/` contains spreadsheet, PDF, browser, theme, and utility code.
+- `src/config/site.ts` is the source of truth for public site and GitHub URLs.
+- `public/openapi.json` and `public/llms.txt` are public machine-readable
+  resources; keep them accurate when API behavior changes.
 
-### State Management
-The application uses **Zustand** with persistence as the primary state management solution:
-- **Main store**: `src/store/priceTagsStore.ts` - Manages all price tag data, themes, and application settings
-- **Features**: Immer middleware for immutable updates, localStorage persistence, undo/redo functionality
-- **Key state**: items, themes, design settings, discount configurations, table-specific settings
+## Important patterns
 
-### Routing
-Uses **Next.js App Router**:
-- Root route: `/` - PriceTagsPage (main application)
-- Secondary route: `/marketing` - QR code functionality
-- API routes in `src/app/api/` for PDF generation, data processing, and Telegram bot
+- Preserve undo/redo behavior when changing table mutations.
+- Keep item IDs stable and avoid introducing duplicate IDs during import or
+  duplication.
+- Treat prices as the smallest currency unit used by the API integration.
+- Keep UI text and metadata consistent with the Russian-language product.
+- Keep API routes safe for unauthenticated reads and validate request bodies
+  before processing uploaded or imported data.
+- Do not put private user data, credentials, or generated product rows into
+  sitemap, JSON-LD, `robots.txt`, or `llms.txt`.
 
-### Component Architecture
-Organized in a feature-based structure:
+## URL and documentation rules
 
-**Features (`src/components/features/`)**:
-- `price-tags/` - Core price tag functionality including table editing, customization, PDF generation
-- `qr/` - QR code generation features
+- Use `https://print.sabraman.art` for production links and examples.
+- Use `https://github.com/sabraman/price-tag-printer` for repository links.
+- Do not reintroduce `your-domain.com`, old Vercel URLs, or placeholder clone
+  commands.
+- When adding a public route, consider its title, description, canonical URL,
+  sitemap entry, and whether it belongs in `llms.txt`.
+- When changing an API route, update the OpenAPI document, API guides, and LLM
+  context in the same change.
 
-**Key Components**:
-- `OptimizedEditTable.tsx` - Main data table with selection, duplication, inline editing
-- `PriceTagSVG.tsx` - SVG rendering for price tags with theme support
-- `PriceTagCustomizer.tsx` - Theme and design configuration
-- `ExcelUploader.tsx` / `GoogleSheetsForm.tsx` - Data import functionality
+## Quality and commits
 
-**UI System**: Shadcn/ui components in `src/components/ui/` with Radix UI primitives
+- Use Oxfmt for formatting and Oxlint for linting; do not add Biome or ESLint
+  configuration back without a deliberate migration plan.
+- Next 16 uses Turbopack by default. Keep Node-only integrations behind API
+  routes or other server-only modules; never import them into client bundles.
+- Keep changes focused and avoid unrelated refactors.
+- Run the narrowest relevant tests, then the full validation commands before
+  handoff.
+- Keep commit messages short and descriptive.
+- Do not add Claude as a co-author.
 
-### Data Flow
-1. **Import**: Excel files or Google Sheets → parsed into `Item[]` format
-2. **Processing**: Items stored in Zustand store with unique ID generation
-3. **Table Editing**: OptimizedEditTable provides inline editing with selection/duplication
-4. **Rendering**: PriceTagSVG renders tags based on themes and discount settings
-5. **Export**: PDF generation using pdf-lib for printing
+## Convex rule
 
-### Key Features
-- **Multi-tier pricing**: Support for bulk pricing (priceFor2, priceFrom3)
-- **Dynamic theming**: Gradient themes with configurable colors per design type
-- **Table vs Global modes**: Design settings can be applied globally or per-row in table
-- **Discount system**: Configurable discount amounts and percentages
-- **History management**: Undo/redo functionality for all table operations
-
-### Technology Stack
-- **Frontend**: React 19 + TypeScript + Next.js 15.4.6 (App Router)
-- **Styling**: TailwindCSS + Shadcn/ui
-- **State**: Zustand with persistence and Immer middleware
-- **Forms**: React Hook Form + Zod validation
-- **PDF**: pdf-lib for generation, react-to-print for browser printing
-- **Excel**: xlsx library for file processing
-- **Bot Framework**: Grammy for Telegram bot functionality
-- **Testing**: Vitest + React Testing Library
-
-### Important Patterns
-- All table operations (add/edit/delete/duplicate) automatically update history for undo/redo
-- Unique ID generation uses timestamp + counter to prevent collisions
-- Price calculations are reactive and update automatically when discount settings change
-- Theme system supports per-item design overrides when in table mode
-- API routes follow Next.js App Router conventions in `src/app/api/`
-
-### Telegram Bot Integration
-- Framework is in place with Grammy dependencies
-- API endpoints exist at `src/app/api/bot/` and `src/app/api/telegram-webhook/`
-- Used for automated price tag generation and sharing via Telegram
-
-## Git Commit Guidelines
-- Do NOT add Claude as co-author in commit messages
-- Keep commit messages concise and descriptive
-- Focus on the changes made, not who made them
+The current `origin/main` application is the single Next.js app. If a future
+branch introduces or changes Convex code, read
+`packages/convex/_generated/ai/guidelines.md` completely before editing any
+Convex files. Those generated guidelines override general Convex assumptions.

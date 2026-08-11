@@ -11,15 +11,12 @@ export async function generateScreenshot(
 ): Promise<Buffer> {
 	const { html, width = 400, height = 275 } = options;
 
-	// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 	let browser: any | null = null;
 
 	try {
 		// Configure for different environments based on Vercel's official guide
 		const isVercel = !!process.env.VERCEL_ENV;
-		// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 		let puppeteer: any;
-		// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 		let launchOptions: any = { headless: true };
 
 		if (isVercel) {
@@ -195,6 +192,7 @@ export async function generateScreenshot(
 		console.error("Screenshot generation error:", error);
 		throw new Error(
 			`Failed to generate screenshot: ${error instanceof Error ? error.message : "Unknown error"}`,
+			{ cause: error },
 		);
 	} finally {
 		if (browser) {

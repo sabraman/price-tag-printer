@@ -1,21 +1,11 @@
 // Google Sheets API integration using google-sheets-data-fetcher package
+import "server-only";
+
 import { fetchGoogleSheetsData as originalFetchGoogleSheetsData } from "google-sheets-data-fetcher";
-
-interface GoogleSheetsConfig {
-	sheetId: string;
-	subSheetsIds: string[];
-}
-
-interface GoogleSheetsResponse {
-	[columnKey: string]: {
-		id: string;
-		label: string;
-		type: string;
-		rows: {
-			[rowKey: string]: { id: number; data: string | number };
-		};
-	};
-}
+import type {
+	GoogleSheetsConfig,
+	GoogleSheetsResponse,
+} from "./googleSheetsTypes";
 
 /**
  * Fetches data from Google Sheets using the reliable google-sheets-data-fetcher package
@@ -45,6 +35,7 @@ export async function fetchGoogleSheetsData(
 			`Failed to fetch Google Sheets data: ${
 				error instanceof Error ? error.message : "Unknown error"
 			}. Make sure the Google Sheet is published to the web or publicly accessible.`,
+			{ cause: error },
 		);
 	}
 }

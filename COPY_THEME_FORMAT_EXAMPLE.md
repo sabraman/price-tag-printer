@@ -4,44 +4,44 @@ When you click "Копировать как код" in the theme customizer, you
 
 ```json
 {
-  "name": "Custom Theme",
-  "description": "Пользовательская тема",
-  "created": "2025-01-18T12:34:56.789Z",
-  "themes": {
-    "default": {
-      "start": "#222222",
-      "end": "#dd4c9b",
-      "textColor": "#ffffff"
-    },
-    "new": {
-      "start": "#222222",
-      "end": "#9cdd4c",
-      "textColor": "#ffffff"
-    },
-    "sale": {
-      "start": "#222222",
-      "end": "#dd4c54",
-      "textColor": "#ffffff"
-    },
-    // ... all 17 themes
-  },
-  "metadata": [
-    {
-      "id": "default",
-      "name": "Классик",
-      "category": "dark",
-      "order": 1
-    },
-    {
-      "id": "new",
-      "name": "Новинка",
-      "category": "dark",
-      "order": 2
-    },
-    // ... all theme metadata
-  ],
-  "version": "1.0.0",
-  "format": "unified-theme-store"
+	"name": "Custom Theme",
+	"description": "Пользовательская тема",
+	"created": "2025-01-18T12:34:56.789Z",
+	"themes": {
+		"default": {
+			"start": "#222222",
+			"end": "#dd4c9b",
+			"textColor": "#ffffff"
+		},
+		"new": {
+			"start": "#222222",
+			"end": "#9cdd4c",
+			"textColor": "#ffffff"
+		},
+		"sale": {
+			"start": "#222222",
+			"end": "#dd4c54",
+			"textColor": "#ffffff"
+		}
+		// ... all 17 themes
+	},
+	"metadata": [
+		{
+			"id": "default",
+			"name": "Классик",
+			"category": "dark",
+			"order": 1
+		},
+		{
+			"id": "new",
+			"name": "Новинка",
+			"category": "dark",
+			"order": 2
+		}
+		// ... all theme metadata
+	],
+	"version": "1.0.0",
+	"format": "unified-theme-store"
 }
 ```
 

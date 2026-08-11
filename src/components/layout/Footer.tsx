@@ -1,5 +1,6 @@
-import { ExternalLink, FileText, Github } from "lucide-react";
+import { ExternalLink, FileText, GitBranch } from "lucide-react";
 import Link from "next/link";
+import { siteConfig } from "@/config/site";
 
 const Footer = () => {
 	return (
@@ -31,12 +32,12 @@ const Footer = () => {
 								API Документация
 							</Link>
 							<Link
-								href="https://github.com/sabraman/price-tag-printer"
+								href={siteConfig.githubUrl}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
 							>
-								<Github className="h-4 w-4" />
+								<GitBranch className="h-4 w-4" />
 								GitHub
 								<ExternalLink className="h-3 w-3" />
 							</Link>
@@ -75,7 +76,8 @@ const Footer = () => {
 				<div className="border-t border-border mt-8 pt-6">
 					<div className="flex flex-col sm:flex-row justify-between items-center gap-4">
 						<div className="text-sm text-muted-foreground">
-							© 2025 Price Tag Generator. Создано для удобства.
+							© {new Date().getFullYear()} Price Tag Generator. Создано для
+							удобной печати ценников.
 						</div>
 						<div className="flex items-center gap-4">
 							<Link

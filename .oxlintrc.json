@@ -1,0 +1,27 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["react", "nextjs", "jsx-a11y"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn"
+	},
+	"rules": {
+		"typescript/no-explicit-any": "off",
+		"react/no-unescaped-entities": "off",
+		"react/react-in-jsx-scope": "off",
+		"jsx-a11y/heading-has-content": "off",
+		"jsx-a11y/prefer-tag-over-role": "off"
+	},
+	"ignorePatterns": [
+		"node_modules/**",
+		".next/**",
+		"out/**",
+		"build/**",
+		"coverage/**",
+		"next-env.d.ts",
+		"public/theme-previews/**",
+		"src/app/api/preview/fonts/**",
+		"bun.lock",
+		"pnpm-lock.yaml"
+	]
+}

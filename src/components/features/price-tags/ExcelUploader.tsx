@@ -90,7 +90,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({ onUpload, onError }) => {
 	return (
 		<div className="space-y-4">
 			{/* Header */}
-			<div className="border border-border/50 rounded-xl p-4 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm">
+			<div className="border border-border/50 rounded-xl p-4 bg-linear-to-br from-card/80 to-card/40 backdrop-blur-sm">
 				<div className="flex items-center gap-3 mb-3">
 					<div className="p-2 rounded-lg bg-emerald-500/10">
 						<Upload className="w-5 h-5 text-emerald-500" />

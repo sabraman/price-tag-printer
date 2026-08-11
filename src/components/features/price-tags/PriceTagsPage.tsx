@@ -1,4 +1,3 @@
-// Dynamic import for Google Sheets functionality to avoid SSR issues
 import {
 	AlertCircle,
 	ClipboardList,
@@ -49,7 +48,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNewItemDraft } from "@/hooks/useNewItemDraft";
-import { fetchGoogleSheetsData } from "@/lib/googleSheets";
+import { fetchGoogleSheetsData } from "@/lib/googleSheetsClient";
+import type { GoogleSheetsResponse } from "@/lib/googleSheetsTypes";
 import type { Item } from "@/store/priceTagsStore";
 import { usePriceTagsStore } from "@/store/priceTagsStore";
 import {
@@ -57,17 +57,6 @@ import {
 	parseClipboardData,
 	shouldHandlePasteEvent,
 } from "@/utils/clipboardImport";
-
-interface GoogleSheetsResponse {
-	[columnKey: string]: {
-		id: string;
-		label: string;
-		type: string;
-		rows: {
-			[rowKey: string]: { id: number; data: string | number };
-		};
-	};
-}
 
 // Function to consistently parse discount values from various formats
 const parseDiscountValue = (
@@ -852,6 +841,9 @@ export const PriceTagsPage: React.FC = () => {
 		<div className="min-h-screen bg-background">
 			{/* Main Container */}
 			<div className="container mx-auto px-6 py-8">
+				<h1 className="sr-only">
+					Генератор ценников онлайн — импорт из Excel и печать PDF
+				</h1>
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 					{/* Left Sidebar - Always maintain grid structure */}
 					<div className="lg:col-span-6 space-y-6">
@@ -920,7 +912,6 @@ export const PriceTagsPage: React.FC = () => {
 										</SheetHeader>
 										<div className="py-4 space-y-3">
 											<Textarea
-												autoFocus
 												rows={6}
 												value={manualPasteValue}
 												onChange={(event) =>
@@ -967,7 +958,6 @@ export const PriceTagsPage: React.FC = () => {
 										</DialogHeader>
 										<div className="py-4 space-y-3">
 											<Textarea
-												autoFocus
 												rows={6}
 												value={manualPasteValue}
 												onChange={(event) =>
