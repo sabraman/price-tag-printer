@@ -74,7 +74,7 @@ export function DomainSettingsTest() {
 
 	const testUrls = [
 		"https://print.archsmoke.ru",
-		"https://vapar-print.vercel.app",
+		"https://print.sabraman.art",
 		"https://example.com",
 		"https://localhost:3000",
 	];

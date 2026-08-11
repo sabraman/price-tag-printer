@@ -154,7 +154,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 			toast.success(`Тема "${customThemeName.trim()}" успешно сохранена`);
 			setCustomThemeName("");
 			setShowThemeSaveDialog(false);
-		} catch (_error) {
+		} catch {
 			toast.error("Не удалось сохранить тему");
 		}
 	};
@@ -181,7 +181,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 			const themeCode = JSON.stringify(formattedTheme, null, 2);
 			navigator.clipboard.writeText(themeCode);
 			toast.success("Код темы скопирован в буфер обмена");
-		} catch (_error) {
+		} catch {
 			toast.error("Не удалось скопировать код темы");
 		}
 	};
@@ -195,7 +195,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 				onThemeChange(themeData);
 				toast.success(`Тема "${themeName}" успешно загружена`);
 			}
-		} catch (_error) {
+		} catch {
 			toast.error("Не удалось загрузить тему");
 		}
 	};
@@ -207,7 +207,7 @@ export const PriceTagCustomizer: React.FC<PriceTagCustomizerProps> = ({
 			delete savedThemes[themeName];
 			localStorage.setItem("custom-themes", JSON.stringify(savedThemes));
 			toast.success(`Тема "${themeName}" удалена`);
-		} catch (_error) {
+		} catch {
 			toast.error("Не удалось удалить тему");
 		}
 	};

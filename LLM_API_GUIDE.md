@@ -5,7 +5,8 @@
 This API allows you to create professional price tags and generate PDFs. Perfect for retail, e-commerce, and inventory management applications.
 
 ### Base Information
-- **Base URL**: `https://your-domain.com/api`
+
+- **Base URL**: `https://print.sabraman.art/api`
 - **Authentication**: None required (open for testing)
 - **Content-Type**: `application/json`
 - **Response Format**: Consistent JSON with `success`, `data`, `message` structure
@@ -13,6 +14,7 @@ This API allows you to create professional price tags and generate PDFs. Perfect
 ## Core Capabilities
 
 ### ✅ What This API Can Do
+
 - Create individual or bulk price tags (up to 1000 at once)
 - Generate professional PDFs in A4, A3, or Letter format
 - Support 17 design themes (sale, new, premium, etc.)
@@ -24,6 +26,7 @@ This API allows you to create professional price tags and generate PDFs. Perfect
 ### 📝 Common Integration Patterns
 
 **1. Simple Price Tag Creation**
+
 ```json
 POST /api/price-tags
 {
@@ -35,6 +38,7 @@ POST /api/price-tags
 ```
 
 **2. Bulk Price Tag Creation**
+
 ```json
 POST /api/price-tags
 {
@@ -46,6 +50,7 @@ POST /api/price-tags
 ```
 
 **3. PDF Generation**
+
 ```json
 POST /api/generate-pdf-v2
 {
@@ -60,8 +65,10 @@ POST /api/generate-pdf-v2
 ## Function Definitions for LLM Integration
 
 ### createPriceTag
+
 **Purpose**: Create a single price tag
 **Parameters**:
+
 - `data` (string, required): Product name
 - `price` (integer, required): Price in cents/smallest currency unit
 - `designType` (string, optional): Theme type (default, new, sale, white, black, sunset, ocean, forest, royal, vintage, neon, monochrome, silver, charcoal, paper, ink, snow)
@@ -70,20 +77,26 @@ POST /api/generate-pdf-v2
 - `priceFrom3` (integer, optional): Bulk price for 3+ items
 
 ### createBulkPriceTags
+
 **Purpose**: Create multiple price tags at once
 **Parameters**:
+
 - `items` (array, required): Array of price tag objects (max 1000)
 
 ### generatePDF
+
 **Purpose**: Generate printable PDF from price tags
 **Parameters**:
+
 - `items` (array, required): Price tag data
 - `format` (string, optional): "A4", "A3", or "Letter" (default: A4)
 - `settings` (object, optional): Design and theme settings
 
 ### listPriceTags
+
 **Purpose**: Retrieve price tags with filtering
 **Parameters**:
+
 - `page` (integer, optional): Page number (default: 1)
 - `limit` (integer, optional): Items per page (default: 10, max: 100)
 - `search` (string, optional): Filter by product name
@@ -93,38 +106,41 @@ POST /api/generate-pdf-v2
 ## Response Patterns
 
 ### Success Response
+
 ```json
 {
-  "success": true,
-  "data": { /* response data */ },
-  "message": "Operation completed successfully"
+	"success": true,
+	"data": {/* response data */},
+	"message": "Operation completed successfully"
 }
 ```
 
 ### Error Response
+
 ```json
 {
-  "success": false,
-  "error": "Descriptive error message",
-  "message": "Additional context if available"
+	"success": false,
+	"error": "Descriptive error message",
+	"message": "Additional context if available"
 }
 ```
 
 ### Paginated Response
+
 ```json
 {
-  "success": true,
-  "data": {
-    "items": [/* price tag objects */],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 100,
-      "totalPages": 10,
-      "hasNext": true,
-      "hasPrev": false
-    }
-  }
+	"success": true,
+	"data": {
+		"items": [/* price tag objects */],
+		"pagination": {
+			"page": 1,
+			"limit": 10,
+			"total": 100,
+			"totalPages": 10,
+			"hasNext": true,
+			"hasPrev": false
+		}
+	}
 }
 ```
 
@@ -133,8 +149,9 @@ POST /api/generate-pdf-v2
 **Available Themes**: default, new, sale, white, black, sunset, ocean, forest, royal, vintage, neon, monochrome, silver, charcoal, paper, ink, snow
 
 **Theme Usage Guidelines**:
+
 - `new`: For new product launches (shows "NEW" label)
-- `sale`: For discounted items (shows "SALE" label)  
+- `sale`: For discounted items (shows "SALE" label)
 - `default`: Standard professional appearance
 - Color themes: `sunset`, `ocean`, `forest`, `royal`, `vintage`, `neon`
 - Minimal themes: `white`, `black`, `monochrome`, `paper`, `ink`, `snow`
@@ -143,6 +160,7 @@ POST /api/generate-pdf-v2
 ## Pricing Structure
 
 **Price Format**: All prices are in smallest currency unit (cents for USD)
+
 - `price`: Main product price
 - `discountPrice`: Automatically calculated discount price
 - `priceFor2`: Special price when buying 2 items
@@ -159,50 +177,54 @@ POST /api/generate-pdf-v2
 ## Integration Examples
 
 ### E-commerce Integration
+
 ```javascript
 // Create price tags from product catalog
-const priceTags = products.map(product => ({
-  data: product.name,
-  price: product.price_cents,
-  designType: product.is_on_sale ? 'sale' : 'default',
-  hasDiscount: product.is_on_sale
+const priceTags = products.map((product) => ({
+	data: product.name,
+	price: product.price_cents,
+	designType: product.is_on_sale ? "sale" : "default",
+	hasDiscount: product.is_on_sale,
 }));
 
 // Generate PDF for printing
-const pdf = await fetch('/api/generate-pdf-v2', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({
-    items: priceTags,
-    format: 'A4',
-    settings: {design: true}
-  })
+const pdf = await fetch("/api/generate-pdf-v2", {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({
+		items: priceTags,
+		format: "A4",
+		settings: { design: true },
+	}),
 });
 ```
 
 ### Inventory Management Integration
+
 ```javascript
 // Create price tags with bulk pricing
-const inventory = await fetch('/api/price-tags', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({
-    data: "Wholesale Item",
-    price: 1000,     // $10.00 each
-    priceFor2: 1800, // $18.00 for 2 ($9.00 each)
-    priceFrom3: 2400 // $24.00 for 3+ ($8.00 each)
-  })
+const inventory = await fetch("/api/price-tags", {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({
+		data: "Wholesale Item",
+		price: 1000, // $10.00 each
+		priceFor2: 1800, // $18.00 for 2 ($9.00 each)
+		priceFrom3: 2400, // $24.00 for 3+ ($8.00 each)
+	}),
 });
 ```
 
 ## System Health & Monitoring
 
 **Health Endpoint**: `/api/health`
+
 - Returns system status, uptime, memory usage
 - Lists all available endpoints
 - Shows service configuration status
 
 **OpenAPI Specification**: `/api/openapi`
+
 - Complete function definitions for AI integration
 - Schema validation rules
 - Example requests and responses
@@ -210,6 +232,7 @@ const inventory = await fetch('/api/price-tags', {
 ## Getting Started Checklist
 
 ### For AI Assistant Integration:
+
 1. ✅ Check API health: `GET /api/health`
 2. ✅ Review available endpoints and capabilities
 3. ✅ Test single price tag creation: `POST /api/price-tags`
@@ -218,6 +241,7 @@ const inventory = await fetch('/api/price-tags', {
 6. ✅ Set up bulk operations if needed
 
 ### Common Use Cases:
+
 - **Retail Store**: Create sale price tags with discount themes
 - **E-commerce**: Generate professional product tags for inventory
 - **Event Management**: Create name tags or product displays
@@ -232,4 +256,4 @@ const inventory = await fetch('/api/price-tags', {
 
 ---
 
-*This API is designed to be AI-assistant friendly with structured outputs, consistent schemas, and descriptive error messages.*
+_This API is designed to be AI-assistant friendly with structured outputs, consistent schemas, and descriptive error messages._

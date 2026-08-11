@@ -37,7 +37,7 @@ export async function GET(
 					{
 						success: false,
 						error:
-							'Theme previews not generated. Run "pnpm generate-theme-previews" first.',
+							'Theme previews not generated. Run "bun run generate-theme-previews" first.',
 					},
 					{ status: 404 },
 				);
@@ -90,7 +90,7 @@ export async function GET(
 			return NextResponse.json(
 				{
 					success: false,
-					error: `Theme preview not found for "${themeName}". Run "pnpm generate-theme-previews" to create previews.`,
+					error: `Theme preview not found for "${themeName}". Run "bun run generate-theme-previews" to create previews.`,
 				},
 				{ status: 404 },
 			);

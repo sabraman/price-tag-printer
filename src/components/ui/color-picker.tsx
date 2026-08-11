@@ -186,7 +186,7 @@ function ColorPicker({
 						onChange={(newHue) => {
 							handleValueChange({ ...colorHsv, ...newHue });
 						}}
-						className="[&>div:first-child]:overflow-hidden [&>div:first-child]:!rounded"
+						className="[&>div:first-child]:overflow-hidden [&>div:first-child]:rounded!"
 						style={
 							{
 								width: "100%",
@@ -292,7 +292,7 @@ function ColorPicker({
 													: null
 											}
 											aria-label={`Использовать недавний цвет ${color}`}
-											className="size-5 cursor-pointer rounded bg-[var(--swatch-color)] ring-2 ring-[var(--swatch-color)00] ring-offset-1 ring-offset-background transition-all duration-100 hover:ring-[var(--swatch-color)]"
+											className="size-5 cursor-pointer rounded bg-(--swatch-color) ring-2 ring-[var(--swatch-color)00] ring-offset-1 ring-offset-background transition-all duration-100 hover:ring-(--swatch-color)"
 										/>
 									))}
 								</div>
@@ -340,7 +340,7 @@ function ColorPicker({
 													: null
 											}
 											aria-label={`Выбрать цвет ${color}`}
-											className="size-5 cursor-pointer rounded bg-[var(--swatch-color)] ring-2 ring-[var(--swatch-color)00] ring-offset-1 ring-offset-background transition-all duration-100 hover:ring-[var(--swatch-color)]"
+											className="size-5 cursor-pointer rounded bg-(--swatch-color) ring-2 ring-[var(--swatch-color)00] ring-offset-1 ring-offset-background transition-all duration-100 hover:ring-(--swatch-color)"
 										/>
 									))}
 							</div>
@@ -417,7 +417,7 @@ function ContrastRatio({ color }: ContrastRatioProps) {
 	return (
 		<div className="flex items-center justify-between gap-4">
 			<div className="flex items-center gap-4">
-				<div className="flex size-10 items-center justify-center rounded bg-[var(--selected-color)]">
+				<div className="flex size-10 items-center justify-center rounded bg-(--selected-color)">
 					<span className="font-medium text-black dark:text-white">A</span>
 				</div>
 				<div className="flex flex-col justify-between">

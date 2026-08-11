@@ -11,9 +11,8 @@ export async function POST(request: NextRequest) {
 		// Handle two API modes: legacy (items + settings) and new (html directly)
 		if (requestData.html) {
 			// New mode: HTML already generated, just convert to PDF
-			const { generatePDF, createPrintableHTML } = await import(
-				"@/lib/puppeteer"
-			);
+			const { generatePDF, createPrintableHTML } =
+				await import("@/lib/puppeteer");
 
 			const printableHTML = createPrintableHTML(requestData.html);
 			const pdfBuffer = await generatePDF({
@@ -22,7 +21,7 @@ export async function POST(request: NextRequest) {
 				margin: { top: "0", right: "0", bottom: "0", left: "0" },
 			});
 
-			return new Response(pdfBuffer, {
+			return new Response(new Uint8Array(pdfBuffer), {
 				headers: {
 					"Content-Type": "application/pdf",
 					"Content-Disposition": `attachment; filename=${buildPriceTagsFilename("pdf")}`,
@@ -89,9 +88,8 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Convert HTML to PDF using our optimized Puppeteer function
-		const { generatePDF, createPrintableHTML } = await import(
-			"@/lib/puppeteer"
-		);
+		const { generatePDF, createPrintableHTML } =
+			await import("@/lib/puppeteer");
 
 		const printableHTML = createPrintableHTML(html);
 		const pdfBuffer = await generatePDF({
@@ -100,7 +98,7 @@ export async function POST(request: NextRequest) {
 			margin: { top: "0", right: "0", bottom: "0", left: "0" },
 		});
 
-		return new Response(pdfBuffer, {
+		return new Response(new Uint8Array(pdfBuffer), {
 			headers: {
 				"Content-Type": "application/pdf",
 				"Content-Disposition": `attachment; filename=${buildPriceTagsFilename("pdf")}`,

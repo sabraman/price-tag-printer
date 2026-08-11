@@ -5,7 +5,6 @@ export async function GET(request: NextRequest) {
 
 	try {
 		// Dynamic import to avoid build-time issues
-		// biome-ignore lint/suspicious/noExplicitAny: Dynamic import requires any type
 		let createCanvas: any;
 		try {
 			const canvasModule = await import("canvas");

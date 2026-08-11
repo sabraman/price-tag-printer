@@ -21,7 +21,8 @@ The work will improve four connected surfaces:
 
 The existing Next.js application remains the deployed product. This pass does
 not migrate to the parked Astro/Convex work, change routing, or redesign the
-application UI.
+application UI. The dependency refresh also brings the active app to Next.js
+16/Turbopack, Tailwind CSS 4, React Compiler, TypeScript 7, and Vitest 4.
 
 ## Baseline
 
@@ -78,6 +79,8 @@ Add lightweight GitHub contribution surfaces where they are missing:
 - `CONTRIBUTING.md` with setup, checks, and pull-request expectations.
 - `SECURITY.md` with a private vulnerability-reporting path.
 - A pull-request template and issue templates for bugs and feature requests.
+- A Bun/Oxc/Next validation workflow and Dependabot configuration so the
+  repository stays current after the migration.
 
 Use the authenticated GitHub CLI after the local changes are validated to set:
 
@@ -187,7 +190,9 @@ Replace Biome and the standalone ESLint configuration with Oxc:
   once Oxlint and Oxfmt pass over the source tree.
 
 The Oxc migration is tooling-only: it must not change runtime behavior or
-silently reformat generated assets, lockfiles, or build output.
+silently reformat generated assets, lockfiles, or build output. The framework
+and dependency refresh is separate and includes the server/client boundary
+fixes required by Turbopack.
 
 ## Validation
 

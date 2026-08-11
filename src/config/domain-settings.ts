@@ -51,12 +51,12 @@ export const domainConfigs: Record<string, DomainSettings> = {
 		designType: "sunset",
 	},
 
-	// Vapar Vercel app
-	"vapar-print.vercel.app": {
+	// Canonical Price Tag Generator app
+	"print.sabraman.art": {
 		...defaultSettings,
 		themes: {
 			...defaultSettings.themes,
-			// Use Vapar gradient theme (from GradientPicker lines 70-75)
+			// Use the branded gradient theme
 			default: { start: "#dd4c9b", end: "#f6989a", textColor: "#ffffff" },
 			new: { start: "#dd4c9b", end: "#f6989a", textColor: "#ffffff" },
 			sale: { start: "#ee4a61", end: "#f6989a", textColor: "#ffffff" },
@@ -65,16 +65,8 @@ export const domainConfigs: Record<string, DomainSettings> = {
 		designType: "default",
 	},
 
-	// You can add more domains as needed
-	"example.com": {
-		...defaultSettings,
-		font: "Inter",
-		designType: "ocean",
-		themes: {
-			...defaultSettings.themes,
-			default: defaultSettings.themes.ocean,
-		},
-	},
+	// Add more domain configurations here when a separately branded deployment
+	// needs different defaults.
 };
 
 /**
@@ -140,8 +132,8 @@ export function getDomainConfigName(hostname?: string): string {
 	switch (normalizedHostname) {
 		case "print.archsmoke.ru":
 			return "ArchSmoke Print";
-		case "vapar-print.vercel.app":
-			return "Vapar Print";
+		case "print.sabraman.art":
+			return "Price Tag Generator";
 		default:
 			if (hasDomainCustomization(hostname)) {
 				return `Custom (${normalizedHostname})`;

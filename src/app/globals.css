@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap");
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@config "../../tailwind.config.js";
+@import "tailwindcss";
 
 @layer base {
 	:root {
@@ -48,7 +46,11 @@
 
 	body {
 		@apply bg-background text-foreground;
-		font-family: "Montserrat", system-ui, -apple-system, sans-serif;
+		font-family:
+			"Montserrat",
+			system-ui,
+			-apple-system,
+			sans-serif;
 		font-optical-sizing: auto;
 	}
 

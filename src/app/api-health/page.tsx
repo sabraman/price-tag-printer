@@ -121,7 +121,7 @@ const ApiHealthPage = () => {
 
 	if (loading && !health) {
 		return (
-			<div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
+			<div className="min-h-screen bg-linear-to-br from-background via-background to-muted/20 flex items-center justify-center">
 				<Card className="w-96">
 					<CardContent className="flex items-center justify-center py-12">
 						<div className="text-center space-y-4">
@@ -136,7 +136,7 @@ const ApiHealthPage = () => {
 
 	if (error) {
 		return (
-			<div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
+			<div className="min-h-screen bg-linear-to-br from-background via-background to-muted/20 flex items-center justify-center">
 				<Card className="w-96">
 					<CardContent className="py-12">
 						<div className="text-center space-y-4">
@@ -161,7 +161,7 @@ const ApiHealthPage = () => {
 		: 0;
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+		<div className="min-h-screen bg-linear-to-br from-background via-background to-muted/20">
 			<div className="container mx-auto py-8 px-4 max-w-6xl">
 				{/* Header */}
 				<div className="text-center mb-8">
@@ -194,7 +194,7 @@ const ApiHealthPage = () => {
 				</div>
 
 				{/* Main Status */}
-				<Card className="mb-8 bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm">
+				<Card className="mb-8 bg-linear-to-r from-card/80 to-card/60 backdrop-blur-sm">
 					<CardContent className="py-8">
 						<div className="flex items-center justify-center space-x-6">
 							<div className="text-center">
@@ -237,7 +237,7 @@ const ApiHealthPage = () => {
 				{/* System Metrics */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 					{/* Memory Usage */}
-					<Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-200/50 dark:border-blue-800/50">
+					<Card className="bg-linear-to-br from-blue-500/10 to-blue-600/5 border-blue-200/50 dark:border-blue-800/50">
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2">
 								<Gauge className="h-5 w-5 text-blue-500" />
@@ -259,7 +259,7 @@ const ApiHealthPage = () => {
 					</Card>
 
 					{/* Response Time */}
-					<Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-200/50 dark:border-green-800/50">
+					<Card className="bg-linear-to-br from-green-500/10 to-green-600/5 border-green-200/50 dark:border-green-800/50">
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2">
 								<Zap className="h-5 w-5 text-green-500" />
@@ -285,7 +285,7 @@ const ApiHealthPage = () => {
 					</Card>
 
 					{/* Uptime */}
-					<Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-200/50 dark:border-purple-800/50">
+					<Card className="bg-linear-to-br from-purple-500/10 to-purple-600/5 border-purple-200/50 dark:border-purple-800/50">
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2">
 								<Activity className="h-5 w-5 text-purple-500" />

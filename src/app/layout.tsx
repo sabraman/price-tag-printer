@@ -7,8 +7,36 @@ import FontLoader from "@/components/layout/FontLoader";
 import Footer from "@/components/layout/Footer";
 import { inter, montserrat, nunito } from "@/config/fonts";
 import { metadata as siteMetadata } from "@/config/metadata";
+import { siteConfig } from "@/config/site";
 
-// eslint-disable-next-line react-refresh/only-export-components
+const structuredData = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: siteConfig.name,
+	url: siteConfig.url,
+	description: siteConfig.description,
+	applicationCategory: "BusinessApplication",
+	operatingSystem: "Web",
+	inLanguage: "ru",
+	featureList: [
+		"Импорт товаров из Excel",
+		"Импорт из Google Sheets",
+		"Настройка дизайна ценников",
+		"Генерация PDF для печати",
+	],
+	author: {
+		"@type": "Person",
+		name: "sabraman",
+		url: "https://github.com/sabraman",
+	},
+	provider: {
+		"@type": "Organization",
+		name: siteConfig.name,
+		url: siteConfig.url,
+		sameAs: [siteConfig.githubUrl],
+	},
+};
+
 export const metadata: Metadata = siteMetadata;
 
 export default function RootLayout({
@@ -26,6 +54,10 @@ export default function RootLayout({
 					rel="preconnect"
 					href="https://fonts.gstatic.com"
 					crossOrigin="anonymous"
+				/>
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
 				/>
 			</head>
 			<body

@@ -20,6 +20,7 @@ A comprehensive REST API for creating, managing, and generating PDF/HTML for pri
 ## Overview
 
 The Price Tag API provides a complete solution for managing price tags, including:
+
 - CRUD operations for price tags
 - Bulk operations
 - PDF generation with customizable themes
@@ -30,7 +31,7 @@ The Price Tag API provides a complete solution for managing price tags, includin
 ## Base URL
 
 ```
-https://your-domain.com/api
+https://print.sabraman.art/api
 ```
 
 ## Authentication
@@ -40,42 +41,45 @@ Currently, the API does not require authentication. In production, implement pro
 ## Data Models
 
 ### Item
+
 ```typescript
 interface Item {
-  id: number;                    // Unique identifier
-  data: string | number;         // Product name or identifier
-  price: number;                 // Main price
-  discountPrice: number;         // Calculated discount price
-  designType?: string;           // Theme type (optional)
-  hasDiscount?: boolean;         // Whether discount applies (optional)
-  priceFor2?: number;           // Price for 2 items (optional)
-  priceFrom3?: number;          // Price for 3+ items (optional)
+	id: number; // Unique identifier
+	data: string | number; // Product name or identifier
+	price: number; // Main price
+	discountPrice: number; // Calculated discount price
+	designType?: string; // Theme type (optional)
+	hasDiscount?: boolean; // Whether discount applies (optional)
+	priceFor2?: number; // Price for 2 items (optional)
+	priceFrom3?: number; // Price for 3+ items (optional)
 }
 ```
 
 ### Theme
+
 ```typescript
 interface Theme {
-  start: string;      // Gradient start color (hex)
-  end: string;        // Gradient end color (hex)
-  textColor: string;  // Text color (hex)
+	start: string; // Gradient start color (hex)
+	end: string; // Gradient end color (hex)
+	textColor: string; // Text color (hex)
 }
 ```
 
 ### PriceTagSettings
+
 ```typescript
 interface PriceTagSettings {
-  design: boolean;                    // Enable discount display
-  designType: string;                 // Global design type
-  discountAmount: number;             // Fixed discount amount
-  maxDiscountPercent: number;         // Maximum discount percentage
-  themes: ThemeSet;                   // Theme configurations
-  currentFont: string;                // Font family
-  discountText: string;               // Discount description text
-  hasTableDesigns: boolean;           // Use per-item designs
-  hasTableDiscounts: boolean;         // Use per-item discounts
-  showThemeLabels: boolean;           // Show NEW/SALE labels
-  cuttingLineColor: string;           // Cutting line color
+	design: boolean; // Enable discount display
+	designType: string; // Global design type
+	discountAmount: number; // Fixed discount amount
+	maxDiscountPercent: number; // Maximum discount percentage
+	themes: ThemeSet; // Theme configurations
+	currentFont: string; // Font family
+	discountText: string; // Discount description text
+	hasTableDesigns: boolean; // Use per-item designs
+	hasTableDiscounts: boolean; // Use per-item discounts
+	showThemeLabels: boolean; // Show NEW/SALE labels
+	cuttingLineColor: string; // Cutting line color
 }
 ```
 
@@ -84,11 +88,13 @@ interface PriceTagSettings {
 ### Price Tags CRUD
 
 #### Get All Price Tags
+
 ```http
 GET /api/price-tags
 ```
 
 **Query Parameters:**
+
 - `page` (number, optional): Page number (default: 1)
 - `limit` (number, optional): Items per page (default: 10)
 - `search` (string, optional): Search in product names
@@ -100,128 +106,140 @@ GET /api/price-tags
 - `sortOrder` ('asc' | 'desc', optional): Sort direction
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "data": {
-    "items": [
-      {
-        "id": 1,
-        "data": "Product Name",
-        "price": 1000,
-        "discountPrice": 500,
-        "designType": "new"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 1,
-      "totalPages": 1,
-      "hasNext": false,
-      "hasPrev": false
-    }
-  }
+	"success": true,
+	"data": {
+		"items": [
+			{
+				"id": 1,
+				"data": "Product Name",
+				"price": 1000,
+				"discountPrice": 500,
+				"designType": "new"
+			}
+		],
+		"pagination": {
+			"page": 1,
+			"limit": 10,
+			"total": 1,
+			"totalPages": 1,
+			"hasNext": false,
+			"hasPrev": false
+		}
+	}
 }
 ```
 
 #### Get Single Price Tag
+
 ```http
 GET /api/price-tags/{id}
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "data": {
-    "id": 1,
-    "data": "Product Name",
-    "price": 1000,
-    "discountPrice": 500,
-    "designType": "new"
-  }
+	"success": true,
+	"data": {
+		"id": 1,
+		"data": "Product Name",
+		"price": 1000,
+		"discountPrice": 500,
+		"designType": "new"
+	}
 }
 ```
 
 #### Create Price Tag
+
 ```http
 POST /api/price-tags
 ```
 
 **Request Body:**
+
 ```json
 {
-  "data": "Product Name",
-  "price": 1000,
-  "designType": "new",
-  "hasDiscount": true,
-  "priceFor2": 1800,
-  "priceFrom3": 2500
+	"data": "Product Name",
+	"price": 1000,
+	"designType": "new",
+	"hasDiscount": true,
+	"priceFor2": 1800,
+	"priceFrom3": 2500
 }
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "data": {
-    "id": 1,
-    "data": "Product Name",
-    "price": 1000,
-    "discountPrice": 500,
-    "designType": "new",
-    "hasDiscount": true,
-    "priceFor2": 1800,
-    "priceFrom3": 2500
-  },
-  "message": "Price tag created successfully"
+	"success": true,
+	"data": {
+		"id": 1,
+		"data": "Product Name",
+		"price": 1000,
+		"discountPrice": 500,
+		"designType": "new",
+		"hasDiscount": true,
+		"priceFor2": 1800,
+		"priceFrom3": 2500
+	},
+	"message": "Price tag created successfully"
 }
 ```
 
 #### Bulk Create Price Tags
+
 ```http
 POST /api/price-tags
 ```
 
 **Request Body:**
+
 ```json
 {
-  "items": [
-    {
-      "data": "Product 1",
-      "price": 1000,
-      "designType": "new"
-    },
-    {
-      "data": "Product 2", 
-      "price": 1500,
-      "designType": "sale"
-    }
-  ]
+	"items": [
+		{
+			"data": "Product 1",
+			"price": 1000,
+			"designType": "new"
+		},
+		{
+			"data": "Product 2",
+			"price": 1500,
+			"designType": "sale"
+		}
+	]
 }
 ```
 
 #### Update Price Tag
+
 ```http
 PUT /api/price-tags/{id}
 ```
 
 **Request Body:**
+
 ```json
 {
-  "data": "Updated Product Name",
-  "price": 1200,
-  "designType": "sale"
+	"data": "Updated Product Name",
+	"price": 1200,
+	"designType": "sale"
 }
 ```
 
 #### Delete Price Tag
+
 ```http
 DELETE /api/price-tags/{id}
 ```
 
 #### Delete All Price Tags
+
 ```http
 DELETE /api/price-tags
 ```
@@ -229,124 +247,134 @@ DELETE /api/price-tags
 ### PDF Generation
 
 #### Generate PDF (Enhanced v2)
+
 ```http
 POST /api/generate-pdf-v2
 ```
 
 **Request Body:**
+
 ```json
 {
-  "items": [
-    {
-      "id": 1,
-      "data": "Product Name",
-      "price": 1000,
-      "discountPrice": 500
-    }
-  ],
-  "settings": {
-    "design": true,
-    "designType": "new",
-    "currentFont": "montserrat",
-    "showThemeLabels": true
-  },
-  "format": "A4",
-  "margin": {
-    "top": "10mm",
-    "right": "10mm",
-    "bottom": "10mm",
-    "left": "10mm"
-  }
+	"items": [
+		{
+			"id": 1,
+			"data": "Product Name",
+			"price": 1000,
+			"discountPrice": 500
+		}
+	],
+	"settings": {
+		"design": true,
+		"designType": "new",
+		"currentFont": "montserrat",
+		"showThemeLabels": true
+	},
+	"format": "A4",
+	"margin": {
+		"top": "10mm",
+		"right": "10mm",
+		"bottom": "10mm",
+		"left": "10mm"
+	}
 }
 ```
 
 **Response:** Binary PDF file
 
 #### Get PDF Generation Info
+
 ```http
 GET /api/generate-pdf-v2
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "data": {
-    "supportedFormats": ["A4", "A3", "Letter"],
-    "defaultFormat": "A4",
-    "supportedFonts": ["montserrat", "nunito", "inter", "mont"],
-    "supportedDesignTypes": ["default", "new", "sale", "white", "black"],
-    "maxItemsPerRequest": 1000,
-    "version": "2.0"
-  }
+	"success": true,
+	"data": {
+		"supportedFormats": ["A4", "A3", "Letter"],
+		"defaultFormat": "A4",
+		"supportedFonts": ["montserrat", "nunito", "inter", "mont"],
+		"supportedDesignTypes": ["default", "new", "sale", "white", "black"],
+		"maxItemsPerRequest": 1000,
+		"version": "2.0"
+	}
 }
 ```
 
 ### HTML Generation
 
 #### Generate HTML
+
 ```http
 POST /api/generate-html
 ```
 
 **Request Body:**
+
 ```json
 {
-  "items": [
-    {
-      "id": 1,
-      "data": "Product Name", 
-      "price": 1000,
-      "discountPrice": 500
-    }
-  ],
-  "settings": {
-    "design": true,
-    "designType": "new",
-    "currentFont": "montserrat"
-  }
+	"items": [
+		{
+			"id": 1,
+			"data": "Product Name",
+			"price": 1000,
+			"discountPrice": 500
+		}
+	],
+	"settings": {
+		"design": true,
+		"designType": "new",
+		"currentFont": "montserrat"
+	}
 }
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "data": {
-    "html": "<!DOCTYPE html>...",
-    "itemCount": 1
-  },
-  "message": "HTML generated successfully for 1 items"
+	"success": true,
+	"data": {
+		"html": "<!DOCTYPE html>...",
+		"itemCount": 1
+	},
+	"message": "HTML generated successfully for 1 items"
 }
 ```
 
 ### File Processing
 
 #### Process Excel File
+
 ```http
 POST /api/process-excel
 ```
 
 **Request Body:**
+
 ```json
 {
-  "fileData": [/* array of bytes */],
-  "fileName": "products.xlsx"
+	"fileData": [/* array of bytes */],
+	"fileName": "products.xlsx"
 }
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "items": [
-    {
-      "data": "Product Name",
-      "price": 1000,
-      "designType": "new"
-    }
-  ],
-  "count": 1
+	"success": true,
+	"items": [
+		{
+			"data": "Product Name",
+			"price": 1000,
+			"designType": "new"
+		}
+	],
+	"count": 1
 }
 ```
 
@@ -356,10 +384,10 @@ All API responses follow this structure:
 
 ```typescript
 interface ApiResponse<T = any> {
-  success: boolean;    // Operation success status
-  data?: T;           // Response data (when successful)
-  error?: string;     // Error message (when failed)
-  message?: string;   // Additional information
+	success: boolean; // Operation success status
+	data?: T; // Response data (when successful)
+	error?: string; // Error message (when failed)
+	message?: string; // Additional information
 }
 ```
 
@@ -377,14 +405,15 @@ interface ApiResponse<T = any> {
 
 ```json
 {
-  "success": false,
-  "error": "Price must be a positive number"
+	"success": false,
+	"error": "Price must be a positive number"
 }
 ```
 
 ## Design Types
 
 Available design types for themes:
+
 - `default` - Standard gradient theme
 - `new` - Green theme for new products
 - `sale` - Red theme for sale items
@@ -406,6 +435,7 @@ Available design types for themes:
 ## Font Options
 
 Supported fonts:
+
 - `montserrat` (default)
 - `nunito`
 - `inter`
@@ -416,6 +446,7 @@ Supported fonts:
 ### Complete Workflow Example
 
 1. **Create price tags**:
+
 ```bash
 curl -X POST /api/price-tags \
   -H "Content-Type: application/json" \
@@ -428,11 +459,13 @@ curl -X POST /api/price-tags \
 ```
 
 2. **Get all price tags**:
+
 ```bash
 curl /api/price-tags?limit=20&sortBy=price&sortOrder=desc
 ```
 
 3. **Generate PDF**:
+
 ```bash
 curl -X POST /api/generate-pdf-v2 \
   -H "Content-Type: application/json" \
@@ -458,6 +491,7 @@ curl -X POST /api/generate-pdf-v2 \
 ```
 
 4. **Generate HTML preview**:
+
 ```bash
 curl -X POST /api/generate-html \
   -H "Content-Type: application/json" \

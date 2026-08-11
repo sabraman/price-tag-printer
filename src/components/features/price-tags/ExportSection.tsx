@@ -25,7 +25,8 @@ export const ExportSection: React.FC<ExportSectionProps> = ({
 	design,
 	designType,
 }) => {
-	// Use parameters to satisfy ESLint (they are required by the interface)
+	// These values are part of the shared export-section interface and may be
+	// consumed by alternate export implementations.
 	void themes;
 	void currentFont;
 	void discountText;
