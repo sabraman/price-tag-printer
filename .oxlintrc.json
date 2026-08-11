@@ -7,8 +7,11 @@
 	},
 	"rules": {
 		"typescript/no-explicit-any": "off",
+		"eslint/no-shadow": "off",
+		"eslint/no-underscore-dangle": "off",
 		"react/no-unescaped-entities": "off",
 		"react/react-in-jsx-scope": "off",
+		"react/no-unstable-nested-components": "off",
 		"jsx-a11y/heading-has-content": "off",
 		"jsx-a11y/prefer-tag-over-role": "off"
 	},

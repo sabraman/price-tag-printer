@@ -150,6 +150,9 @@ This checks the public HTML, crawler directives, sitemap, LLM context, OpenAPI
 server URL, and placeholder domains. It does not make claims about whether a
 particular AI engine will cite the site.
 
+GitHub Actions runs OSV-Scanner on pull requests and on a weekly schedule to
+detect known vulnerabilities in the Bun lockfile.
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup and pull-request guidance.
