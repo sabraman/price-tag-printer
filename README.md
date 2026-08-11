@@ -132,8 +132,9 @@ api-reference/         Mintlify-style API reference pages
 
 The editor is a client-side React experience mounted by the Next.js App Router.
 Zustand owns persistent editor state; PDF generation uses `pdf-lib` and the
-browser/Node preview helpers; spreadsheet imports use `xlsx` and the Google
-Sheets integration. The app uses Next.js 16 with Turbopack, Tailwind CSS 4,
+browser/Node preview helpers; spreadsheet imports use the SheetJS-compatible
+`@e965/xlsx` package and the Google Sheets integration. The app uses Next.js 16
+with Turbopack, Tailwind CSS 4,
 React Compiler, TypeScript 7, and Vitest 4.
 
 ## Discoverability

@@ -9,7 +9,7 @@ import {
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import * as XLSX from "xlsx";
+import * as XLSX from "@e965/xlsx";
 import { BrowserWarning } from "@/components/common/BrowserWarning";
 import { BackupPrintButtons } from "@/components/features/price-tags/BackupPrintButtons";
 import ExcelUploader from "@/components/features/price-tags/ExcelUploader";

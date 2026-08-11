@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import * as XLSX from "xlsx";
+import * as XLSX from "@e965/xlsx";
 
 export async function POST(request: NextRequest) {
 	try {

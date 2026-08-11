@@ -1,6 +1,6 @@
 {
 	"name": "price-tag-generator",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -22,6 +22,7 @@
 		"test:all-table": "vitest run src/tests/OptimizedEditTable.test.tsx src/tests/DuplicationSystem.test.tsx src/tests/OptimizedEditTable.duplication.test.tsx src/tests/OptimizedEditTable.selectionFiltering.test.tsx"
 	},
 	"dependencies": {
+		"@e965/xlsx": "0.20.3",
 		"@hookform/resolvers": "5.7.1",
 		"@radix-ui/react-accordion": "1.2.20",
 		"@radix-ui/react-alert-dialog": "1.1.23",
@@ -51,7 +52,6 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"framer-motion": "13.1.0",
-		"google-sheets-data-fetcher": "^1.1.7",
 		"immer": "11.1.16",
 		"lucide-react": "1.31.0",
 		"next": "16.3.0",
@@ -67,7 +67,6 @@
 		"server-only": "^0.0.1",
 		"sonner": "2.0.8",
 		"tailwind-merge": "3.6.0",
-		"xlsx": "^0.18.5",
 		"zod": "4.4.3",
 		"zustand": "5.0.14"
 	},
@@ -84,10 +83,13 @@
 		"oxfmt": "^0.63.0",
 		"oxlint": "^1.78.0",
 		"postcss": "8.5.26",
+		"proxy-agent": "8.0.2",
 		"puppeteer": "25.5.0",
 		"tailwindcss": "^4.3.3",
+		"tar-fs": "2.1.5",
 		"tsx": "4.23.12",
 		"typescript": "7.0.2",
+		"vite": "6.4.3",
 		"vitest": "4.1.10"
 	},
 	"engines": {

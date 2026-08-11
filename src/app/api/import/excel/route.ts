@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
-import * as xlsx from "xlsx";
+import * as xlsx from "@e965/xlsx";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;

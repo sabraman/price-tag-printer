@@ -2,7 +2,7 @@ import { AlertTriangle, FileSpreadsheet, Upload } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { read, type WorkBook } from "xlsx";
+import { read, type WorkBook } from "@e965/xlsx";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dropzone, DropzoneEmptyState } from "@/components/ui/dropzone";
 import { validateFileIntegrity, validateFiles } from "@/utils/fileValidation";

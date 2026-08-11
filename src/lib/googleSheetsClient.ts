@@ -12,8 +12,8 @@ interface GoogleSheetsApiResponse {
 /**
  * Fetches Google Sheets data through the server API.
  *
- * The Google Sheets package uses Node-only modules, so browser components must
- * call the API boundary instead of importing the server integration directly.
+ * The Google Sheets integration is server-only, so browser components must
+ * call the API boundary instead of importing it directly.
  */
 export async function fetchGoogleSheetsData(
 	configs: GoogleSheetsConfig[],
