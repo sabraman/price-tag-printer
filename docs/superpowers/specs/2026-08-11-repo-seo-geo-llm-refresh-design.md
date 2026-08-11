@@ -16,6 +16,8 @@ The work will improve four connected surfaces:
    robots rules, and a sitemap.
 4. Answer engines and coding agents: a standards-shaped `llms.txt`, a complete
    API discovery path, and a repeatable discoverability audit.
+5. Local development: Bun as the package manager and Oxc as the formatter and
+   linter.
 
 The existing Next.js application remains the deployed product. This pass does
 not migrate to the parked Astro/Convex work, change routing, or redesign the
@@ -51,6 +53,10 @@ The external guidance/checking references are:
 
 These tools guide and validate the work; the repository will not depend on an
 agent skill at runtime.
+
+The repository toolchain will also move from pnpm/Biome to Bun/Oxc during this
+pass. This keeps the migration explicit and prevents the README and agent
+instructions from documenting two competing workflows.
 
 ## Design
 
@@ -141,7 +147,7 @@ Add a dependency-free Node checker at
 `scripts/check-discoverability.mjs`, invoked as:
 
 ```bash
-pnpm check:discoverability -- https://print.sabraman.art
+bun run check:discoverability -- https://print.sabraman.art
 ```
 
 The checker will fetch the origin and verify:
@@ -160,16 +166,41 @@ when the live deployment is reachable; the local checker remains the stable
 repository check that does not require Python, credentials, or third-party
 accounts.
 
+### 6. Bun and Oxc toolchain
+
+Migrate local package management from pnpm to Bun:
+
+- Declare Bun 1.3.3 in `package.json`.
+- Keep `bun.lock` and remove the pnpm lockfile.
+- Use `bun install`, `bun run`, and `bunx` in documentation and contributor
+  instructions.
+
+Replace Biome and the standalone ESLint configuration with Oxc:
+
+- Add the `oxlint` and `oxfmt` development packages.
+- Add `.oxlintrc.json` and `.oxfmtrc.json` with repository-wide ignores and
+  formatting settings matching the existing tab/semicolon style.
+- Make `bun run lint` run Oxlint and add `bun run lint:fix`.
+- Make `bun run format` write with Oxfmt and `bun run format:check` verify
+  without changing files.
+- Remove Biome/ESLint-only scripts, configuration, dependencies, and comments
+  once Oxlint and Oxfmt pass over the source tree.
+
+The Oxc migration is tooling-only: it must not change runtime behavior or
+silently reformat generated assets, lockfiles, or build output.
+
 ## Validation
 
 Before handoff, run:
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm test -- --run
-pnpm build
-pnpm check:discoverability -- https://print.sabraman.art
+bun install --frozen-lockfile
+bun run lint
+bun run format:check
+bun run typecheck
+bun run test -- --run
+bun run build
+bun run check:discoverability -- https://print.sabraman.art
 ```
 
 Also verify with `gh repo view` that the description, homepage, and topics were
@@ -184,3 +215,5 @@ distinction will be called out in the handoff.
 - No new analytics provider, cookies, user tracking, or paid SEO service.
 - No claim that `llms.txt` guarantees citations by any particular AI engine.
 - No release tag until the validated changes represent a deployed release.
+- No runtime package-manager changes beyond Bun, and no automatic source
+  reformatting of generated assets.
