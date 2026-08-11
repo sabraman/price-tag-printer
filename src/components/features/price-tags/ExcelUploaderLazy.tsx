@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import type { WorkBook } from "xlsx";
+import type { WorkBook } from "@e965/xlsx";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ExcelUploader = lazy(() => import("./ExcelUploader"));

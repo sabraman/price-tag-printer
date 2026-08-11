@@ -1,36 +1,128 @@
-// Google Sheets API integration using google-sheets-data-fetcher package
 import "server-only";
 
-import { fetchGoogleSheetsData as originalFetchGoogleSheetsData } from "google-sheets-data-fetcher";
 import type {
 	GoogleSheetsConfig,
 	GoogleSheetsResponse,
 } from "./googleSheetsTypes";
 
+const GOOGLE_VISUALIZATION_RESPONSE_PREFIX =
+	"google.visualization.Query.setResponse(";
+
+interface GoogleVisualizationCell {
+	v?: string | number;
+}
+
+interface GoogleVisualizationColumn {
+	id?: string;
+	label?: string;
+	type?: string;
+}
+
+interface GoogleVisualizationResponse {
+	table?: {
+		cols?: GoogleVisualizationColumn[];
+		rows?: Array<{ c?: Array<GoogleVisualizationCell | null> }>;
+	};
+}
+
+function parseVisualizationResponse(body: string): GoogleVisualizationResponse {
+	const prefixIndex = body.indexOf(GOOGLE_VISUALIZATION_RESPONSE_PREFIX);
+	const closingIndex = body.lastIndexOf(")");
+
+	if (prefixIndex === -1 || closingIndex <= prefixIndex) {
+		throw new Error("Google Sheets returned an invalid response");
+	}
+
+	const json = body.slice(
+		prefixIndex + GOOGLE_VISUALIZATION_RESPONSE_PREFIX.length,
+		closingIndex,
+	);
+
+	return JSON.parse(json) as GoogleVisualizationResponse;
+}
+
+async function fetchSheet(
+	sheetId: string,
+	subSheetId: string,
+): Promise<GoogleSheetsResponse> {
+	const url = new URL(
+		`https://docs.google.com/a/google.com/spreadsheets/d/${sheetId}/gviz/tq`,
+	);
+	url.searchParams.set("tqx", "out:json");
+	url.searchParams.set("tq", "");
+	url.searchParams.set("gid", subSheetId);
+
+	const response = await fetch(url, {
+		headers: { Accept: "application/json" },
+		signal: AbortSignal.timeout(10_000),
+	});
+
+	if (!response.ok) {
+		throw new Error(`Google Sheets returned HTTP ${response.status}`);
+	}
+
+	const payload = parseVisualizationResponse(await response.text());
+	const columns = payload.table?.cols ?? [];
+	const rows = payload.table?.rows ?? [];
+	const result: GoogleSheetsResponse = {};
+
+	for (const [columnIndex, column] of columns.entries()) {
+		const id = column.id || String(columnIndex);
+		result[id] = {
+			id,
+			label: column.label || id,
+			type: column.type || "string",
+			rows: {},
+		};
+
+		for (const [rowIndex, row] of rows.entries()) {
+			result[id].rows[String(rowIndex)] = {
+				id: rowIndex,
+				data: row.c?.[columnIndex]?.v as string | number,
+			};
+		}
+	}
+
+	return result;
+}
+
 /**
- * Fetches data from Google Sheets using the reliable google-sheets-data-fetcher package
- * @param configs Array of sheet configurations
- * @returns Promise resolving to Google Sheets data in the expected format
+ * Fetches public Google Sheets data without pulling a second HTTP client into
+ * the server bundle. The response shape remains compatible with the previous
+ * JSON_COLUMNS integration.
  */
 export async function fetchGoogleSheetsData(
 	configs: GoogleSheetsConfig[],
 ): Promise<GoogleSheetsResponse> {
 	try {
-		console.log("Fetching Google Sheets data with configs:", configs);
+		const results = await Promise.all(
+			configs.map(async (config) => {
+				const subSheetIds =
+					config.subSheetsIds.length > 0 ? config.subSheetsIds : ["0"];
+				const sheets = await Promise.all(
+					subSheetIds.map((subSheetId) =>
+						fetchSheet(config.sheetId, subSheetId),
+					),
+				);
 
-		// Use the google-sheets-data-fetcher package
-		const result = await originalFetchGoogleSheetsData(
-			configs,
-			["JSON_COLUMNS"], // Use JSON_COLUMNS format which is what we expect
+				if (sheets.length === 1) {
+					return sheets[0];
+				}
+
+				return Object.fromEntries(
+					subSheetIds.map((subSheetId, index) => [subSheetId, sheets[index]]),
+				);
+			}),
 		);
 
-		console.log("Raw Google Sheets data received:", result);
+		if (results.length === 1) {
+			return results[0] as GoogleSheetsResponse;
+		}
 
-		// The package returns the data directly in the format we expect
-		// No need for conversion as it should already be in the correct format
-		return result as GoogleSheetsResponse;
+		return Object.fromEntries(
+			configs.map((config, index) => [config.sheetId, results[index]]),
+		) as unknown as GoogleSheetsResponse;
 	} catch (error) {
-		console.error("Error fetching Google Sheets data:", error);
 		throw new Error(
 			`Failed to fetch Google Sheets data: ${
 				error instanceof Error ? error.message : "Unknown error"
@@ -41,9 +133,7 @@ export async function fetchGoogleSheetsData(
 }
 
 /**
- * Extracts sheet ID from a Google Sheets URL
- * @param url Google Sheets URL
- * @returns Sheet ID string
+ * Extracts sheet ID from a Google Sheets URL.
  */
 export function extractSheetIdFromUrl(url: string): string {
 	const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
@@ -51,9 +141,7 @@ export function extractSheetIdFromUrl(url: string): string {
 }
 
 /**
- * Extracts GID (sheet tab ID) from a Google Sheets URL
- * @param url Google Sheets URL
- * @returns GID string or '0' as default
+ * Extracts GID (sheet tab ID) from a Google Sheets URL.
  */
 export function extractGidFromUrl(url: string): string {
 	const match = url.match(/[#&]gid=([0-9]+)/);
