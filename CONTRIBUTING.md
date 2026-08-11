@@ -35,6 +35,9 @@ bun run check:discoverability -- https://print.sabraman.art
 If the production site does not yet contain your branch, run the checker
 against a local server instead.
 
+OSV-Scanner runs automatically for pull requests and on the weekly scheduled
+security workflow; no local security-scanner installation is required.
+
 ## Pull requests
 
 - Explain the user-facing or maintenance problem being solved.
